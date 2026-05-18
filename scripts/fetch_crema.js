@@ -4,7 +4,7 @@ const { notifyNegativeReviews } = require('./slack_notify');
 
 const APP_ID = process.env.CREMA_APP_ID;
 const SECRET = process.env.CREMA_SECRET;
-const HTML_PATH = process.env.HTML_PATH || 'index.html';
+const REVIEWS_JSON_PATH = process.env.REVIEWS_JSON_PATH || 'reviews.json';
 
 function request(options, body = null) {
   return new Promise((resolve, reject) => {
@@ -532,51 +532,20 @@ function mergeReview(old, incoming) {
   };
 }
 
-function updateHTML(newReviews) {
-  console.log(`=== HTML 파일 업데이트 (${HTML_PATH}) ===`);
-  let html = fs.readFileSync(HTML_PATH, 'utf8');
-
-  const startMarker = 'const ALL_REVIEWS = ';
-  const markerPos = html.indexOf(startMarker);
-  if (markerPos === -1) {
-    throw new Error(`ALL_REVIEWS 블록을 ${HTML_PATH}에서 찾지 못했습니다.`);
-  }
-
-  const startIdx = markerPos + startMarker.length;
-
-  let depth = 0;
-  let inString = false;
-  let i = startIdx;
-
-  while (i < html.length) {
-    const c = html[i];
-    if (c === '\\' && inString) {
-      i += 2;
-      continue;
-    }
-    if (c === '"') {
-      inString = !inString;
-    } else if (!inString) {
-      if (c === '[') depth++;
-      else if (c === ']') {
-        depth--;
-        if (depth === 0) {
-          i++;
-          break;
-        }
-      }
-    }
-    i++;
-  }
-
-  const endIdx = i;
-  const existingJson = html.slice(startIdx, endIdx);
+function updateReviewsJson(newReviews) {
+  console.log(`=== reviews.json 업데이트 (${REVIEWS_JSON_PATH}) ===`);
 
   let existing = [];
-  try {
-    existing = JSON.parse(existingJson);
-  } catch (e) {
-    console.warn('기존 데이터 파싱 실패 → 새 데이터로 덮음');
+  if (fs.existsSync(REVIEWS_JSON_PATH)) {
+    try {
+      existing = JSON.parse(fs.readFileSync(REVIEWS_JSON_PATH, 'utf8'));
+      if (!Array.isArray(existing)) existing = [];
+    } catch (e) {
+      console.warn('기존 reviews.json 파싱 실패 → 새 데이터로 덮음');
+      existing = [];
+    }
+  } else {
+    console.log('reviews.json 없음 → 새로 생성');
   }
 
   const map = new Map();
@@ -593,15 +562,7 @@ function updateHTML(newReviews) {
   });
 
   const merged = [...map.values()].sort((a, b) => b.date.localeCompare(a.date));
-  const totalCount = merged.length;
-
-  const newJson = JSON.stringify(merged, null, 0);
-  html = html.slice(0, startIdx) + newJson + html.slice(endIdx);
-
-  html = html.replace(/(<span class="nav-badge">)\d+(<\/span>)/g, `$1${totalCount}$2`);
-  html = html.replace(/(<div class="nav-badge">)\d+(<\/div>)/g, `$1${totalCount}$2`);
-
-  fs.writeFileSync(HTML_PATH, html, 'utf8');
+  fs.writeFileSync(REVIEWS_JSON_PATH, JSON.stringify(merged), 'utf8');
   console.log(`총 ${merged.length}개 리뷰 업데이트 완료`);
 }
 
@@ -610,7 +571,7 @@ async function main() {
     console.log('========================================');
     console.log('  크리마 전체 리뷰 수집 시작');
     console.log('========================================\n');
-    console.log(`대상 HTML 파일: ${HTML_PATH}`);
+    console.log(`대상 JSON 파일: ${REVIEWS_JSON_PATH}`);
 
     if (!APP_ID || !SECRET) {
       throw new Error('CREMA_APP_ID 또는 CREMA_SECRET 환경변수가 설정되지 않았습니다');
@@ -642,7 +603,7 @@ async function main() {
     const noProductCount = converted.filter(r => !r.product).length;
     console.log(`상품명 비어있는 리뷰 수: ${noProductCount}개`);
 
-    updateHTML(converted);
+    updateReviewsJson(converted);
 
     const negatives = converted.filter(r => r.is_negative);
     if (negatives.length > 0) {
