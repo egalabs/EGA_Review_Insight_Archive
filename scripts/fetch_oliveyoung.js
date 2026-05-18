@@ -3,6 +3,8 @@ const http = require('http');
 const fs = require('fs');
 const { notifyNegativeReviews } = require('./slack_notify');
 
+const REVIEWS_JSON_PATH = process.env.REVIEWS_JSON_PATH || 'reviews.json';
+
 // EGA 올리브영 상품 목록 (브랜드 페이지에서 확인)
 const BRAND_URL = 'https://www.oliveyoung.co.kr/store/display/getBrandShopDetail.do?onlBrndCd=A016175';
 
@@ -296,47 +298,32 @@ function convertReview(r) {
   };
 }
 
-function updateHTML(newReviews) {
-  console.log('\n=== HTML 파일 업데이트 중... ===');
-  let html = fs.readFileSync('index.html', 'utf8');
+function updateReviewsJson(newReviews) {
+  console.log(`\n=== reviews.json 업데이트 (${REVIEWS_JSON_PATH}) ===`);
 
-  const startMarker = 'const ALL_REVIEWS = ';
-  const startIdx = html.indexOf(startMarker) + startMarker.length;
-
-  let depth = 0;
-  let inString = false;
-  let i = startIdx;
-  while (i < html.length) {
-    const c = html[i];
-    if (c === '\\' && inString) { i += 2; continue; }
-    if (c === '"') inString = !inString;
-    else if (!inString) {
-      if (c === '[') depth++;
-      else if (c === ']') { depth--; if (depth === 0) { i++; break; } }
-    }
-    i++;
-  }
-  const endIdx = i;
-
-  const existingJson = html.slice(startIdx, endIdx);
   let existing = [];
-  try {
-    existing = JSON.parse(existingJson);
-  } catch(e) {
-    console.warn('  기존 데이터 파싱 실패');
-    return;
+  if (fs.existsSync(REVIEWS_JSON_PATH)) {
+    try {
+      existing = JSON.parse(fs.readFileSync(REVIEWS_JSON_PATH, 'utf8'));
+      if (!Array.isArray(existing)) existing = [];
+    } catch(e) {
+      console.warn('  기존 reviews.json 파싱 실패');
+      return;
+    }
+  } else {
+    console.log('  reviews.json 없음 → 새로 생성');
   }
 
   // 기존 올리브영 리뷰의 텍스트+날짜 해시로 중복 체크
   const existingOlvTexts = new Set();
   existing.forEach(r => {
     if (String(r.id).startsWith('OLV') || (r.channel === '올리브영')) {
-      existingOlvTexts.add(r.date + '|' + r.text.slice(0, 50));
+      existingOlvTexts.add(r.date + '|' + (r.text || '').slice(0, 50));
     }
   });
 
   const brandNew = newReviews.filter(r => {
-    const key = r.date + '|' + r.text.slice(0, 50);
+    const key = r.date + '|' + (r.text || '').slice(0, 50);
     return !existingOlvTexts.has(key);
   });
 
@@ -351,16 +338,8 @@ function updateHTML(newReviews) {
 
   const merged = [...existing, ...brandNew]
     .sort((a, b) => b.date.localeCompare(a.date));
-  const totalCount = merged.length;
-
-  const newJson = JSON.stringify(merged, null, 0);
-  html = html.slice(0, startIdx) + newJson + html.slice(endIdx);
-
-  html = html.replace(/(<span class="nav-badge">)\d+(<\/span>)/g, `$1${totalCount}$2`);
-  html = html.replace(/(<div class="nav-badge">)\d+(<\/div>)/g, `$1${totalCount}$2`);
-
-  fs.writeFileSync('index.html', html, 'utf8');
-  console.log(`\n=== 총 ${totalCount}개로 업데이트 완료 ===`);
+  fs.writeFileSync(REVIEWS_JSON_PATH, JSON.stringify(merged), 'utf8');
+  console.log(`\n=== 총 ${merged.length}개로 업데이트 완료 ===`);
 }
 
 async function main() {
@@ -419,7 +398,7 @@ async function main() {
       console.warn(`\n[경고] 상품명 없는 리뷰 ${noName.length}건 (goodsNo 확인 필요)`);
     }
 
-    updateHTML(converted);
+    updateReviewsJson(converted);
 
     // 부정리뷰 슬랙 DM 알림
     const negatives = converted.filter(r => r.is_negative);
