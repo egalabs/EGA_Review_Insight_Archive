@@ -501,10 +501,10 @@
           <div class="kpi-value" id="kpi-pos">64%</div>
           <div class="kpi-change up">↑ +5%p vs 전주</div>
         </div>
-        <div class="kpi-card">
+        <div class="kpi-card" onclick="showIssueReviewsModal()" style="cursor:pointer;transition:transform .12s,box-shadow .12s" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 14px rgba(239,68,68,0.18)'" onmouseout="this.style.transform='';this.style.boxShadow=''" title="클릭하여 부정/이슈 리뷰 확인 및 답변 작성">
           <div class="kpi-label">즉시 확인 필요</div>
           <div class="kpi-value" id="kpi-issue" style="color:var(--negative)">13</div>
-          <div class="kpi-change neutral">부정/이슈 리뷰</div>
+          <div class="kpi-change neutral">부정/이슈 리뷰 · 👆 클릭하여 답변</div>
         </div>
       </div>
 
@@ -2169,7 +2169,8 @@ function updateDashboard() {
   const negCount = monthReviews.filter(r => r.sentiment === '부정').length;
   const posPct = total ? Math.round(posCount / total * 100) : 0;
   const repurchase = monthReviews.filter(r => r.has_repurchase).length;
-  const issues = monthReviews.filter(r => r.issue_flag || r.sentiment === '부정').length;
+  // 답변이 이미 게시된 건 카운트에서 제외 (사용자 처리 완료)
+  const issues = monthReviews.filter(r => (r.issue_flag || r.sentiment === '부정') && r.reply_status !== 'posted').length;
   const avgScore = total ? (monthReviews.reduce((a, r) => a + r.sentiment_score, 0) / total / 20).toFixed(1) : 0;
 
   // 배너 날짜 범위 업데이트
@@ -3612,6 +3613,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     </div>
   </div>
 </div>
+
+<!-- ===== 즉시 확인 필요 리뷰 모달 ===== -->
+<div id="issue-modal-overlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.55);z-index:9999;backdrop-filter:blur(2px)" onclick="if(event.target===this)closeIssueReviewsModal()">
+  <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:16px;width:920px;max-width:95vw;max-height:88vh;box-shadow:0 24px 80px rgba(0,0,0,.28);display:flex;flex-direction:column">
+    <div style="padding:20px 26px 14px;border-bottom:1px solid #e5e7eb;display:flex;justify-content:space-between;align-items:flex-start;gap:16px">
+      <div>
+        <div style="font-size:18px;font-weight:700;color:#111827;margin-bottom:4px">🚨 즉시 확인 필요한 리뷰</div>
+        <div style="font-size:12.5px;color:#6b7280" id="issue-modal-subtitle">최근 4주 부정/이슈 리뷰 · 답변 게시하면 목록에서 자동 제외됩니다</div>
+      </div>
+      <button onclick="closeIssueReviewsModal()" style="background:none;border:none;cursor:pointer;font-size:22px;color:#9ca3af;padding:4px 10px;border-radius:6px;line-height:1" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='none'">&times;</button>
+    </div>
+    <div id="issue-reviews-list" style="padding:18px 22px;overflow-y:auto;flex:1;background:#fafafa"></div>
+  </div>
+</div>
+
 <script>
 function showReviewPopup(r) {
   if(!r) return;
@@ -3922,6 +3938,178 @@ function setReplyFilter(f, el) {
   renderReplyList();
 }
 
+// ===== 즉시 확인 필요 모달 (대시보드 KPI 카드 클릭 시) =====
+window.showIssueReviewsModal = function() {
+  document.getElementById('issue-modal-overlay').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+  renderIssueReviewsList();
+};
+window.closeIssueReviewsModal = function() {
+  document.getElementById('issue-modal-overlay').style.display = 'none';
+  document.body.style.overflow = '';
+};
+// ESC로 닫기
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' && document.getElementById('issue-modal-overlay')?.style.display === 'block') {
+    closeIssueReviewsModal();
+  }
+});
+
+// 부정/이슈 리뷰 (최근 4주, 답변 미게시) 모달에 카드 렌더링
+function renderIssueReviewsList() {
+  const listEl = document.getElementById('issue-reviews-list');
+  if (!listEl) return;
+  // 최근 4주 범위 (Dashboard 기준)
+  const today = new Date();
+  const monthAgo = new Date(today); monthAgo.setDate(today.getDate() - 28);
+  const fromStr = monthAgo.toISOString().slice(0,10);
+  const issueReviews = ALL_REVIEWS
+    .filter(r => (r.issue_flag || r.sentiment === '부정') && r.reply_status !== 'posted' && r.date >= fromStr)
+    .sort((a,b) => b.date.localeCompare(a.date));
+
+  // 서브타이틀 업데이트
+  const sub = document.getElementById('issue-modal-subtitle');
+  if (sub) sub.textContent = '최근 4주 · 답변 미게시 ' + issueReviews.length + '건 · 답변 게시하면 목록에서 자동 제외';
+
+  if (issueReviews.length === 0) {
+    listEl.innerHTML = '<div style="padding:60px 20px;text-align:center;color:#9ca3af"><div style="font-size:42px;margin-bottom:12px">🎉</div><div style="font-size:15px;font-weight:600;color:#374151;margin-bottom:6px">모든 이슈 리뷰가 처리됐어요</div><div style="font-size:12.5px">새 부정/이슈 리뷰가 들어오면 여기에 표시됩니다</div></div>';
+    return;
+  }
+
+  listEl.innerHTML = issueReviews.map(r => _buildIssueReplyCardHtml(r)).join('');
+}
+
+// 모달 안 답변 카드 HTML (renderReplyList의 카드와 동일 구조, id만 issue- prefix)
+function _buildIssueReplyCardHtml(r) {
+  const statusClass = r.reply_status || 'none';
+  const statusLabel = r.reply_status === 'posted' ? '게시 완료' : r.reply_status === 'ai_generated' ? 'AI 답변 생성됨' : '미답변';
+  const isEditing = window._issueEditingId === r.id;
+  const canPost = r.reply_status === 'ai_generated' && r.ai_reply && getCremaReviewId(r);
+  const channelEmoji = r.channel === '스마트스토어' ? '🟢' : r.channel === '올리브영' ? '🛍️' : '🛒';
+  const isOliveYoung = r.channel === '올리브영';
+
+  return '<div class="reply-card status-' + statusClass + '" id="issue-reply-card-' + r.id + '" style="background:#fff;border-radius:10px;padding:14px;margin-bottom:10px;border:1px solid #e5e7eb">' +
+    '<div class="reply-header" style="margin-bottom:8px">' +
+      '<div style="flex:1">' +
+        '<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;flex-wrap:wrap">' +
+          '<span style="font-size:12px;font-weight:600;color:#111827">' + (r.product || r.product_norm || r.product_category || '제품명 없음') + '</span>' +
+          '<span class="reply-status-tag ' + statusClass + '">' + statusLabel + '</span>' +
+          '<span class="tag tag-channel" style="font-size:10.5px">' + channelEmoji + ' ' + r.channel + '</span>' +
+          (r.sentiment === '부정' ? '<span class="tag tag-negative" style="font-size:10.5px">부정</span>' : '') +
+          (r.issue_flag ? '<span class="tag" style="background:#fef3c7;color:#92400e;font-size:10.5px">⚠ 이슈</span>' : '') +
+        '</div>' +
+        '<div style="font-size:11px;color:#9ca3af">' + r.date + ' · ' + (r.reviewer || '익명') + ' · ' + r.id + '</div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="reply-review-text" style="background:#f9fafb;padding:10px 12px;border-radius:8px;font-size:13px;line-height:1.7;margin-bottom:10px">' +
+      '💬 <strong>고객 리뷰:</strong> ' + (r.text || '(내용 없음)') +
+    '</div>' +
+    (r.ai_reply ? (
+      '<div class="reply-ai-box" style="background:#eff6ff;border-radius:8px;padding:10px 12px;margin-bottom:10px">' +
+        '<label style="font-size:11px;color:#1d4ed8;font-weight:600">🤖 AI 생성 답변 ' + (r.ai_reply_date ? '(' + r.ai_reply_date + ')' : '') + '</label>' +
+        (isEditing ?
+          ('<textarea id="issue-edit-area-' + r.id + '" style="width:100%;min-height:120px;margin-top:8px;padding:8px;border:1px solid #93c5fd;border-radius:6px;font-size:13px;font-family:inherit;line-height:1.7">' + r.ai_reply + '</textarea>' +
+           '<div style="margin-top:8px;display:flex;gap:6px"><button class="btn btn-primary btn-sm" onclick="saveIssueReplyEdit(\'' + r.id + '\')">저장</button><button class="btn btn-outline btn-sm" onclick="cancelIssueReplyEdit()">취소</button></div>')
+          :
+          ('<div style="margin-top:6px;font-size:13px;line-height:1.7;color:#111827;white-space:pre-wrap">' + r.ai_reply + '</div>')
+        ) +
+      '</div>'
+    ) : (
+      '<div style="padding:10px;background:#f9fafb;border-radius:8px;border:1px dashed #d1d5db;color:#6b7280;font-size:12.5px;margin-bottom:10px;text-align:center">AI 답변이 아직 생성되지 않았습니다. 아래 버튼을 눌러 바로 생성할 수 있습니다.</div>'
+    )) +
+    '<div class="reply-actions" style="display:flex;gap:6px;flex-wrap:wrap">' +
+      (r.ai_reply && !isOliveYoung ? (
+        '<button class="btn-post" onclick="postIssueReply(\'' + r.id + '\')"' + (!serverOnline ? ' disabled title="서버를 먼저 연결하세요"' : '') + '>📨 답변 게시</button>' +
+        '<button class="btn-edit" onclick="startIssueReplyEdit(\'' + r.id + '\')">✏️ 수정</button>'
+      ) : '') +
+      (!isOliveYoung ? '<button class="btn btn-primary btn-sm" onclick="generateIssueReply(\'' + r.id + '\')">🤖 ' + (r.ai_reply ? 'AI 답변 다시 생성' : 'AI 답변 생성') + '</button>' : '') +
+      (isOliveYoung ? '<button class="btn btn-outline btn-sm" onclick="markIssueAsHandled(\'' + r.id + '\')">✅ 처리 완료로 표시 (올리브영)</button>' : '') +
+    '</div>' +
+  '</div>';
+}
+
+// 모달 전용 wrapper 함수들 (기존 함수 재사용 + 모달 갱신)
+window.generateIssueReply = async function(id) {
+  // 기존 함수 호출하되, AI 생성 후 모달도 갱신
+  const r = ALL_REVIEWS.find(x => x.id === id); if (!r) return;
+  const btn = document.querySelector('#issue-reply-card-' + id + ' .btn');
+  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="loader"></span> 생성 중...'; }
+  try {
+    const reply = await callOpenAIReply(r);
+    r.ai_reply = reply.trim();
+    r.ai_reply_date = new Date().toISOString().slice(0, 10);
+    r.reply_status = 'ai_generated';
+    persistReply(id);
+    showToast('AI 답변을 생성하고 저장했습니다', 'success');
+  } catch (e) { showToast('AI 생성 오류: ' + e.message, 'error'); }
+  updateReplyStats();
+  renderIssueReviewsList();
+  if (typeof updateDashboard === 'function') updateDashboard();
+};
+
+window.startIssueReplyEdit = function(id) {
+  window._issueEditingId = id;
+  renderIssueReviewsList();
+};
+window.cancelIssueReplyEdit = function() {
+  window._issueEditingId = null;
+  renderIssueReviewsList();
+};
+window.saveIssueReplyEdit = function(id) {
+  const ta = document.getElementById('issue-edit-area-' + id);
+  if (!ta) return;
+  const r = ALL_REVIEWS.find(x => x.id === id);
+  if (r) {
+    r.ai_reply = ta.value.trim();
+    r.ai_reply_date = new Date().toISOString().slice(0, 10);
+    r.reply_status = 'ai_generated';
+    persistReply(id);
+  }
+  window._issueEditingId = null;
+  renderIssueReviewsList();
+  showToast('답변이 수정되었습니다', 'success');
+};
+
+window.postIssueReply = async function(id) {
+  if (!serverOnline) { showToast('서버에 먼저 연결하세요', 'error'); return; }
+  const r = ALL_REVIEWS.find(x => x.id === id);
+  const cremaReviewId = getCremaReviewId(r);
+  if (!r || !r.ai_reply || !cremaReviewId) { showToast('크리마 리뷰 ID가 없어 게시할 수 없습니다', 'error'); return; }
+  const card = document.getElementById('issue-reply-card-' + id);
+  const btn = card?.querySelector('.btn-post');
+  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="loader"></span> 게시 중...'; }
+  try {
+    const res = await fetch(REPLY_SERVER + '/api/post-reply', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ reviewId: r.id, cremaReviewId: cremaReviewId, replyText: r.ai_reply, channel: r.channel })
+    });
+    const data = await res.json();
+    if (data.success) {
+      r.reply_status = 'posted';
+      r.reply_posted = true;
+      r.reply_posted_date = new Date().toISOString().slice(0, 10);
+      persistReply(id);
+      showToast('답변이 게시되었습니다! 목록에서 자동 제외됩니다.', 'success');
+    } else { showToast('게시 실패: ' + (data.error || '알 수 없는 오류'), 'error'); }
+  } catch (e) { showToast('서버 연결 오류: ' + e.message, 'error'); }
+  updateReplyStats();
+  renderIssueReviewsList();
+  if (typeof updateDashboard === 'function') updateDashboard();
+};
+
+// 올리브영처럼 답변 게시가 불가능한 채널 — "처리됨"으로 표시
+window.markIssueAsHandled = function(id) {
+  if (!confirm('이 리뷰를 처리 완료로 표시할까요?\n(목록에서 제외되며, 답변 관리에는 영향 없음)')) return;
+  const r = ALL_REVIEWS.find(x => x.id === id);
+  if (!r) return;
+  r.reply_status = 'posted';  // 카운트 제외용
+  r.reply_posted_date = new Date().toISOString().slice(0, 10);
+  persistReply(id);
+  showToast('처리 완료로 표시했습니다', 'success');
+  renderIssueReviewsList();
+  if (typeof updateDashboard === 'function') updateDashboard();
+};
+
 // ── 답변 카드 렌더링 ──
 function renderReplyList() {
   const reviews = getFilteredReplyReviews();
@@ -4080,6 +4268,8 @@ async function postSingleReply(id) {
   }
   updateReplyStats();
   renderReplyList();
+  // 대시보드 KPI도 동기화 (즉시 확인 필요 카운트 갱신용)
+  if (typeof updateDashboard === 'function') updateDashboard();
 }
 
 // ── 일괄 선택/게시 ──
