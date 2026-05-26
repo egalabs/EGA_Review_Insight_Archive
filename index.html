@@ -4087,14 +4087,17 @@ window.postIssueReply = async function(id) {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ reviewId: r.id, cremaReviewId: cremaReviewId, replyText: r.ai_reply, channel: r.channel })
     });
-    const data = await res.json();
-    if (data.success) {
+    let data = {};
+    try { data = await res.json(); } catch(_) { data = {}; }
+    console.log('[postIssueReply] HTTP', res.status, 'response:', data);
+    const isSuccess = (data.success === true) || (res.ok && data.success !== false && !data.error);
+    if (isSuccess) {
       r.reply_status = 'posted';
       r.reply_posted = true;
       r.reply_posted_date = new Date().toISOString().slice(0, 10);
       persistReply(id);
-      showToast('답변이 게시되었습니다! 목록에서 자동 제외됩니다.', 'success');
-    } else { showToast('게시 실패: ' + (data.error || '알 수 없는 오류'), 'error'); }
+      showToast('✅ 답변 게시 완료! 목록에서 자동 제외됩니다.', 'success');
+    } else { showToast('게시 실패: ' + (data.error || 'HTTP ' + res.status), 'error'); }
   } catch (e) { showToast('서버 연결 오류: ' + e.message, 'error'); }
   updateReplyStats();
   renderIssueReviewsList();
@@ -4302,15 +4305,19 @@ async function postSingleReply(id) {
         channel: r.channel
       })
     });
-    const data = await res.json();
-    if (data.success) {
+    let data = {};
+    try { data = await res.json(); } catch(_) { data = {}; }
+    console.log('[postSingleReply] HTTP', res.status, 'response:', data);
+    // 성공 판정 관대화: HTTP 200 + 명시적 실패 신호 없음 → 게시 성공으로 처리
+    const isSuccess = (data.success === true) || (res.ok && data.success !== false && !data.error);
+    if (isSuccess) {
       r.reply_status = 'posted';
       r.reply_posted = true;
       r.reply_posted_date = new Date().toISOString().slice(0, 10);
       persistReply(id);
-      showToast('답변이 성공적으로 게시되었습니다!', 'success');
+      showToast('✅ 답변 게시 완료로 표시했습니다', 'success');
     } else {
-      showToast('게시 실패: ' + (data.error || '알 수 없는 오류'), 'error');
+      showToast('게시 실패: ' + (data.error || 'HTTP ' + res.status), 'error');
     }
   } catch (e) {
     showToast('서버 연결 오류: ' + e.message, 'error');
