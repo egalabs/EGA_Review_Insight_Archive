@@ -3577,6 +3577,9 @@ async function bootstrapReviews() {
 
 document.addEventListener('DOMContentLoaded', async () => {
   await bootstrapReviews();
+  // 페이지 로드 직후 저장된 답변/게시 상태를 ALL_REVIEWS에 복원
+  // (이거 빠지면 대시보드·모달·위클리리포트에서 답변/게시 정보가 안 보임)
+  if (typeof applySavedReplies === 'function') applySavedReplies();
   updateDashboard();
   buildWeekOptions();
   updateWeeklyReport();
