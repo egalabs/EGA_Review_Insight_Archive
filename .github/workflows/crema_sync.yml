@@ -1,42 +1,66 @@
 name: EGA 리뷰 자동 수집 (크리마 + 올리브영)
+
 on:
   schedule:
-    # 평일(월~금) 한국시간 10:00~19:00, 30분 간격
-    # KST = UTC+9 → 10:00 KST = 01:00 UTC, 19:00 KST = 10:00 UTC
-    - cron: '0,30 1-10 * * 1-5'
-    # 토,일 한국시간 오전 10시 (하루 1회)
-    # 10:00 KST = 01:00 UTC
-    - cron: '0 1 * * 0,6'
-  workflow_dispatch:       # 수동 실행 버튼도 활성화
+    - cron: '0 23 * * *'   # 매일 한국시간 오전 8시 (UTC 23시)
+  workflow_dispatch:        # 수동 실행도 가능
+
 jobs:
   sync-reviews:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
     steps:
       - name: 레포지토리 체크아웃
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
       - name: Node.js 설정
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+
+      - name: Git 사용자 설정 & 최신 변경사항 가져오기
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git pull --rebase origin ${GITHUB_REF_NAME:-main}
+
       - name: 크리마 리뷰 수집
         env:
           CREMA_APP_ID: ${{ secrets.CREMA_APP_ID }}
           CREMA_SECRET: ${{ secrets.CREMA_SECRET }}
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
           SLACK_USER_EMAIL: ${{ secrets.SLACK_USER_EMAIL }}
+          SLACK_USER_ID: ${{ secrets.SLACK_USER_ID }}
         run: node scripts/fetch_crema.js
+
       - name: 올리브영 리뷰 수집
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
           SLACK_USER_EMAIL: ${{ secrets.SLACK_USER_EMAIL }}
+          SLACK_USER_ID: ${{ secrets.SLACK_USER_ID }}
         run: node scripts/fetch_oliveyoung.js
+
       - name: 변경사항 커밋 & 푸시
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add index.html
-          git diff --staged --quiet || git commit -m "🔄 리뷰 자동 업데이트 $(date '+%Y-%m-%d %H:%M')"
-          git pull --rebase origin main
-          git push
+          git add -A
+          if git diff --staged --quiet; then
+            echo "변경사항 없음, 커밋 건너뜀"
+            exit 0
+          fi
+          git commit -m "🤖 리뷰 자동 수집 $(date +'%Y-%m-%d %H:%M')"
+
+          # 푸시 실패 시 (동시 push 충돌) 리베이스 후 최대 3회 재시도
+          for i in 1 2 3; do
+            if git push; then
+              echo "✅ 푸시 성공"
+              exit 0
+            fi
+            echo "⚠️ 푸시 충돌 감지, 리베이스 후 재시도 ($i/3)"
+            git pull --rebase --autostash origin ${GITHUB_REF_NAME:-main}
+          done
+          echo "❌ 푸시 3회 실패"
+          exit 1
