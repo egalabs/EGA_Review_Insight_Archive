@@ -2282,8 +2282,14 @@ function updateDashboard() {
     </div>`).join('') : '<div class="empty" style="padding:20px"><p>최근 4주 이슈 리뷰 없음</p></div>';
 
   // ── 제품별 리뷰 수 (4주) ──
+  // 카테고리 통합: 핸드크림 관련 4종(에센셜/어드밴스드/세트/단일)을 '핸드크림'으로 묶음
+  const _normProdCatD = (cat) => {
+    if (!cat) return '기타';
+    if (cat.indexOf('핸드크림') !== -1) return '핸드크림';
+    return cat;
+  };
   const prodCounts = {};
-  monthReviews.forEach(r => { const n = r.product_category || '기타'; prodCounts[n] = (prodCounts[n]||0)+1; });
+  monthReviews.forEach(r => { const n = _normProdCatD(r.product_category); prodCounts[n] = (prodCounts[n]||0)+1; });
   const topProds = Object.entries(prodCounts).sort((a, b) => b[1]-a[1]).slice(0, 8);
   const maxProd = topProds[0] ? topProds[0][1] : 1;
   document.getElementById('product-bars').innerHTML = topProds.map(([p, v]) => `
@@ -2575,8 +2581,14 @@ function updateWeeklyReport() {
   const chCounts = {};
   weekReviews.forEach(r=>{ chCounts[r.channel]=(chCounts[r.channel]||0)+1; });
 
+  // 제품 카테고리 통합 룰: 핸드크림 관련 4종(에센셜/어드밴스드/세트/단일)을 '핸드크림'으로 묶음
+  const _normProdCat = (cat) => {
+    if (!cat) return '기타';
+    if (cat.indexOf('핸드크림') !== -1) return '핸드크림';
+    return cat;
+  };
   const prodCounts = {};
-  weekReviews.forEach(r=>{ const n=r.product_category||'기타'; prodCounts[n]=(prodCounts[n]||0)+1; });
+  weekReviews.forEach(r=>{ const n=_normProdCat(r.product_category); prodCounts[n]=(prodCounts[n]||0)+1; });
   const topProds = Object.entries(prodCounts).sort((a,b)=>b[1]-a[1]).slice(0,8);
 
   const kwCounts = {};
