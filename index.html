@@ -2181,6 +2181,23 @@ function showPage(id) {
 // ===== 판매 분석 페이지 =====
 let _salesDataCache = {};
 
+async function initSalesAnalysis() {
+  // 첫 진입 시 모든 채널 데이터 로드
+  if (!_salesDataCache.oliveyoung) {
+    try {
+      const res = await fetch('sales_oliveyoung.json?t=' + Date.now(), { cache: 'no-store' });
+      if (res.ok) _salesDataCache.oliveyoung = await res.json();
+    } catch(e) { console.warn('sales_oliveyoung.json 로드 실패', e); }
+  }
+  if (!_salesDataCache.cafe24) {
+    try {
+      const res = await fetch('sales_cafe24.json?t=' + Date.now(), { cache: 'no-store' });
+      if (res.ok) _salesDataCache.cafe24 = await res.json();
+    } catch(e) { console.warn('sales_cafe24.json 로드 실패', e); }
+  }
+  renderOliveyoungSales();
+}
+
 function switchSalesTab(channel, btnEl) {
   document.querySelectorAll('.sales-tab-btn').forEach(b => {
     b.classList.remove('active');
@@ -2195,17 +2212,148 @@ function switchSalesTab(channel, btnEl) {
   document.querySelectorAll('.sales-content').forEach(c => c.style.display = 'none');
   document.getElementById('sales-content-' + channel).style.display = '';
   if (channel === 'oliveyoung') renderOliveyoungSales();
+  if (channel === 'cafe24') renderCafe24Sales();
 }
 
-async function initSalesAnalysis() {
-  // 첫 진입 시 올리브영 데이터 로드
-  if (!_salesDataCache.oliveyoung) {
-    try {
-      const res = await fetch('sales_oliveyoung.json?t=' + Date.now(), { cache: 'no-store' });
-      if (res.ok) _salesDataCache.oliveyoung = await res.json();
-    } catch(e) { console.warn('sales_oliveyoung.json 로드 실패', e); }
+// ───── 카페24 렌더링 ─────
+function renderCafe24Sales() {
+  const container = document.getElementById('sales-content-cafe24');
+  const data = _salesDataCache.cafe24;
+  if (!data) {
+    container.innerHTML = '<div style="text-align:center;padding:60px;color:#9ca3af">📊 매출 데이터 로딩 중...</div>';
+    return;
   }
-  renderOliveyoungSales();
+
+  // 카페24 리뷰 매칭 — 정규화 함수 (sales.byCategory 키와 동일하게)
+  function _catReview(r) {
+    const p = (r.product || r.product_norm || r.product_category || '').replace(/&amp;/g, '&');
+    if (!p) return null;
+    if (/UV Healer|UV힐러|앰플/i.test(p)) return '앰플';
+    if (/마스크팩|지우개팩|repair.*kit|face.*neck.*kit|7일팩|자외선.*팩/i.test(p)) {
+      if (p.includes('&') && /핸드크림/i.test(p)) return '종합 패키지';
+      return '마스크팩';
+    }
+    if (/NMN.*Daily Routine|NMN.*Daily Regenerator|NMN.*스킨.?부스터|NMN.*Solution|NMN Skin booster|NMN.*Regenerator/i.test(p)) return 'NMN';
+    if (/Daily Regenerator/i.test(p)) return 'NMN';
+    if (/FISETIN.*NMN|NMN.*특별/i.test(p)) return 'NMN';
+    if (/에센셜 리제너레이터|어드밴스드 리제너레이터|손티에이징 크림|손티에이징 핸드크림|핸드크림 인앤아웃|에센셜 미니어처|에센셜.*기프트|어드밴스드.*기프트|에센셜.*50ml|어드밴스드.*30ml|핸드크림/i.test(p)) return '핸드크림';
+    if (/리버스 루틴|리버스 스타터|역노화.*패키지|리버스.*패키지/i.test(p)) return '종합 패키지';
+    if (/Holiday|명절|설|추석|선물세트|선물 세트|종합선물/i.test(p)) return '시즌 선물세트';
+    return null;
+  }
+
+  const cafe24Reviews = (ALL_REVIEWS || []).filter(r => r.channel === '카페24');
+  const reviewByCat = {};
+  cafe24Reviews.forEach(r => {
+    const c = _catReview(r);
+    if (c) reviewByCat[c] = (reviewByCat[c] || 0) + 1;
+  });
+
+  const convColor = (r) => r >= 5 ? '#10b981' : r >= 2 ? '#3b6cf0' : r >= 1 ? '#f59e0b' : '#ef4444';
+  const convBg = (r) => r >= 5 ? '#dcfce7' : r >= 2 ? '#dbeafe' : r >= 1 ? '#fef3c7' : '#fee2e2';
+
+  const order = ['핸드크림','NMN','마스크팩','앰플','종합 패키지','시즌 선물세트','기타'];
+  const catEmoji = { '핸드크림':'🤲', 'NMN':'💊', '마스크팩':'🩹', '앰플':'💧', '종합 패키지':'📦', '시즌 선물세트':'🎁', '기타':'🛒' };
+
+  // KPI
+  const totalOrders = data.totalNetOrders;
+  const totalAmt = data.totalAmount;
+  const totalReviews = cafe24Reviews.length;
+  const avgConv = totalOrders > 0 ? (totalReviews / totalOrders * 100) : 0;
+
+  const kpiHtml = `
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px">
+      <div class="card" style="padding:18px"><div class="kpi-label">총 순주문건수</div><div class="kpi-value">${totalOrders.toLocaleString()}<span style="font-size:14px;font-weight:500;color:var(--text-muted)">건</span></div><div class="kpi-change neutral">결제 - 환불 기준</div></div>
+      <div class="card" style="padding:18px"><div class="kpi-label">총 매출액</div><div class="kpi-value">${Math.round(totalAmt/100000000*10)/10}<span style="font-size:14px;font-weight:500;color:var(--text-muted)">억원</span></div><div class="kpi-change neutral">3년치 누적</div></div>
+      <div class="card" style="padding:18px"><div class="kpi-label">카페24 리뷰</div><div class="kpi-value">${totalReviews.toLocaleString()}<span style="font-size:14px;font-weight:500;color:var(--text-muted)">건</span></div><div class="kpi-change neutral">우리 시스템 누적</div></div>
+      <div class="card" style="padding:18px;background:${convBg(avgConv)}"><div class="kpi-label">평균 전환율</div><div class="kpi-value" style="color:${convColor(avgConv)}">${avgConv.toFixed(2)}<span style="font-size:14px;font-weight:500">%</span></div><div class="kpi-change neutral">리뷰 / 순주문</div></div>
+    </div>
+  `;
+
+  // 카테고리별 표
+  const catRows = order.map(cat => {
+    const s = data.byCategory[cat];
+    if (!s) return '';
+    const revs = reviewByCat[cat] || 0;
+    const rate = s.netOrders > 0 ? (revs/s.netOrders*100) : 0;
+    return `
+      <tr style="border-bottom:1px solid #f3f4f6">
+        <td style="padding:12px;font-weight:600">${catEmoji[cat]||'•'} ${cat}</td>
+        <td style="padding:12px;text-align:right">${s.netOrders.toLocaleString()}</td>
+        <td style="padding:12px;text-align:right;color:#6b7280">${Math.round(s.amount/1000000)}M</td>
+        <td style="padding:12px;text-align:right">${revs.toLocaleString()}</td>
+        <td style="padding:12px;text-align:right">
+          <span style="background:${convBg(rate)};color:${convColor(rate)};padding:4px 12px;border-radius:6px;font-weight:700">${rate.toFixed(2)}%</span>
+        </td>
+      </tr>`;
+  }).filter(Boolean).join('');
+
+  // 기간별 표
+  const periods = data.periods || [];
+  const periodHeader = periods.map(p => `<th style="padding:8px 10px;text-align:right;font-size:11px;color:#6b7280">${p}<br><span style="font-weight:400">(주문건수)</span></th>`).join('');
+  const periodRows = order.map(cat => {
+    const s = data.byCategory[cat];
+    if (!s) return '';
+    const cells = periods.map(p => {
+      const pd = s.periods?.[p];
+      const orders = pd ? pd.netOrders : 0;
+      return `<td style="padding:8px 10px;text-align:right;font-size:13px">${orders > 0 ? orders.toLocaleString() : '<span style="color:#d1d5db">—</span>'}</td>`;
+    }).join('');
+    return `<tr style="border-bottom:1px solid #f3f4f6"><td style="padding:8px 10px;font-weight:500">${catEmoji[cat]||'•'} ${cat}</td>${cells}<td style="padding:8px 10px;text-align:right;font-weight:600;background:#f9fafb">${s.netOrders.toLocaleString()}</td></tr>`;
+  }).filter(Boolean).join('');
+
+  // 자동 인사이트
+  const catConv = order.map(cat => {
+    const s = data.byCategory[cat]; if (!s) return null;
+    const revs = reviewByCat[cat] || 0;
+    return { cat, orders: s.netOrders, revs, rate: s.netOrders > 0 ? revs/s.netOrders*100 : 0 };
+  }).filter(Boolean).filter(x => x.orders >= 50);
+
+  const sortedByRate = [...catConv].sort((a,b) => b.rate - a.rate);
+  const best = sortedByRate[0];
+  const worst = sortedByRate[sortedByRate.length - 1];
+  const insights = [];
+  if (best) insights.push(`<li>🏆 <strong>전환율 1위</strong>: ${catEmoji[best.cat]} ${best.cat} <strong>${best.rate.toFixed(2)}%</strong> (${best.revs.toLocaleString()}건 / ${best.orders.toLocaleString()}주문) — 광고/USP 카피 활용 후보</li>`);
+  if (worst && worst.cat !== best?.cat) insights.push(`<li>📉 <strong>전환율 최하위</strong>: ${catEmoji[worst.cat]} ${worst.cat} <strong>${worst.rate.toFixed(2)}%</strong> (${worst.revs.toLocaleString()}건 / ${worst.orders.toLocaleString()}주문) — 리뷰 유도 캠페인 ROI 큼</li>`);
+  insights.push(`<li>✨ <strong>자사몰 평균 전환율 ${avgConv.toFixed(2)}%</strong> — 업계 평균(1~3%)의 ${(avgConv/2).toFixed(1)}배. 자사몰 단골/팬덤 고객 기반의 강점.</li>`);
+  const nmn = catConv.find(x => x.cat === 'NMN');
+  if (nmn) insights.push(`<li>💊 <strong>NMN 전환율 ${nmn.rate.toFixed(2)}%</strong> — 자사몰 평균보다 낮음. 단가 높은 SKU(Daily Routine 63만원)는 한달후기 자동화 알림톡 ROI 가장 큼.</li>`);
+
+  container.innerHTML = `
+    ${kpiHtml}
+
+    <div class="card" style="margin-bottom:20px;padding:18px">
+      <div class="card-title" style="margin-bottom:12px">📊 카테고리별 주문건수 vs 리뷰 vs 전환율</div>
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead><tr style="background:#fafafa;color:#6b7280;font-size:12px">
+          <th style="padding:10px;text-align:left;font-weight:600">카테고리</th>
+          <th style="padding:10px;text-align:right;font-weight:600">순주문(건)</th>
+          <th style="padding:10px;text-align:right;font-weight:600">매출액</th>
+          <th style="padding:10px;text-align:right;font-weight:600">리뷰(건)</th>
+          <th style="padding:10px;text-align:right;font-weight:600">전환율</th>
+        </tr></thead>
+        <tbody>${catRows}</tbody>
+      </table>
+    </div>
+
+    <div class="card" style="margin-bottom:20px;padding:18px;background:#fefce8;border:1px solid #fde68a">
+      <div style="font-size:14px;font-weight:700;color:#854d0e;margin-bottom:10px">🔍 자동 인사이트</div>
+      <ul style="margin:0;padding-left:20px;font-size:13px;line-height:1.9;color:#374151">${insights.join('')}</ul>
+    </div>
+
+    <div class="card" style="margin-bottom:20px;padding:18px">
+      <div class="card-title" style="margin-bottom:12px">📅 기간별 주문건수 추이 (카테고리 × 기간)</div>
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead><tr style="background:#fafafa;color:#6b7280">
+          <th style="padding:10px;text-align:left;font-size:11px">카테고리</th>
+          ${periodHeader}
+          <th style="padding:10px;text-align:right;font-size:11px;background:#f3f4f6">합계</th>
+        </tr></thead>
+        <tbody>${periodRows}</tbody>
+      </table>
+      <div style="font-size:11px;color:#9ca3af;margin-top:10px">※ 주문건수 = 결제수량 - 환불수량 (순주문 기준)</div>
+    </div>
+  `;
 }
 
 // 제품 정규화: 매출 데이터 ↔ 리뷰 데이터를 같은 카테고리로 묶기
@@ -2419,10 +2567,14 @@ function renderOliveyoungSales() {
   else insights.push(`<li>🔻 <strong>평균 전환율 ${avgConv.toFixed(2)}%</strong> — 업계 평균 하단. 알림톡 / 인센티브 캠페인 ROI 큼</li>`);
 
   container.innerHTML = `
+    <div style="background:#fef3c7;border:1px solid #fde68a;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:12.5px;color:#854d0e;line-height:1.6">
+      ⚠️ <strong>올리브영은 매장 판매 특성상 "주문건수" 데이터가 없어요.</strong> 받은 매출 파일은 <strong>일별 판매수량</strong>만 포함 (한 명이 여러 개 사면 1결제·N수량). 따라서 전환율 수치는 <strong>참고용</strong>이며, 자사몰(카페24)의 주문건수 기반 전환율과 직접 비교 어렵습니다.
+    </div>
+
     ${kpiHtml}
 
     <div class="card" style="margin-bottom:20px;padding:18px">
-      <div class="card-title" style="margin-bottom:12px">📅 월별 판매 vs 리뷰 vs 전환율</div>
+      <div class="card-title" style="margin-bottom:12px">📅 월별 판매 vs 리뷰 vs 전환율 (참고치)</div>
       <table style="width:100%;border-collapse:collapse;font-size:13px">
         <thead><tr style="background:#fafafa;color:#6b7280;font-size:12px">
           <th style="padding:10px 12px;text-align:left;font-weight:600">월</th>
