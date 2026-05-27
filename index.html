@@ -431,6 +431,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
         Insights
       </a>
+      <a class="nav-item" onclick="showPage('sales')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="20" x2="12" y2="10"></line><line x1="18" y1="20" x2="18" y2="4"></line><line x1="6" y1="20" x2="6" y2="16"></line></svg>
+        판매 분석
+      </a>
       <div class="nav-section-label">CS 관리</div>
       <a class="nav-item" onclick="showPage('replies')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"></path></svg>
@@ -1880,6 +1884,44 @@
       </div>
     </div>
 
+    <!-- ===== SALES ANALYSIS ===== -->
+    <div class="page" id="page-sales">
+      <div class="page-header">
+        <div class="page-header-row">
+          <div>
+            <div class="page-title">📈 판매 분석</div>
+            <div class="page-subtitle">판매량 대비 리뷰 전환율 진단 · 채널별 · 제품별</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 채널 탭 -->
+      <div class="sales-tabs" style="display:flex;gap:0;margin-bottom:20px;border-bottom:2px solid #e5e7eb">
+        <button class="sales-tab-btn active" data-channel="oliveyoung" onclick="switchSalesTab('oliveyoung', this)" style="padding:12px 24px;background:none;border:none;border-bottom:3px solid #3b6cf0;font-weight:600;font-size:14px;color:#3b6cf0;cursor:pointer;margin-bottom:-2px">🛍️ 올리브영</button>
+        <button class="sales-tab-btn" data-channel="smartstore" onclick="switchSalesTab('smartstore', this)" style="padding:12px 24px;background:none;border:none;border-bottom:3px solid transparent;font-weight:500;font-size:14px;color:#6b7280;cursor:pointer;margin-bottom:-2px">🟢 스마트스토어</button>
+        <button class="sales-tab-btn" data-channel="cafe24" onclick="switchSalesTab('cafe24', this)" style="padding:12px 24px;background:none;border:none;border-bottom:3px solid transparent;font-weight:500;font-size:14px;color:#6b7280;cursor:pointer;margin-bottom:-2px">🛒 카페24</button>
+      </div>
+
+      <!-- 채널별 컨텐츠 -->
+      <div id="sales-content-oliveyoung" class="sales-content"></div>
+      <div id="sales-content-smartstore" class="sales-content" style="display:none">
+        <div style="text-align:center;padding:80px 20px;color:#9ca3af">
+          <div style="font-size:48px;margin-bottom:16px">📁</div>
+          <div style="font-size:16px;font-weight:600;color:#374151;margin-bottom:8px">스마트스토어 매출 데이터 미연동</div>
+          <div style="font-size:13px;margin-bottom:20px">CSV/엑셀 파일을 받아오시면 자동 분석합니다</div>
+          <div style="font-size:12px;color:#6b7280">현재 우리 시스템에 스마트스토어 리뷰는 자동 수집 중 (크리마)</div>
+        </div>
+      </div>
+      <div id="sales-content-cafe24" class="sales-content" style="display:none">
+        <div style="text-align:center;padding:80px 20px;color:#9ca3af">
+          <div style="font-size:48px;margin-bottom:16px">📁</div>
+          <div style="font-size:16px;font-weight:600;color:#374151;margin-bottom:8px">카페24 매출 데이터 미연동</div>
+          <div style="font-size:13px;margin-bottom:20px">CSV/엑셀 파일을 받아오시면 자동 분석합니다</div>
+          <div style="font-size:12px;color:#6b7280">현재 우리 시스템에 카페24 리뷰는 자동 수집 중 (크리마)</div>
+        </div>
+      </div>
+    </div>
+
     <!-- ===== REPLY MANAGEMENT ===== -->
     <div class="page" id="page-replies">
       <div class="page-header">
@@ -2140,6 +2182,275 @@ function showPage(id) {
   if(id==='admin') initAdmin();
   if(id==='dashboard') updateDashboard();
   if(id==='replies') initReplies();
+  if(id==='sales') initSalesAnalysis();
+}
+
+// ===== 판매 분석 페이지 =====
+let _salesDataCache = {};
+
+function switchSalesTab(channel, btnEl) {
+  document.querySelectorAll('.sales-tab-btn').forEach(b => {
+    b.classList.remove('active');
+    b.style.borderBottomColor = 'transparent';
+    b.style.color = '#6b7280';
+    b.style.fontWeight = '500';
+  });
+  btnEl.classList.add('active');
+  btnEl.style.borderBottomColor = '#3b6cf0';
+  btnEl.style.color = '#3b6cf0';
+  btnEl.style.fontWeight = '600';
+  document.querySelectorAll('.sales-content').forEach(c => c.style.display = 'none');
+  document.getElementById('sales-content-' + channel).style.display = '';
+  if (channel === 'oliveyoung') renderOliveyoungSales();
+}
+
+async function initSalesAnalysis() {
+  // 첫 진입 시 올리브영 데이터 로드
+  if (!_salesDataCache.oliveyoung) {
+    try {
+      const res = await fetch('sales_oliveyoung.json?t=' + Date.now(), { cache: 'no-store' });
+      if (res.ok) _salesDataCache.oliveyoung = await res.json();
+    } catch(e) { console.warn('sales_oliveyoung.json 로드 실패', e); }
+  }
+  renderOliveyoungSales();
+}
+
+// 제품 정규화: 매출 데이터 ↔ 리뷰 데이터를 같은 카테고리로 묶기
+function _normalizeProductForSales(name) {
+  if (!name) return '기타';
+  // 매출 데이터 카테고리 (헤더 행 제외)
+  if (name === '상품명') return null;
+  if (/어워즈/.test(name)) return '에센셜 50ml 어워즈 한정기획';
+  if (/에센셜.*기획.*\+10ml/.test(name) || /에센셜.*\+10ml.*증정/.test(name)) return '에센셜 50ml 기획(+10ml)';
+  if (/어드밴스드.*기획/.test(name) || /어드밴스드.*\+에센셜.*증정/.test(name)) return '어드밴스드 30ml 기획(+에센셜10ml)';
+  if (/에센셜.*50ml/.test(name)) return '에센셜 리제너레이터 50ml';
+  if (/어드밴스드.*30ml/.test(name)) return '어드밴스드 리제너레이터 30ml';
+  return name;
+}
+
+// 리뷰 매칭용 정규화 (리뷰 데이터의 product 필드 기준)
+function _normalizeReviewForSales(r) {
+  const p = (r.product || r.product_norm || r.product_category || '').toLowerCase();
+  if (/어워즈/.test(p)) return '에센셜 50ml 어워즈 한정기획';
+  if (/에센셜.*기획/.test(p) || /에센셜.*\+10ml/.test(p)) return '에센셜 50ml 기획(+10ml)';
+  if (/어드밴스드.*기획/.test(p) || /어드밴스드.*\+에센셜/.test(p)) return '어드밴스드 30ml 기획(+에센셜10ml)';
+  if (/에센셜.*50ml|에센셜.*리제너레이터/.test(p)) return '에센셜 리제너레이터 50ml';
+  if (/어드밴스드.*30ml|어드밴스드.*리제너레이터|어드밴스드.*자외선|UV/i.test(p)) return '어드밴스드 리제너레이터 30ml';
+  return null;
+}
+
+function renderOliveyoungSales() {
+  const container = document.getElementById('sales-content-oliveyoung');
+  const data = _salesDataCache.oliveyoung;
+  if (!data) {
+    container.innerHTML = '<div style="text-align:center;padding:60px;color:#9ca3af">📊 매출 데이터 로딩 중...</div>';
+    return;
+  }
+
+  // ── 매출 데이터: 월별 집계 (헤더 행 제외) ──
+  const validTx = (data.transactions || []).filter(t => t.product && t.product !== '상품명' && t.qty > 0);
+  const byMonth = {};
+  validTx.forEach(t => {
+    byMonth[t.ym] = byMonth[t.ym] || {qty:0, amount:0};
+    byMonth[t.ym].qty += t.qty;
+    byMonth[t.ym].amount += t.amount;
+  });
+  const months = Object.keys(byMonth).sort();
+
+  // ── 매출: 정규화된 제품별 집계 ──
+  const salesByProd = {};
+  validTx.forEach(t => {
+    const cat = _normalizeProductForSales(t.product);
+    if (!cat) return;
+    salesByProd[cat] = salesByProd[cat] || {qty:0, amount:0, byMonth:{}};
+    salesByProd[cat].qty += t.qty;
+    salesByProd[cat].amount += t.amount;
+    salesByProd[cat].byMonth[t.ym] = (salesByProd[cat].byMonth[t.ym] || 0) + t.qty;
+  });
+
+  // ── 리뷰: 올리브영만, 정규화된 제품별 집계 ──
+  const oyReviews = (ALL_REVIEWS || []).filter(r => r.channel === '올리브영');
+  const reviewByProd = {};
+  const reviewByMonth = {};
+  oyReviews.forEach(r => {
+    const cat = _normalizeReviewForSales(r);
+    const ym = (r.date || '').slice(0,7);
+    if (cat) {
+      reviewByProd[cat] = reviewByProd[cat] || {count:0, byMonth:{}};
+      reviewByProd[cat].count++;
+      if (ym) reviewByProd[cat].byMonth[ym] = (reviewByProd[cat].byMonth[ym] || 0) + 1;
+    }
+    if (ym) reviewByMonth[ym] = (reviewByMonth[ym] || 0) + 1;
+  });
+
+  // ── 전체 KPI ──
+  const totalQty = Object.values(byMonth).reduce((a,b)=>a+b.qty, 0);
+  const totalAmt = Object.values(byMonth).reduce((a,b)=>a+b.amount, 0);
+  const totalReviews = oyReviews.length;
+  // 신뢰 가능한 기간(2026-01 이후)만 평균 전환율
+  const reliableMonths = months.filter(m => m >= '2026-01');
+  let reliableQty = 0, reliableRev = 0;
+  reliableMonths.forEach(m => {
+    reliableQty += byMonth[m].qty;
+    reliableRev += reviewByMonth[m] || 0;
+  });
+  const avgConv = reliableQty > 0 ? (reliableRev / reliableQty * 100) : 0;
+
+  // ── 색상 코딩 헬퍼 ──
+  const convColor = (rate) => rate >= 3 ? '#10b981' : rate >= 1 ? '#f59e0b' : rate > 0 ? '#ef4444' : '#9ca3af';
+  const convBg = (rate) => rate >= 3 ? '#dcfce7' : rate >= 1 ? '#fef3c7' : rate > 0 ? '#fee2e2' : '#f3f4f6';
+
+  // ── KPI 카드 ──
+  const kpiHtml = `
+    <div class="grid-4 mb-16" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px">
+      <div class="card" style="padding:18px">
+        <div class="kpi-label">총 판매수량</div>
+        <div class="kpi-value">${totalQty.toLocaleString()}<span style="font-size:14px;font-weight:500;color:var(--text-muted)">개</span></div>
+        <div class="kpi-change neutral">${months[0]} ~ ${months[months.length-1]}</div>
+      </div>
+      <div class="card" style="padding:18px">
+        <div class="kpi-label">총 매출액</div>
+        <div class="kpi-value">${Math.round(totalAmt/1000000).toLocaleString()}<span style="font-size:14px;font-weight:500;color:var(--text-muted)">백만원</span></div>
+        <div class="kpi-change neutral">${months.length}개월 누적</div>
+      </div>
+      <div class="card" style="padding:18px">
+        <div class="kpi-label">올영 리뷰 수</div>
+        <div class="kpi-value">${totalReviews.toLocaleString()}<span style="font-size:14px;font-weight:500;color:var(--text-muted)">건</span></div>
+        <div class="kpi-change neutral">우리 시스템 누적</div>
+      </div>
+      <div class="card" style="padding:18px;background:${convBg(avgConv)}">
+        <div class="kpi-label">평균 전환율</div>
+        <div class="kpi-value" style="color:${convColor(avgConv)}">${avgConv.toFixed(2)}<span style="font-size:14px;font-weight:500">%</span></div>
+        <div class="kpi-change neutral">2026-01 이후 신뢰 구간</div>
+      </div>
+    </div>
+  `;
+
+  // ── 월별 추이 표 ──
+  const monthBars = months.map(m => {
+    const sales = byMonth[m];
+    const revs = reviewByMonth[m] || 0;
+    const rate = sales.qty > 0 ? (revs/sales.qty*100) : 0;
+    const reliable = m >= '2026-01' || revs > 0;
+    const note = m === '2025-12' ? ' 🏆 어워즈 기획 출시' : '';
+    return `
+      <tr style="border-bottom:1px solid #f3f4f6">
+        <td style="padding:10px 12px;font-weight:500">${m}${note}</td>
+        <td style="padding:10px 12px;text-align:right">${sales.qty.toLocaleString()}</td>
+        <td style="padding:10px 12px;text-align:right;color:#6b7280">${Math.round(sales.amount/1000000)}M</td>
+        <td style="padding:10px 12px;text-align:right">${revs > 0 ? revs : '<span style="color:#d1d5db">—</span>'}</td>
+        <td style="padding:10px 12px;text-align:right">
+          ${reliable ? `<span style="background:${convBg(rate)};color:${convColor(rate)};padding:3px 10px;border-radius:6px;font-weight:600">${rate.toFixed(2)}%</span>` : '<span style="color:#d1d5db;font-size:11px">수집 X</span>'}
+        </td>
+      </tr>`;
+  }).join('');
+
+  // ── 제품별 분석 ──
+  const prodCards = Object.entries(salesByProd).sort((a,b) => b[1].qty - a[1].qty).map(([cat, sales]) => {
+    const revs = reviewByProd[cat] || {count:0, byMonth:{}};
+    // 신뢰 가능한 기간 매칭
+    let prodReliableQty = 0, prodReliableRev = 0;
+    reliableMonths.forEach(m => {
+      prodReliableQty += (sales.byMonth[m] || 0);
+      prodReliableRev += (revs.byMonth[m] || 0);
+    });
+    const prodRate = prodReliableQty > 0 ? (prodReliableRev / prodReliableQty * 100) : 0;
+
+    // 월별 미니 그래프
+    const monthRows = months.map(m => {
+      const sQty = sales.byMonth[m] || 0;
+      const rCnt = revs.byMonth[m] || 0;
+      const maxQty = Math.max(...Object.values(sales.byMonth), 1);
+      const barWidth = sQty > 0 ? Math.max(2, (sQty/maxQty*100)) : 0;
+      const rate = sQty > 0 ? (rCnt/sQty*100) : 0;
+      const reliable = m >= '2026-01' || rCnt > 0;
+      return `
+        <tr style="border-bottom:1px solid #f9fafb;font-size:12px">
+          <td style="padding:6px 8px;color:#6b7280">${m}</td>
+          <td style="padding:6px 8px;width:35%">
+            <div style="display:flex;align-items:center;gap:6px">
+              <div style="height:6px;background:#3b6cf0;width:${barWidth}%;border-radius:3px;min-width:${sQty>0?'2px':'0'}"></div>
+              <span style="color:#374151;font-weight:500">${sQty.toLocaleString()}</span>
+            </div>
+          </td>
+          <td style="padding:6px 8px;text-align:right">${rCnt > 0 ? rCnt : '<span style="color:#d1d5db">—</span>'}</td>
+          <td style="padding:6px 8px;text-align:right">
+            ${reliable && sQty > 0 ? `<span style="background:${convBg(rate)};color:${convColor(rate)};padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600">${rate.toFixed(1)}%</span>` : '<span style="color:#d1d5db;font-size:11px">—</span>'}
+          </td>
+        </tr>`;
+    }).join('');
+
+    return `
+      <div class="card" style="padding:0;overflow:hidden;margin-bottom:14px;border:1px solid #e5e7eb">
+        <div style="padding:16px 18px;background:linear-gradient(135deg,#f8faff 0%,#eff6ff 100%);border-bottom:1px solid #e5e7eb">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+            <div style="font-size:15px;font-weight:700;color:#111827">${cat}</div>
+            <div style="display:flex;gap:14px;align-items:center">
+              <div style="text-align:right"><div style="font-size:11px;color:#6b7280">누적 판매</div><div style="font-size:14px;font-weight:700">${sales.qty.toLocaleString()}개</div></div>
+              <div style="text-align:right"><div style="font-size:11px;color:#6b7280">매출액</div><div style="font-size:14px;font-weight:700">${Math.round(sales.amount/1000000)}M</div></div>
+              <div style="text-align:right"><div style="font-size:11px;color:#6b7280">누적 리뷰</div><div style="font-size:14px;font-weight:700">${revs.count}건</div></div>
+              <div style="text-align:right;background:${convBg(prodRate)};padding:6px 12px;border-radius:8px"><div style="font-size:11px;color:${convColor(prodRate)}">전환율(26-01~)</div><div style="font-size:16px;font-weight:800;color:${convColor(prodRate)}">${prodRate.toFixed(2)}%</div></div>
+            </div>
+          </div>
+        </div>
+        <table style="width:100%;border-collapse:collapse">
+          <thead><tr style="background:#fafafa;font-size:11px;color:#6b7280">
+            <th style="padding:8px 10px;text-align:left">월</th>
+            <th style="padding:8px 10px;text-align:left">판매</th>
+            <th style="padding:8px 10px;text-align:right">리뷰</th>
+            <th style="padding:8px 10px;text-align:right">전환율</th>
+          </tr></thead>
+          <tbody>${monthRows}</tbody>
+        </table>
+      </div>
+    `;
+  }).join('');
+
+  // ── 자동 인사이트 ──
+  const topProd = Object.entries(salesByProd).sort((a,b)=>b[1].qty-a[1].qty)[0];
+  const bestConvProd = Object.entries(salesByProd).map(([cat,s]) => {
+    let q=0,r=0;
+    reliableMonths.forEach(m => { q += s.byMonth[m]||0; r += (reviewByProd[cat]?.byMonth[m]||0); });
+    return [cat, q>0 ? r/q*100 : 0, q, r];
+  }).filter(x => x[2] > 50).sort((a,b)=>b[1]-a[1]);
+  const insights = [];
+  insights.push(`<li>📦 <strong>매출 1위</strong>: ${topProd[0]} (${topProd[1].qty.toLocaleString()}개 / ${Math.round(topProd[1].amount/1000000)}M원)</li>`);
+  if (bestConvProd[0]) insights.push(`<li>🎯 <strong>전환율 1위</strong>: ${bestConvProd[0][0]} (${bestConvProd[0][1].toFixed(2)}%, 26-01 이후 ${bestConvProd[0][3]}건/${bestConvProd[0][2].toLocaleString()}개)</li>`);
+  if (bestConvProd[bestConvProd.length-1] && bestConvProd.length > 1) {
+    const worst = bestConvProd[bestConvProd.length-1];
+    insights.push(`<li>⚠️ <strong>전환율 최하위</strong>: ${worst[0]} (${worst[1].toFixed(2)}%) — 리뷰 유도 캠페인 검토</li>`);
+  }
+  insights.push(`<li>🏆 <strong>2025-12 매출 피크</strong>: 7,764개 (어워즈 기획 출시 효과) — 같은 구조의 한정기획 재실행 검토</li>`);
+  insights.push(`<li>📉 <strong>2025년 리뷰 수집 공백</strong>: 3~6월, 8~9월은 우리 시스템 미가동 기간. 진짜 전환율은 2026-01 이후만 신뢰</li>`);
+  if (avgConv >= 1.5) insights.push(`<li>✅ <strong>평균 전환율 ${avgConv.toFixed(2)}%</strong> — 업계 평균(1~3%) 정상 범위</li>`);
+  else insights.push(`<li>🔻 <strong>평균 전환율 ${avgConv.toFixed(2)}%</strong> — 업계 평균 하단. 알림톡 / 인센티브 캠페인 ROI 큼</li>`);
+
+  container.innerHTML = `
+    ${kpiHtml}
+
+    <div class="card" style="margin-bottom:20px;padding:18px">
+      <div class="card-title" style="margin-bottom:12px">📅 월별 판매 vs 리뷰 vs 전환율</div>
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead><tr style="background:#fafafa;color:#6b7280;font-size:12px">
+          <th style="padding:10px 12px;text-align:left;font-weight:600">월</th>
+          <th style="padding:10px 12px;text-align:right;font-weight:600">판매(개)</th>
+          <th style="padding:10px 12px;text-align:right;font-weight:600">매출(원)</th>
+          <th style="padding:10px 12px;text-align:right;font-weight:600">리뷰(건)</th>
+          <th style="padding:10px 12px;text-align:right;font-weight:600">전환율</th>
+        </tr></thead>
+        <tbody>${monthBars}</tbody>
+      </table>
+      <div style="font-size:11px;color:#9ca3af;margin-top:10px">※ 2025-03~12 일부 월의 전환율이 낮은 건 우리 리뷰 수집 시스템 미가동 영향. 2026-01부터 신뢰 가능.</div>
+    </div>
+
+    <div class="card" style="margin-bottom:20px;padding:18px;background:#fefce8;border:1px solid #fde68a">
+      <div style="font-size:14px;font-weight:700;color:#854d0e;margin-bottom:10px">🔍 자동 인사이트</div>
+      <ul style="margin:0;padding-left:20px;font-size:13px;line-height:1.9;color:#374151">${insights.join('')}</ul>
+    </div>
+
+    <div style="margin-bottom:12px;font-size:15px;font-weight:700;color:#111827">📦 제품별 상세 분석</div>
+    ${prodCards}
+  `;
 }
 
 // ===== DASHBOARD =====
