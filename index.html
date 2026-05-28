@@ -4530,6 +4530,47 @@ function handleFileUpload(input) {
   alert(`"${file.name}" 파일이 선택되었습니다.\n실제 서비스에서는 이 파일을 분석하여 리뷰 데이터가 업데이트됩니다.`);
 }
 
+// ===== 감정 수동 재분류 (사용자가 직접 정정) =====
+const SENTIMENT_OVERRIDE_KEY = 'ega_sentiment_overrides';
+
+window.applySentimentOverrides = function() {
+  try {
+    const overrides = JSON.parse(localStorage.getItem(SENTIMENT_OVERRIDE_KEY) || '{}');
+    if (!Object.keys(overrides).length) return 0;
+    let count = 0;
+    (ALL_REVIEWS || []).forEach(r => {
+      if (overrides[r.id]) {
+        r.sentiment = overrides[r.id];
+        r.is_negative = (overrides[r.id] === '부정');
+        count++;
+      }
+    });
+    return count;
+  } catch(e) { console.warn('감정 오버라이드 로드 실패', e); return 0; }
+};
+
+window.setSentimentOverride = function(id, newSentiment) {
+  const r = (ALL_REVIEWS || []).find(x => x.id === id);
+  if (!r) return;
+  const oldSentiment = r.sentiment;
+  r.sentiment = newSentiment;
+  r.is_negative = (newSentiment === '부정');
+  // localStorage 저장
+  try {
+    const overrides = JSON.parse(localStorage.getItem(SENTIMENT_OVERRIDE_KEY) || '{}');
+    overrides[id] = newSentiment;
+    localStorage.setItem(SENTIMENT_OVERRIDE_KEY, JSON.stringify(overrides));
+  } catch(e) { console.warn('감정 저장 실패', e); }
+  // UI 갱신
+  if (typeof showToast === 'function') showToast('감정 "' + oldSentiment + '" → "' + newSentiment + '"으로 변경', 'success');
+  if (typeof renderReplyList === 'function') renderReplyList();
+  if (typeof updateReplyStats === 'function') updateReplyStats();
+  if (typeof renderIssueReviewsList === 'function' && document.getElementById('issue-modal-overlay')?.style.display === 'block') {
+    renderIssueReviewsList();
+  }
+  if (typeof updateDashboard === 'function') updateDashboard();
+};
+
 // ===== 위클리 인사이트 저장/로드 (localStorage 기반) =====
 window.saveInsight = function(el) {
   const key = el.dataset.insightKey;
@@ -4602,6 +4643,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   // 페이지 로드 직후 저장된 답변/게시 상태를 ALL_REVIEWS에 복원
   // (이거 빠지면 대시보드·모달·위클리리포트에서 답변/게시 정보가 안 보임)
   if (typeof applySavedReplies === 'function') applySavedReplies();
+  // 사용자가 수동 정정한 감정도 복원
+  if (typeof applySentimentOverrides === 'function') applySentimentOverrides();
   updateDashboard();
   buildWeekOptions();
   updateWeeklyReport();
@@ -5059,7 +5102,11 @@ function _buildIssueReplyCardHtml(r) {
           '<span style="font-size:12px;font-weight:600;color:#111827">' + (r.product || r.product_norm || r.product_category || '제품명 없음') + '</span>' +
           '<span class="reply-status-tag ' + statusClass + '">' + statusLabel + '</span>' +
           '<span class="tag tag-channel" style="font-size:10.5px">' + channelEmoji + ' ' + r.channel + '</span>' +
-          (r.sentiment === '부정' ? '<span class="tag tag-negative" style="font-size:10.5px">부정</span>' : '') +
+          '<select class="sentiment-override-select" onchange="setSentimentOverride(\'' + r.id + '\', this.value)" title="감정 분류 수정 (틀렸으면 변경)" style="font-size:10.5px;padding:2px 6px;border-radius:4px;border:1px solid ' + (r.sentiment==='부정'?'#fecaca':r.sentiment==='긍정'?'#bbf7d0':'#fde68a') + ';background:' + (r.sentiment==='부정'?'#fee2e2':r.sentiment==='긍정'?'#dcfce7':'#fef3c7') + ';color:' + (r.sentiment==='부정'?'#991b1b':r.sentiment==='긍정'?'#166534':'#92400e') + ';font-weight:600;cursor:pointer">' +
+            '<option value="긍정"' + (r.sentiment==='긍정'?' selected':'') + '>😊 긍정</option>' +
+            '<option value="혼합"' + ((r.sentiment==='혼합'||r.sentiment==='중립')?' selected':'') + '>😐 중립</option>' +
+            '<option value="부정"' + (r.sentiment==='부정'?' selected':'') + '>😞 부정</option>' +
+          '</select>' +
           (r.issue_flag ? '<span class="tag" style="background:#fef3c7;color:#92400e;font-size:10.5px">⚠ 이슈</span>' : '') +
         '</div>' +
         '<div style="font-size:11px;color:#9ca3af">' + r.date + ' · ' + (r.reviewer || '익명') + ' · ' + r.id + '</div>' +
@@ -5244,7 +5291,11 @@ function renderReplyList() {
             <span style="font-size:12px;font-weight:600;color:var(--text-primary)">${r.product || r.product_norm || r.product_category || '제품명 없음'}</span>
             <span class="reply-status-tag ${statusClass}">${statusLabel}</span>
             <span class="tag tag-channel" style="font-size:10.5px">${channelEmoji} ${r.channel}</span>
-            ${r.sentiment === '부정' ? '<span class="tag tag-negative" style="font-size:10.5px">부정</span>' : ''}
+            <select class="sentiment-override-select" onchange="setSentimentOverride('${r.id}', this.value)" title="감정 분류가 잘못됐으면 직접 수정하세요" style="font-size:10.5px;padding:2px 6px;border-radius:4px;border:1px solid ${r.sentiment==='부정'?'#fecaca':r.sentiment==='긍정'?'#bbf7d0':'#fde68a'};background:${r.sentiment==='부정'?'#fee2e2':r.sentiment==='긍정'?'#dcfce7':'#fef3c7'};color:${r.sentiment==='부정'?'#991b1b':r.sentiment==='긍정'?'#166534':'#92400e'};font-weight:600;cursor:pointer">
+              <option value="긍정" ${r.sentiment==='긍정'?'selected':''}>😊 긍정</option>
+              <option value="혼합" ${(r.sentiment==='혼합'||r.sentiment==='중립')?'selected':''}>😐 중립</option>
+              <option value="부정" ${r.sentiment==='부정'?'selected':''}>😞 부정</option>
+            </select>
           </div>
           <div style="font-size:11px;color:var(--text-muted)">${r.date} · ${r.reviewer||'익명'} · ${r.id}</div>
         </div>
