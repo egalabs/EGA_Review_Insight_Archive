@@ -1904,14 +1904,7 @@
 
       <!-- 채널별 컨텐츠 -->
       <div id="sales-content-oliveyoung" class="sales-content"></div>
-      <div id="sales-content-smartstore" class="sales-content" style="display:none">
-        <div style="text-align:center;padding:80px 20px;color:#9ca3af">
-          <div style="font-size:48px;margin-bottom:16px">📁</div>
-          <div style="font-size:16px;font-weight:600;color:#374151;margin-bottom:8px">스마트스토어 매출 데이터 미연동</div>
-          <div style="font-size:13px;margin-bottom:20px">CSV/엑셀 파일을 받아오시면 자동 분석합니다</div>
-          <div style="font-size:12px;color:#6b7280">현재 우리 시스템에 스마트스토어 리뷰는 자동 수집 중 (크리마)</div>
-        </div>
-      </div>
+      <div id="sales-content-smartstore" class="sales-content" style="display:none"></div>
       <div id="sales-content-cafe24" class="sales-content" style="display:none"></div>
     </div>
 
@@ -1983,10 +1976,31 @@
           <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg>
           <input class="search-input" placeholder="리뷰 검색..." oninput="replySearchQuery=this.value;renderReplyList()" id="reply-search">
         </div>
-        <select class="filter-select" onchange="replyChannelFilter=this.value;renderReplyList()" id="reply-channel-filter">
+        <select class="filter-select" onchange="replyChannelFilter=this.value;replyPage=1;renderReplyList()" id="reply-channel-filter">
           <option value="all">모든 채널</option>
           <option value="카페24">카페24</option>
           <option value="스마트스토어">스마트스토어</option>
+        </select>
+        <select class="filter-select" onchange="replySentimentFilter=this.value;replyPage=1;renderReplyList()" id="reply-sentiment-filter" title="감정 필터">
+          <option value="all">모든 감정</option>
+          <option value="긍정">😊 긍정</option>
+          <option value="부정">😞 부정</option>
+          <option value="혼합">😐 혼합/중립</option>
+        </select>
+        <select class="filter-select" onchange="replyProductFilter=this.value;replyPage=1;renderReplyList()" id="reply-product-filter" title="제품 카테고리 필터">
+          <option value="all">모든 제품</option>
+          <option value="핸드크림">🤲 핸드크림</option>
+          <option value="NMN">💊 NMN</option>
+          <option value="마스크팩">🩹 마스크팩</option>
+          <option value="앰플">💧 앰플</option>
+          <option value="종합 패키지">📦 종합 패키지</option>
+          <option value="시즌 선물세트">🎁 시즌 선물세트</option>
+        </select>
+        <select class="filter-select" onchange="replySortOrder=this.value;replyPage=1;renderReplyList()" id="reply-sort-order" title="정렬">
+          <option value="unanswered_first">미답변 우선</option>
+          <option value="date_desc">최신순</option>
+          <option value="date_asc">오래된순</option>
+          <option value="negative_first">부정 우선</option>
         </select>
       </div>
 
@@ -2195,6 +2209,12 @@ async function initSalesAnalysis() {
       if (res.ok) _salesDataCache.cafe24 = await res.json();
     } catch(e) { console.warn('sales_cafe24.json 로드 실패', e); }
   }
+  if (!_salesDataCache.smartstore) {
+    try {
+      const res = await fetch('sales_smartstore.json?t=' + Date.now(), { cache: 'no-store' });
+      if (res.ok) _salesDataCache.smartstore = await res.json();
+    } catch(e) { console.warn('sales_smartstore.json 로드 실패', e); }
+  }
   renderOliveyoungSales();
 }
 
@@ -2213,6 +2233,156 @@ function switchSalesTab(channel, btnEl) {
   document.getElementById('sales-content-' + channel).style.display = '';
   if (channel === 'oliveyoung') renderOliveyoungSales();
   if (channel === 'cafe24') renderCafe24Sales();
+  if (channel === 'smartstore') renderSmartstoreSales();
+}
+
+// ───── 공통: 자사몰 카테고리 분류 (카페24/스마트스토어 공용) ─────
+function _categorizeForSelfShop(p) {
+  if (!p) return null;
+  p = p.replace(/&amp;/g, '&');
+  if (/리뷰전용|\[Review\]/i.test(p)) return null;
+  if (/UV Healer|UV힐러|앰플/i.test(p)) return '앰플';
+  if (/마스크팩|지우개팩|repair.*kit|face.*neck.*kit|7일팩|자외선.*팩|얼굴목|넥팩|페이스.*넥|겔마스크팩/i.test(p)) {
+    if (p.includes('&') && /핸드크림/i.test(p)) return '종합 패키지';
+    return '마스크팩';
+  }
+  if (/NMN.*Daily Routine|NMN.*Daily Regenerator|NMN.*스킨.?부스터|NMN.*Solution|NMN Skin booster|NMN.*Regenerator|NMN 스킨부스터|NMN 영양제|스킨부스터|NMN.*분말|NMN.*고함량|고함량.*NMN|엔엠엔/i.test(p)) return 'NMN';
+  if (/Daily Regenerator/i.test(p)) return 'NMN';
+  if (/FISETIN.*NMN|NMN.*특별/i.test(p)) return 'NMN';
+  if (/에센셜 리제너레이터|어드밴스드 리제너레이터|손티에이징 크림|손티에이징 핸드크림|핸드크림 인앤아웃|에센셜 미니어처|에센셜.*기프트|어드밴스드.*기프트|에센셜.*50ml|어드밴스드.*30ml|핸드크림|인앤아웃 세트/i.test(p)) return '핸드크림';
+  if (/리버스 루틴|리버스 스타터|역노화.*패키지|리버스.*패키지/i.test(p)) return '종합 패키지';
+  if (/Holiday|명절|선물세트|선물 세트|종합선물|추석|설 명절/i.test(p)) return '시즌 선물세트';
+  return null;
+}
+
+// ───── 자사몰 공통 렌더링 ─────
+function _renderSelfShopSales(containerId, channelName, data, channelEmoji, extraNote) {
+  const container = document.getElementById(containerId);
+  if (!data) {
+    container.innerHTML = '<div style="text-align:center;padding:60px;color:#9ca3af">📊 매출 데이터 로딩 중...</div>';
+    return;
+  }
+
+  const salesPeriod = data.salesPeriod || { start: '2020-01-01', end: '2099-12-31' };
+  // 매출 기간 내 리뷰만 매칭
+  const channelReviews = (ALL_REVIEWS || []).filter(r =>
+    r.channel === channelName &&
+    (r.date || '') >= salesPeriod.start &&
+    (r.date || '') <= salesPeriod.end
+  );
+  const reviewByCat = {};
+  channelReviews.forEach(r => {
+    const p = (r.product || r.product_norm || r.product_category || '');
+    const cat = _categorizeForSelfShop(p);
+    if (cat) reviewByCat[cat] = (reviewByCat[cat] || 0) + 1;
+  });
+
+  const convColor = (r) => r >= 30 ? '#3b6cf0' : r >= 10 ? '#10b981' : r >= 3 ? '#f59e0b' : r >= 1 ? '#ef4444' : '#9ca3af';
+  const convBg = (r) => r >= 30 ? '#dbeafe' : r >= 10 ? '#dcfce7' : r >= 3 ? '#fef3c7' : r >= 1 ? '#fee2e2' : '#f3f4f6';
+
+  const order = ['핸드크림','NMN','마스크팩','앰플','종합 패키지','시즌 선물세트','기타'];
+  const catEmoji = { '핸드크림':'🤲', 'NMN':'💊', '마스크팩':'🩹', '앰플':'💧', '종합 패키지':'📦', '시즌 선물세트':'🎁', '기타':'🛒' };
+
+  const totalOrders = data.totalNetOrders;
+  const totalAmt = data.totalAmount;
+  const totalReviews = channelReviews.length;
+  const avgConv = totalOrders > 0 ? (totalReviews / totalOrders * 100) : 0;
+
+  const formatAmt = (a) => a >= 100000000 ? (Math.round(a/10000000)/10) + '억' : (Math.round(a/10000) + '만');
+
+  const kpiHtml = `
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px">
+      <div class="card" style="padding:18px"><div class="kpi-label">총 순주문건수</div><div class="kpi-value">${totalOrders.toLocaleString()}<span style="font-size:14px;font-weight:500;color:var(--text-muted)">건</span></div><div class="kpi-change neutral">결제 - 환불</div></div>
+      <div class="card" style="padding:18px"><div class="kpi-label">총 매출액</div><div class="kpi-value">${formatAmt(totalAmt)}<span style="font-size:14px;font-weight:500;color:var(--text-muted)">원</span></div><div class="kpi-change neutral">${data.periods.length}개 구간 누적</div></div>
+      <div class="card" style="padding:18px"><div class="kpi-label">${channelName} 리뷰</div><div class="kpi-value">${totalReviews.toLocaleString()}<span style="font-size:14px;font-weight:500;color:var(--text-muted)">건</span></div><div class="kpi-change neutral">매출 기간 내</div></div>
+      <div class="card" style="padding:18px;background:${convBg(avgConv)}"><div class="kpi-label">평균 전환율</div><div class="kpi-value" style="color:${convColor(avgConv)}">${avgConv.toFixed(2)}<span style="font-size:14px;font-weight:500">%</span></div><div class="kpi-change neutral">리뷰 / 순주문</div></div>
+    </div>
+  `;
+
+  const catRows = order.map(cat => {
+    const s = data.byCategory[cat];
+    if (!s) return '';
+    const revs = reviewByCat[cat] || 0;
+    const rate = s.netOrders > 0 ? (revs/s.netOrders*100) : 0;
+    return `<tr style="border-bottom:1px solid #f3f4f6">
+        <td style="padding:12px;font-weight:600">${catEmoji[cat]||'•'} ${cat}</td>
+        <td style="padding:12px;text-align:right">${s.netOrders.toLocaleString()}</td>
+        <td style="padding:12px;text-align:right;color:#6b7280">${formatAmt(s.amount)}</td>
+        <td style="padding:12px;text-align:right">${revs.toLocaleString()}</td>
+        <td style="padding:12px;text-align:right"><span style="background:${convBg(rate)};color:${convColor(rate)};padding:4px 12px;border-radius:6px;font-weight:700">${rate.toFixed(2)}%</span></td>
+      </tr>`;
+  }).filter(Boolean).join('');
+
+  const periods = data.periods || [];
+  const periodHeader = periods.map(p => `<th style="padding:8px 10px;text-align:right;font-size:11px;color:#6b7280">${p}<br><span style="font-weight:400">(주문건수)</span></th>`).join('');
+  const periodRows = order.map(cat => {
+    const s = data.byCategory[cat];
+    if (!s) return '';
+    const cells = periods.map(p => {
+      const pd = s.periods?.[p];
+      const orders = pd ? pd.netOrders : 0;
+      return `<td style="padding:8px 10px;text-align:right;font-size:13px">${orders > 0 ? orders.toLocaleString() : '<span style="color:#d1d5db">—</span>'}</td>`;
+    }).join('');
+    return `<tr style="border-bottom:1px solid #f3f4f6"><td style="padding:8px 10px;font-weight:500">${catEmoji[cat]||'•'} ${cat}</td>${cells}<td style="padding:8px 10px;text-align:right;font-weight:600;background:#f9fafb">${s.netOrders.toLocaleString()}</td></tr>`;
+  }).filter(Boolean).join('');
+
+  // 자동 인사이트
+  const catConv = order.map(cat => {
+    const s = data.byCategory[cat]; if (!s) return null;
+    const revs = reviewByCat[cat] || 0;
+    return { cat, orders: s.netOrders, revs, rate: s.netOrders > 0 ? revs/s.netOrders*100 : 0 };
+  }).filter(x => x && x.orders >= 50);
+
+  const sortedByRate = [...catConv].sort((a,b) => b.rate - a.rate);
+  const best = sortedByRate[0];
+  const worst = sortedByRate[sortedByRate.length - 1];
+  const insights = [];
+  if (best) insights.push(`<li>🏆 <strong>전환율 1위</strong>: ${catEmoji[best.cat]} ${best.cat} <strong>${best.rate.toFixed(2)}%</strong> (${best.revs.toLocaleString()}건 / ${best.orders.toLocaleString()}주문)</li>`);
+  if (worst && worst.cat !== best?.cat) insights.push(`<li>📉 <strong>전환율 최하위</strong>: ${catEmoji[worst.cat]} ${worst.cat} <strong>${worst.rate.toFixed(2)}%</strong> — 리뷰 유도 캠페인 ROI 큼</li>`);
+  insights.push(`<li>✨ <strong>평균 전환율 ${avgConv.toFixed(2)}%</strong> — 업계 평균(1~3%)과 비교 시 ${avgConv >= 10 ? '매우 높음' : avgConv >= 3 ? '높음' : '평균'}</li>`);
+  if (catConv.find(x => x.rate > 100)) {
+    insights.push(`<li>⚠️ <strong>100% 초과 카테고리 존재</strong> — 1주문에 여러 리뷰(일반+한달후기 등) 또는 매출 데이터에 누락된 SKU가 있을 가능성. 정확도는 카페24가 더 신뢰 가능</li>`);
+  }
+  if (extraNote) insights.push('<li>' + extraNote + '</li>');
+
+  container.innerHTML = `
+    ${kpiHtml}
+    <div class="card" style="margin-bottom:20px;padding:18px">
+      <div class="card-title" style="margin-bottom:12px">📊 ${channelEmoji} 카테고리별 주문건수 vs 리뷰 vs 전환율</div>
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead><tr style="background:#fafafa;color:#6b7280;font-size:12px">
+          <th style="padding:10px;text-align:left;font-weight:600">카테고리</th>
+          <th style="padding:10px;text-align:right;font-weight:600">순주문(건)</th>
+          <th style="padding:10px;text-align:right;font-weight:600">매출액</th>
+          <th style="padding:10px;text-align:right;font-weight:600">리뷰(건)</th>
+          <th style="padding:10px;text-align:right;font-weight:600">전환율</th>
+        </tr></thead>
+        <tbody>${catRows}</tbody>
+      </table>
+      <div style="font-size:11px;color:#9ca3af;margin-top:10px">※ 매출 기간(${salesPeriod.start} ~ ${salesPeriod.end}) 내 리뷰만 매칭</div>
+    </div>
+    <div class="card" style="margin-bottom:20px;padding:18px;background:#fefce8;border:1px solid #fde68a">
+      <div style="font-size:14px;font-weight:700;color:#854d0e;margin-bottom:10px">🔍 자동 인사이트</div>
+      <ul style="margin:0;padding-left:20px;font-size:13px;line-height:1.9;color:#374151">${insights.join('')}</ul>
+    </div>
+    <div class="card" style="margin-bottom:20px;padding:18px">
+      <div class="card-title" style="margin-bottom:12px">📅 기간별 주문건수 추이</div>
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead><tr style="background:#fafafa;color:#6b7280">
+          <th style="padding:10px;text-align:left;font-size:11px">카테고리</th>
+          ${periodHeader}
+          <th style="padding:10px;text-align:right;font-size:11px;background:#f3f4f6">합계</th>
+        </tr></thead>
+        <tbody>${periodRows}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+// ───── 스마트스토어 렌더링 ─────
+function renderSmartstoreSales() {
+  _renderSelfShopSales('sales-content-smartstore', '스마트스토어', _salesDataCache.smartstore, '🟢',
+    '네이버 페이는 <strong>일반 리뷰 + 한달후기</strong>를 각각 카운트해서 일부 카테고리 전환율이 100% 넘을 수 있음 (정상 시그널)');
 }
 
 // ───── 카페24 렌더링 ─────
@@ -4122,6 +4292,9 @@ const REPLY_SERVER = 'https://ega-review-insight-archive.onrender.com';
 let replyFilter = 'all';
 let replySearchQuery = '';
 let replyChannelFilter = 'all';
+let replySentimentFilter = 'all';
+let replyProductFilter = 'all';
+let replySortOrder = 'unanswered_first';
 let replyPage = 1;
 const REPLY_PER_PAGE = 15;
 let bulkSelected = new Set();
