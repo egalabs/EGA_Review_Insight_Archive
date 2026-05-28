@@ -3,6 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EGA Review Insight Archive</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
@@ -434,6 +435,10 @@
       <a class="nav-item" onclick="showPage('sales')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="20" x2="12" y2="10"></line><line x1="18" y1="20" x2="18" y2="4"></line><line x1="6" y1="20" x2="6" y2="16"></line></svg>
         판매 분석
+      </a>
+      <a class="nav-item" onclick="showPage('writeRate')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"></path><path d="m7 14 4-4 4 4 6-6"></path></svg>
+        리뷰 작성률
       </a>
       <div class="nav-section-label">CS 관리</div>
       <a class="nav-item" onclick="showPage('replies')">
@@ -1889,6 +1894,30 @@
       </div>
     </div>
 
+    <!-- ===== REVIEW WRITE RATE (크리마 리뷰 작성률) ===== -->
+    <div class="page" id="page-writeRate">
+      <div class="page-header">
+        <div class="page-header-row">
+          <div>
+            <div class="page-title">📈 리뷰 작성률</div>
+            <div class="page-subtitle">크리마 기반 · 배송완료 대비 리뷰 작성 비율 추적 · EGA 공식 온라인 스토어</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input type="file" id="write-rate-upload" accept=".xlsx" style="display:none" onchange="handleWriteRateUpload(event)">
+            <button class="btn btn-primary btn-sm" onclick="document.getElementById('write-rate-upload').click()">📥 크리마 엑셀 업로드</button>
+            <button class="btn btn-outline btn-sm" onclick="clearWriteRateData()" title="저장된 데이터 초기화">🗑️ 초기화</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="write-rate-content"></div>
+
+      <div style="margin-top:24px;padding:14px 16px;background:#f0fdf4;border:1px solid #86efac;border-radius:8px;font-size:12.5px;color:#166534;line-height:1.7">
+        💡 <strong>크리마 어드민에서 받는 법:</strong> 크리마 어드민 → 리뷰 → 리뷰 통계 → 리뷰 작성률 → 우측 상단 다운로드 → <strong>위의 "크리마 엑셀 업로드"</strong> 버튼으로 드래그 / 선택<br>
+        업로드한 데이터는 <strong>로컬 브라우저에 누적 저장</strong>되며, 동일 날짜 데이터는 자동으로 최신값으로 덮어쓰여집니다.
+      </div>
+    </div>
+
     <!-- ===== REPLY ARCHIVE (게시 완료 답변 모아보기) ===== -->
     <div class="page" id="page-replyArchive">
       <div class="page-header">
@@ -2254,6 +2283,203 @@ function showPage(id) {
   if(id==='replies') initReplies();
   if(id==='sales') initSalesAnalysis();
   if(id==='replyArchive') initReplyArchive();
+  if(id==='writeRate') initWriteRate();
+}
+
+// ===== 리뷰 작성률 (크리마) =====
+const WRITE_RATE_STORAGE_KEY = 'ega_crema_write_rate';
+let _writeRateData = null;
+
+async function initWriteRate() {
+  // 1. localStorage 우선
+  let local = null;
+  try {
+    const raw = localStorage.getItem(WRITE_RATE_STORAGE_KEY);
+    if (raw) local = JSON.parse(raw);
+  } catch(e) {}
+  // 2. 없으면 서버의 초기 데이터 fetch
+  if (!local || !local.daily || local.daily.length === 0) {
+    try {
+      const res = await fetch('crema_review_rate.json?t=' + Date.now(), { cache: 'no-store' });
+      if (res.ok) local = await res.json();
+    } catch(e) { console.warn('crema_review_rate.json 로드 실패', e); }
+  }
+  _writeRateData = local || { source: '크리마', scope: 'EGA 공식 온라인 스토어', daily: [] };
+  renderWriteRate();
+}
+
+// Excel 시리얼 → YYYY-MM-DD
+function _excelSerialToDate(serial) {
+  const n = parseFloat(serial);
+  if (!isFinite(n) || n < 10000) return null;
+  const epoch = Date.UTC(1899, 11, 30);
+  return new Date(epoch + n * 86400 * 1000).toISOString().slice(0, 10);
+}
+
+function handleWriteRateUpload(ev) {
+  const file = ev.target.files && ev.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = new Uint8Array(e.target.result);
+      const wb = XLSX.read(data, { type: 'array' });
+      // 시트3 = '리뷰 작성률'
+      const sheetName = wb.SheetNames.find(n => /작성률|write.*rate/i.test(n)) || wb.SheetNames[2] || wb.SheetNames[0];
+      const sheet = wb.Sheets[sheetName];
+      const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
+      // 헤더 행 찾기 (B=리뷰수, C=배송완료된 상품수, D=리뷰 작성률 패턴)
+      const newDaily = [];
+      let headerFound = false;
+      for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
+        if (!headerFound) {
+          if (row.some(c => String(c).includes('배송완료된 상품수') || String(c).includes('배송완료'))) {
+            headerFound = true;
+          }
+          continue;
+        }
+        const dateCell = row[0];
+        if (!dateCell || String(dateCell) === '합계') continue;
+        const dateStr = _excelSerialToDate(dateCell);
+        if (!dateStr) continue;
+        const reviews = parseInt(row[1]) || 0;
+        const delivered = parseInt(row[2]) || 0;
+        const rate = parseFloat(row[3]) || 0;
+        const reviewers = parseInt(row[4]) || 0;
+        const deliveredPersons = parseInt(row[5]) || 0;
+        const personRate = parseFloat(row[6]) || 0;
+        newDaily.push({ date: dateStr, reviews, delivered, rate, reviewers, deliveredPersons, personRate });
+      }
+      if (newDaily.length === 0) {
+        showToast('파일에서 데이터를 찾지 못했습니다. 크리마 어드민의 "리뷰 작성률" 시트가 포함된 엑셀인지 확인하세요.', 'error');
+        return;
+      }
+      // 기존 데이터와 머지 (date 키, 새 값 우선)
+      const merged = {};
+      (_writeRateData.daily || []).forEach(d => { merged[d.date] = d; });
+      newDaily.forEach(d => { merged[d.date] = d; });
+      _writeRateData.daily = Object.values(merged).sort((a,b) => a.date.localeCompare(b.date));
+      _writeRateData.lastUpdated = new Date().toISOString().slice(0, 10);
+      localStorage.setItem(WRITE_RATE_STORAGE_KEY, JSON.stringify(_writeRateData));
+      showToast('✅ 신규 ' + newDaily.length + '일치 데이터 추가 (누적 ' + _writeRateData.daily.length + '일)', 'success');
+      renderWriteRate();
+    } catch(err) {
+      console.error(err);
+      showToast('엑셀 파싱 실패: ' + err.message, 'error');
+    }
+    ev.target.value = '';
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function clearWriteRateData() {
+  if (!confirm('저장된 리뷰 작성률 데이터를 모두 삭제할까요?\n(기본 데이터로 복원됩니다)')) return;
+  localStorage.removeItem(WRITE_RATE_STORAGE_KEY);
+  _writeRateData = null;
+  initWriteRate();
+  showToast('초기화 완료', 'success');
+}
+
+function renderWriteRate() {
+  const container = document.getElementById('write-rate-content');
+  const d = _writeRateData;
+  if (!d || !d.daily || d.daily.length === 0) {
+    container.innerHTML = '<div style="text-align:center;padding:80px 20px;color:#9ca3af"><div style="font-size:48px;margin-bottom:16px">📥</div><div style="font-size:16px;font-weight:600;color:#374151;margin-bottom:8px">크리마 엑셀을 업로드하세요</div><div style="font-size:13px">상단 "크리마 엑셀 업로드" 버튼 클릭</div></div>';
+    return;
+  }
+
+  // 합계 계산
+  const daily = d.daily;
+  const totalReviews = daily.reduce((a,b) => a + b.reviews, 0);
+  const totalDelivered = daily.reduce((a,b) => a + b.delivered, 0);
+  const totalReviewers = daily.reduce((a,b) => a + b.reviewers, 0);
+  const totalDeliveredPersons = daily.reduce((a,b) => a + b.deliveredPersons, 0);
+  const totalRate = totalDelivered > 0 ? (totalReviews / totalDelivered * 100) : 0;
+  const totalPersonRate = totalDeliveredPersons > 0 ? (totalReviewers / totalDeliveredPersons * 100) : 0;
+  const period = daily.length > 0 ? (daily[0].date + ' ~ ' + daily[daily.length-1].date) : '-';
+  const days = daily.length;
+
+  // KPI
+  const kpiHtml = `
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px">
+      <div class="card" style="padding:18px"><div class="kpi-label">전체 작성률 (리뷰수 기준)</div><div class="kpi-value" style="color:${totalRate >= 5 ? '#10b981' : totalRate >= 1 ? '#f59e0b' : '#ef4444'}">${totalRate.toFixed(2)}<span style="font-size:14px">%</span></div><div class="kpi-change neutral">${totalReviews} / ${totalDelivered} 배송완료</div></div>
+      <div class="card" style="padding:18px"><div class="kpi-label">전체 작성률 (인원수 기준)</div><div class="kpi-value" style="color:${totalPersonRate >= 5 ? '#10b981' : totalPersonRate >= 1 ? '#f59e0b' : '#ef4444'}">${totalPersonRate.toFixed(2)}<span style="font-size:14px">%</span></div><div class="kpi-change neutral">${totalReviewers} / ${totalDeliveredPersons} 명</div></div>
+      <div class="card" style="padding:18px"><div class="kpi-label">기간</div><div class="kpi-value" style="font-size:14px;font-weight:600">${period}</div><div class="kpi-change neutral">${days}일치 데이터</div></div>
+      <div class="card" style="padding:18px"><div class="kpi-label">총 배송완료 / 리뷰</div><div class="kpi-value">${totalDelivered.toLocaleString()}<span style="font-size:13px;color:#9ca3af"> / ${totalReviews}</span></div><div class="kpi-change neutral">상품 기준</div></div>
+    </div>
+  `;
+
+  // 표
+  const tableRows = daily.slice().reverse().map(d => `
+    <tr style="border-bottom:1px solid #f3f4f6">
+      <td style="padding:10px 12px;font-weight:500">${d.date}</td>
+      <td style="padding:10px 12px;text-align:right">${d.reviews}</td>
+      <td style="padding:10px 12px;text-align:right;color:#6b7280">${d.delivered}</td>
+      <td style="padding:10px 12px;text-align:right"><span style="background:${d.rate >= 5 ? '#dcfce7' : d.rate >= 1 ? '#fef3c7' : d.delivered > 0 ? '#fee2e2' : '#f3f4f6'};color:${d.rate >= 5 ? '#166534' : d.rate >= 1 ? '#92400e' : d.delivered > 0 ? '#991b1b' : '#9ca3af'};padding:3px 10px;border-radius:6px;font-weight:600;font-size:12px">${d.rate.toFixed(2)}%</span></td>
+      <td style="padding:10px 12px;text-align:right">${d.reviewers}</td>
+      <td style="padding:10px 12px;text-align:right;color:#6b7280">${d.deliveredPersons}</td>
+      <td style="padding:10px 12px;text-align:right"><span style="background:${d.personRate >= 5 ? '#dcfce7' : d.personRate >= 1 ? '#fef3c7' : d.deliveredPersons > 0 ? '#fee2e2' : '#f3f4f6'};color:${d.personRate >= 5 ? '#166534' : d.personRate >= 1 ? '#92400e' : d.deliveredPersons > 0 ? '#991b1b' : '#9ca3af'};padding:3px 10px;border-radius:6px;font-weight:600;font-size:12px">${d.personRate.toFixed(2)}%</span></td>
+    </tr>
+  `).join('');
+
+  container.innerHTML = `
+    ${kpiHtml}
+    <div class="card" style="padding:18px;margin-bottom:18px">
+      <div class="card-title" style="margin-bottom:12px">📊 일별 리뷰 작성률 추이</div>
+      <div style="position:relative;height:260px"><canvas id="write-rate-chart"></canvas></div>
+    </div>
+    <div class="card" style="padding:18px">
+      <div class="card-title" style="margin-bottom:12px">📅 일별 상세</div>
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead><tr style="background:#fafafa;color:#6b7280;font-size:12px">
+          <th style="padding:10px 12px;text-align:left;font-weight:600">날짜</th>
+          <th style="padding:10px 12px;text-align:right;font-weight:600" colspan="3">리뷰수 기준</th>
+          <th style="padding:10px 12px;text-align:right;font-weight:600" colspan="3">인원수 기준</th>
+        </tr><tr style="background:#fafafa;color:#9ca3af;font-size:11px">
+          <th></th>
+          <th style="padding:6px 12px;text-align:right">리뷰수</th>
+          <th style="padding:6px 12px;text-align:right">배송완료</th>
+          <th style="padding:6px 12px;text-align:right">작성률</th>
+          <th style="padding:6px 12px;text-align:right">리뷰인원</th>
+          <th style="padding:6px 12px;text-align:right">배송인원</th>
+          <th style="padding:6px 12px;text-align:right">작성률</th>
+        </tr></thead>
+        <tbody>${tableRows}</tbody>
+        <tfoot><tr style="background:#fafafa;font-weight:700;border-top:2px solid #d1d5db">
+          <td style="padding:10px 12px">합계</td>
+          <td style="padding:10px 12px;text-align:right">${totalReviews}</td>
+          <td style="padding:10px 12px;text-align:right">${totalDelivered}</td>
+          <td style="padding:10px 12px;text-align:right;color:${totalRate >= 5 ? '#10b981' : totalRate >= 1 ? '#f59e0b' : '#ef4444'}">${totalRate.toFixed(2)}%</td>
+          <td style="padding:10px 12px;text-align:right">${totalReviewers}</td>
+          <td style="padding:10px 12px;text-align:right">${totalDeliveredPersons}</td>
+          <td style="padding:10px 12px;text-align:right;color:${totalPersonRate >= 5 ? '#10b981' : totalPersonRate >= 1 ? '#f59e0b' : '#ef4444'}">${totalPersonRate.toFixed(2)}%</td>
+        </tr></tfoot>
+      </table>
+    </div>
+  `;
+
+  // Chart.js 라인 차트
+  setTimeout(() => {
+    const ctx = document.getElementById('write-rate-chart');
+    if (!ctx) return;
+    if (window._writeRateChart && typeof window._writeRateChart.destroy === 'function') window._writeRateChart.destroy();
+    window._writeRateChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: daily.map(d => d.date.slice(5)),
+        datasets: [
+          { label: '작성률 (리뷰수 기준 %)', data: daily.map(d => d.rate), borderColor: '#3b6cf0', backgroundColor: 'rgba(59,108,240,0.1)', tension: 0.3, fill: true },
+          { label: '작성률 (인원수 기준 %)', data: daily.map(d => d.personRate), borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.1)', tension: 0.3, fill: false }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 10 } } },
+        scales: { y: { beginAtZero: true, ticks: { callback: (v) => v + '%' } } }
+      }
+    });
+  }, 50);
 }
 
 // ===== 답변 아카이브 페이지 =====
