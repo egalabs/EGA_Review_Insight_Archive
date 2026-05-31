@@ -440,6 +440,11 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"></path><path d="m7 14 4-4 4 4 6-6"></path></svg>
         리뷰 작성률
       </a>
+      <a class="nav-item" onclick="showPage('repurchase')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path><path d="m9 12 2 2 4-4"></path></svg>
+        재구매 분석
+        <span class="nav-badge" style="background:#10b981">NEW</span>
+      </a>
       <div class="nav-section-label">CS 관리</div>
       <a class="nav-item" onclick="showPage('replies')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"></path></svg>
@@ -1894,6 +1899,20 @@
       </div>
     </div>
 
+    <!-- ===== REPURCHASE ANALYSIS (재구매 분석) ===== -->
+    <div class="page" id="page-repurchase">
+      <div class="page-header">
+        <div class="page-header-row">
+          <div>
+            <div class="page-title">🔁 재구매 분석</div>
+            <div class="page-subtitle">카페24 주문 데이터 기반 · 재구매 고객 식별 + 후기 작성률 매칭</div>
+          </div>
+          <div style="font-size:11px;color:#9ca3af">기준: <span id="repurchase-period">-</span></div>
+        </div>
+      </div>
+      <div id="repurchase-content"></div>
+    </div>
+
     <!-- ===== REVIEW WRITE RATE (크리마 리뷰 작성률) ===== -->
     <div class="page" id="page-writeRate">
       <div class="page-header">
@@ -2284,6 +2303,196 @@ function showPage(id) {
   if(id==='sales') initSalesAnalysis();
   if(id==='replyArchive') initReplyArchive();
   if(id==='writeRate') initWriteRate();
+  if(id==='repurchase') initRepurchase();
+}
+
+// ===== 재구매 분석 페이지 =====
+let _repurchaseData = null;
+
+async function initRepurchase() {
+  if (!_repurchaseData) {
+    try {
+      const res = await fetch('repurchase_cafe24.json?t=' + Date.now(), { cache: 'no-store' });
+      if (res.ok) _repurchaseData = await res.json();
+    } catch(e) { console.warn('repurchase_cafe24.json 로드 실패', e); }
+  }
+  renderRepurchase();
+}
+
+function renderRepurchase() {
+  const container = document.getElementById('repurchase-content');
+  const d = _repurchaseData;
+  if (!d) {
+    container.innerHTML = '<div style="text-align:center;padding:80px 20px;color:#9ca3af"><div style="font-size:42px;margin-bottom:12px">📊</div><div style="font-size:15px;font-weight:600;color:#374151;margin-bottom:6px">재구매 분석 데이터 없음</div><div style="font-size:13px">repurchase_cafe24.json 파일을 GitHub에 업로드해주세요</div></div>';
+    return;
+  }
+  const periodEl = document.getElementById('repurchase-period');
+  if (periodEl) periodEl.textContent = d.periodCovered + ' · ' + d.channel;
+
+  const s = d.summary;
+  const formatN = (n) => n.toLocaleString();
+
+  // 분석 기준 안내
+  const noteHtml = `
+    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:12.5px;color:#1e40af;line-height:1.7">
+      🔍 <strong>분석 기준:</strong> 수령인 이름 + 휴대전화 (회원 + 비회원 통합) · 한 사람이 같은 번호로 주문 시 동일 고객으로 인식<br>
+      📌 <strong>"고유 고객" 정의:</strong> 분석 기간 중 <strong>최소 1회 이상 실제 주문/배송이 발생한 사람</strong> (회원 가입만 한 사람은 제외) · 회원/비회원 모두 포함된 "진짜 구매한 사람" 단위
+    </div>
+  `;
+
+  // KPI
+  const kpiHtml = `
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px">
+      <div class="card" style="padding:18px">
+        <div class="kpi-label">총 고유 고객</div>
+        <div class="kpi-value">${formatN(s.totalCustomers)}<span style="font-size:14px;color:var(--text-muted)">명</span></div>
+        <div class="kpi-change neutral">${formatN(s.totalOrders)} 주문</div>
+      </div>
+      <div class="card" style="padding:18px;background:#eff6ff">
+        <div class="kpi-label">재구매율</div>
+        <div class="kpi-value" style="color:#3b6cf0">${s.repurchaseRate}<span style="font-size:14px">%</span></div>
+        <div class="kpi-change neutral">${formatN(s.repeatCustomers)}명 / ${formatN(s.totalCustomers)}명</div>
+      </div>
+      <div class="card" style="padding:18px;background:#dcfce7">
+        <div class="kpi-label">재구매자 후기 작성률</div>
+        <div class="kpi-value" style="color:#166534">${s.repeatReviewRate}<span style="font-size:14px">%</span></div>
+        <div class="kpi-change neutral">${formatN(s.repeatWithReview)}명 / ${formatN(s.repeatCustomers)}명</div>
+      </div>
+      <div class="card" style="padding:18px;background:#fef3c7">
+        <div class="kpi-label">첫구매자 후기 작성률</div>
+        <div class="kpi-value" style="color:#92400e">${s.firstTimeReviewRate}<span style="font-size:14px">%</span></div>
+        <div class="kpi-change neutral">${formatN(s.firstTimeWithReview)}명 / ${formatN(s.firstTimeCustomers)}명</div>
+      </div>
+    </div>
+  `;
+
+  // 핵심 인사이트 배너
+  const insightHtml = `
+    <div class="card" style="padding:24px;margin-bottom:18px;background:linear-gradient(135deg,#eff6ff 0%,#dcfce7 100%);border:1px solid #93c5fd">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap">
+        <div style="flex:1;min-width:240px">
+          <div style="font-size:13px;color:#1e40af;font-weight:600;margin-bottom:6px">📌 핵심 발견 — 데이터로 가설 입증</div>
+          <div style="font-size:22px;font-weight:800;color:#111827;line-height:1.4">재구매 고객이 첫구매 고객보다 <span style="color:#10b981">${s.multiplier}배</span> 더 후기를 작성합니다</div>
+          <div style="font-size:13px;color:#374151;margin-top:8px;line-height:1.7">
+            • 첫구매 고객 후기 작성률: <strong>${s.firstTimeReviewRate}%</strong> (${formatN(s.firstTimeWithReview)}/${formatN(s.firstTimeCustomers)}명)<br>
+            • 재구매 고객 후기 작성률: <strong style="color:#10b981">${s.repeatReviewRate}%</strong> (${formatN(s.repeatWithReview)}/${formatN(s.repeatCustomers)}명)<br>
+            • 격차: <strong>${(s.repeatReviewRate - s.firstTimeReviewRate).toFixed(2)}%p</strong>
+          </div>
+        </div>
+        <div style="text-align:center;background:#fff;padding:18px 24px;border-radius:12px;box-shadow:0 4px 12px rgba(59,108,240,0.15);min-width:160px">
+          <div style="font-size:11px;color:#6b7280;margin-bottom:6px">분기 KPI 후보</div>
+          <div style="font-size:32px;font-weight:900;color:#3b6cf0">${s.multiplier}x</div>
+          <div style="font-size:12px;color:#374151;margin-top:4px">재구매자 후기 배율</div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // 회차별 분포 + 작성률 표 + 차트
+  const writeRate = d.writeRateByCount;
+  const tableRows = writeRate.map(r => {
+    const bar = '<div style="background:#e5e7eb;border-radius:6px;height:8px;overflow:hidden;width:100%"><div style="background:' + (r.rate >= 50 ? '#10b981' : r.rate >= 30 ? '#3b6cf0' : r.rate >= 15 ? '#f59e0b' : '#9ca3af') + ';height:100%;width:' + Math.min(r.rate, 100) + '%"></div></div>';
+    const badge = r.count >= 4 ? '<span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;margin-left:8px">🔥 임계점 돌파</span>' : '';
+    return `
+      <tr style="border-bottom:1px solid #f3f4f6">
+        <td style="padding:10px 12px;font-weight:600">${r.count}회 ${badge}</td>
+        <td style="padding:10px 12px;text-align:right">${r.customers.toLocaleString()}명</td>
+        <td style="padding:10px 12px;text-align:right">${r.withReview}명</td>
+        <td style="padding:10px 12px;width:30%">${bar}</td>
+        <td style="padding:10px 12px;text-align:right;font-weight:700;color:${r.rate >= 50 ? '#10b981' : r.rate >= 30 ? '#3b6cf0' : r.rate >= 15 ? '#f59e0b' : '#6b7280'}">${r.rate.toFixed(2)}%</td>
+      </tr>
+    `;
+  }).join('');
+
+  const tableHtml = `
+    <div class="card" style="padding:18px;margin-bottom:18px">
+      <div class="card-title" style="margin-bottom:12px">📊 회차별 후기 작성률 (4회+ 부터 폭발적 증가)</div>
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead><tr style="background:#fafafa;color:#6b7280;font-size:12px">
+          <th style="padding:10px 12px;text-align:left;font-weight:600">구매 회차</th>
+          <th style="padding:10px 12px;text-align:right;font-weight:600">고객 수</th>
+          <th style="padding:10px 12px;text-align:right;font-weight:600">후기 작성</th>
+          <th style="padding:10px 12px;text-align:left;font-weight:600">작성률 시각화</th>
+          <th style="padding:10px 12px;text-align:right;font-weight:600">작성률</th>
+        </tr></thead>
+        <tbody>${tableRows}</tbody>
+      </table>
+      <div style="margin-top:14px;padding:12px;background:#fffbeb;border-left:3px solid #f59e0b;border-radius:6px;font-size:12.5px;color:#92400e;line-height:1.7">
+        💡 <strong>임계점 발견:</strong> 1~3회 구매자는 13~20% 작성률이지만, <strong>4회 이상 구매자는 33~100%</strong>로 폭발적 증가.<br>
+        → 1차 분기 KPI: <strong>"4회까지 도달한 고객 비율"</strong>을 현재 ${((writeRate.filter(r=>r.count>=4).reduce((a,b)=>a+b.customers,0))/s.totalCustomers*100).toFixed(2)}% → 목표 2배 끌어올리기
+      </div>
+    </div>
+  `;
+
+  // 추이 차트
+  const chartHtml = `
+    <div class="card" style="padding:18px;margin-bottom:18px">
+      <div class="card-title" style="margin-bottom:12px">📈 회차별 후기 작성률 추이</div>
+      <div style="position:relative;height:280px"><canvas id="repurchase-chart"></canvas></div>
+    </div>
+  `;
+
+  // VIP 명단
+  const vips = d.vipCustomers || [];
+  const vipRows = vips.map(v => `
+    <tr style="border-bottom:1px solid #f3f4f6">
+      <td style="padding:10px 12px;font-weight:600">${v.name} <span style="color:#9ca3af;font-size:11px">${v.phone}</span></td>
+      <td style="padding:10px 12px;text-align:center"><span style="background:${v.count >= 6 ? '#7c3aed' : '#3b6cf0'};color:#fff;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:700">${v.count}회</span></td>
+      <td style="padding:10px 12px;text-align:right;color:#6b7280">${Math.round(v.totalAmount/10000).toLocaleString()}만원</td>
+      <td style="padding:10px 12px;text-align:center">${v.hasReview ? '<span style="background:#dcfce7;color:#166534;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:600">✅ 작성</span>' : '<span style="background:#fee2e2;color:#991b1b;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:600">⚠️ 미작성</span>'}</td>
+      <td style="padding:10px 12px;text-align:right;color:#9ca3af;font-size:11px">${(v.firstOrder||'').slice(0,10)} ~ ${(v.lastOrder||'').slice(0,10)}</td>
+    </tr>
+  `).join('');
+
+  const vipNotWritten = vips.filter(v => !v.hasReview).length;
+  const vipHtml = `
+    <div class="card" style="padding:18px;margin-bottom:18px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:10px">
+        <div>
+          <div class="card-title">👑 VIP 슈퍼팬 명단 (4회+ 재구매)</div>
+          <div style="font-size:12px;color:#6b7280;margin-top:2px">총 ${vips.length}명 · 협업/인터뷰/베타테스트 후보</div>
+        </div>
+        ${vipNotWritten > 0 ? `<div style="background:#fef3c7;color:#92400e;padding:8px 14px;border-radius:8px;font-size:12px;font-weight:600">⚠️ 후기 미작성 ${vipNotWritten}명 → CRM 1순위</div>` : ''}
+      </div>
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead><tr style="background:#fafafa;color:#6b7280;font-size:12px">
+          <th style="padding:10px 12px;text-align:left;font-weight:600">고객</th>
+          <th style="padding:10px 12px;text-align:center;font-weight:600">구매 횟수</th>
+          <th style="padding:10px 12px;text-align:right;font-weight:600">누적 금액</th>
+          <th style="padding:10px 12px;text-align:center;font-weight:600">후기 작성</th>
+          <th style="padding:10px 12px;text-align:right;font-weight:600">활동 기간</th>
+        </tr></thead>
+        <tbody>${vipRows}</tbody>
+      </table>
+    </div>
+  `;
+
+  container.innerHTML = noteHtml + kpiHtml + insightHtml + tableHtml + chartHtml + vipHtml;
+
+  // Chart 렌더링
+  setTimeout(() => {
+    const ctx = document.getElementById('repurchase-chart');
+    if (!ctx) return;
+    if (window._repurchaseChart && typeof window._repurchaseChart.destroy === 'function') window._repurchaseChart.destroy();
+    window._repurchaseChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: writeRate.map(r => r.count + '회'),
+        datasets: [
+          { label: '고객 수', data: writeRate.map(r => r.customers), backgroundColor: '#cbd5e1', yAxisID: 'y' },
+          { label: '후기 작성률 (%)', data: writeRate.map(r => r.rate), type: 'line', borderColor: '#3b6cf0', backgroundColor: 'rgba(59,108,240,0.15)', tension: 0.25, fill: true, yAxisID: 'y1' }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } },
+        scales: {
+          y: { beginAtZero: true, title: { display: true, text: '고객 수 (명)' } },
+          y1: { position: 'right', beginAtZero: true, max: 100, title: { display: true, text: '후기 작성률 (%)' }, grid: { drawOnChartArea: false } }
+        }
+      }
+    });
+  }, 50);
 }
 
 // ===== 리뷰 작성률 (크리마) =====
