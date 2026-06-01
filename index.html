@@ -3933,7 +3933,15 @@ function updateWeeklyReport() {
   };
   try {
     const savedSpecialReviews = localStorage.getItem(specialWeekKey);
-    if (savedSpecialReviews) specialReviews = JSON.parse(savedSpecialReviews);
+    if (savedSpecialReviews) {
+      const saved = JSON.parse(savedSpecialReviews);
+      // 강한 긍정·마케팅은 사용자 편집값 유지, CS는 항상 자동 계산 강제 (부정 전부 보이게)
+      specialReviews = {
+        strong_pos: saved.strong_pos && saved.strong_pos.length ? saved.strong_pos : specialReviews.strong_pos,
+        cs: csReviews, // ⚠ 강제: 캐시 무시하고 항상 자동 계산된 부정 전부 사용
+        marketing: saved.marketing && saved.marketing.length ? saved.marketing : specialReviews.marketing
+      };
+    }
   } catch(e) { console.warn('특이 리뷰 저장값 로드 실패', e); }
   window._currentSpecialReviews = specialReviews;
   window._currentSpecialKey = specialWeekKey;
