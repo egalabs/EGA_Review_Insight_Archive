@@ -4779,6 +4779,15 @@ window.setSentimentOverride = function(id, newSentiment) {
     overrides[id] = newSentiment;
     localStorage.setItem(SENTIMENT_OVERRIDE_KEY, JSON.stringify(overrides));
   } catch(e) { console.warn('감정 저장 실패', e); }
+  // 위클리 리포트의 "특이 리뷰" 캐시 모두 삭제 (감정 변경 반영 위해)
+  try {
+    const keysToDelete = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith('ega_special_reviews_')) keysToDelete.push(k);
+    }
+    keysToDelete.forEach(k => localStorage.removeItem(k));
+  } catch(e) {}
   // UI 갱신
   if (typeof showToast === 'function') showToast('감정 "' + oldSentiment + '" → "' + newSentiment + '"으로 변경', 'success');
   if (typeof renderReplyList === 'function') renderReplyList();
@@ -4787,15 +4796,13 @@ window.setSentimentOverride = function(id, newSentiment) {
     renderIssueReviewsList();
   }
   if (typeof updateDashboard === 'function') updateDashboard();
-  // 위클리 리포트가 활성 페이지면 즉시 갱신 (감정 분포·CS 대응 영역 반영)
+  // 위클리 리포트 갱신 (활성 페이지 여부 무관 — 다음 방문 시에도 최신 데이터)
   if (typeof updateWeeklyReport === 'function') {
-    const weeklyPage = document.getElementById('page-weekly');
-    if (weeklyPage && weeklyPage.classList.contains('active')) updateWeeklyReport();
+    try { updateWeeklyReport(); } catch(e) { /* 페이지 안 보일 때 DOM 없음 → 무시 */ }
   }
-  // 답변 아카이브가 활성 페이지면 갱신
+  // 답변 아카이브 갱신
   if (typeof renderReplyArchive === 'function') {
-    const archivePage = document.getElementById('page-replyArchive');
-    if (archivePage && archivePage.classList.contains('active')) renderReplyArchive();
+    try { renderReplyArchive(); } catch(e) {}
   }
 };
 
