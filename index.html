@@ -2767,7 +2767,11 @@ function renderReplyArchive() {
           <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;flex-wrap:wrap">
             <span style="font-size:12.5px;font-weight:600;color:#111827">${r.product || r.product_norm || r.product_category || '제품명 없음'}</span>
             <span class="tag tag-channel" style="font-size:10.5px">${channelEmoji} ${r.channel}</span>
-            ${r.sentiment === '부정' ? '<span class="tag tag-negative" style="font-size:10.5px">부정</span>' : r.sentiment === '긍정' ? '<span class="tag tag-positive" style="font-size:10.5px">긍정</span>' : '<span class="tag tag-mixed" style="font-size:10.5px">' + (r.sentiment || '중립') + '</span>'}
+            <select class="sentiment-override-select" onchange="setSentimentOverride('${r.id}', this.value)" title="감정 분류 변경 (위클리·대시보드 동기화됨)" style="font-size:10.5px;padding:2px 6px;border-radius:4px;border:1px solid ${r.sentiment==='부정'?'#fecaca':r.sentiment==='긍정'?'#bbf7d0':'#fde68a'};background:${r.sentiment==='부정'?'#fee2e2':r.sentiment==='긍정'?'#dcfce7':'#fef3c7'};color:${r.sentiment==='부정'?'#991b1b':r.sentiment==='긍정'?'#166534':'#92400e'};font-weight:600;cursor:pointer">
+              <option value="긍정" ${r.sentiment==='긍정'?'selected':''}>😊 긍정</option>
+              <option value="혼합" ${(r.sentiment==='혼합'||r.sentiment==='중립')?'selected':''}>😐 중립</option>
+              <option value="부정" ${r.sentiment==='부정'?'selected':''}>😞 부정</option>
+            </select>
             <span style="background:#dcfce7;color:#166534;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:600">✅ ${r.reply_posted_date || ''} 게시</span>
           </div>
           <div style="font-size:11px;color:#9ca3af">${r.date} · ${r.reviewer || '익명'} · ${r.id}</div>
@@ -3903,11 +3907,16 @@ function updateWeeklyReport() {
     .sort((a, b) => b._mktScore - a._mktScore)
     .slice(0, 3);
 
-  // ── CS 대응: 재분류된 부정 기준 ──
+  // ── CS 대응: 재분류된 부정/혼합 리뷰 전부 표시 (사용자 요청) ──
   const csReviews = weekReviews
-    .filter(r => r._weekSentiment === '부정' || r._weekSentiment === '혼합')
-    .sort((a, b) => (a._weekSentiment === '부정' ? 0 : 1) - (b._weekSentiment === '부정' ? 0 : 1))
-    .slice(0, 3);
+    .filter(r => r._weekSentiment === '부정' || r._weekSentiment === '혼합' || r.sentiment === '부정' || r.is_negative)
+    .sort((a, b) => {
+      // 부정 우선, 그 다음 혼합. 같은 등급이면 날짜 최신순
+      const aRank = (a._weekSentiment === '부정' || a.sentiment === '부정' || a.is_negative) ? 0 : 1;
+      const bRank = (b._weekSentiment === '부정' || b.sentiment === '부정' || b.is_negative) ? 0 : 1;
+      if (aRank !== bRank) return aRank - bRank;
+      return (b.date||'').localeCompare(a.date||'');
+    });
 
   // ── 강한 긍정: 길고 감동적인 리뷰 우선 ──
   const strongPosCandidates = weekReviews
@@ -3919,7 +3928,7 @@ function updateWeeklyReport() {
   const specialWeekKey = `ega_special_reviews_${s.toISOString().slice(0,10)}_${e.toISOString().slice(0,10)}`;
   let specialReviews = {
     strong_pos: ensureOliveYoungIncluded(strongPosCandidates, r => r._weekSentiment === '긍정' && r.text && r.text.length >= 15),
-    cs: ensureOliveYoungIncluded(csReviews, r => r._weekSentiment === '부정' || r._weekSentiment === '혼합'),
+    cs: csReviews, // 부정/혼합 리뷰 전부 표시 (올영 강제 포함 없이)
     marketing: ensureOliveYoungIncluded(marketingCandidates, r => r._weekSentiment === '긍정' && r.text && r.text.length >= 15),
   };
   try {
@@ -4778,6 +4787,16 @@ window.setSentimentOverride = function(id, newSentiment) {
     renderIssueReviewsList();
   }
   if (typeof updateDashboard === 'function') updateDashboard();
+  // 위클리 리포트가 활성 페이지면 즉시 갱신 (감정 분포·CS 대응 영역 반영)
+  if (typeof updateWeeklyReport === 'function') {
+    const weeklyPage = document.getElementById('page-weekly');
+    if (weeklyPage && weeklyPage.classList.contains('active')) updateWeeklyReport();
+  }
+  // 답변 아카이브가 활성 페이지면 갱신
+  if (typeof renderReplyArchive === 'function') {
+    const archivePage = document.getElementById('page-replyArchive');
+    if (archivePage && archivePage.classList.contains('active')) renderReplyArchive();
+  }
 };
 
 // ===== 위클리 인사이트 저장/로드 (localStorage 기반) =====
