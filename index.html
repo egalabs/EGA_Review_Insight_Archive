@@ -406,6 +406,26 @@
 </head>
 <body>
 
+<!-- ===== 드래그앤드롭 CSS (G ↔ D) ===== -->
+<style>
+  .raw-table tr[draggable="true"]:hover { background:#eff6ff !important; }
+  .raw-table tr[draggable="true"]:active { cursor:grabbing }
+  .special-section-card { transition: background .15s, border-color .15s; min-height:120px; }
+  .special-section-card.drag-over {
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%) !important;
+    border: 2px dashed #3b6cf0 !important;
+    box-shadow: 0 0 0 4px rgba(59,108,240,0.1);
+  }
+  .special-section-card.drag-over .drop-hint {
+    border-color: #3b6cf0 !important;
+    color: #1d4ed8 !important;
+    font-weight: 600;
+  }
+  .special-review-item[draggable="true"]:active { cursor:grabbing }
+  .special-review-item:hover .special-mini-x { opacity:1; transform:scale(1); }
+  .special-mini-x { opacity:0.6; transition: all .15s; }
+</style>
+
 <!-- ===== 🔒 로그인 게이트 (EGA 임직원 전용) ===== -->
 <div id="auth-gate" style="position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,#1a1f2e 0%,#2d3548 100%);z-index:999999;display:flex;align-items:center;justify-content:center;font-family:'Pretendard','맑은 고딕',sans-serif">
   <div style="background:#fff;border-radius:16px;padding:40px 36px;width:380px;max-width:90vw;box-shadow:0 24px 80px rgba(0,0,0,.35);text-align:center">
@@ -1447,78 +1467,6 @@ window.logoutEGA = logoutEGA;
     </div>
   </div>
 
-  <!-- E. 제품별 분석 -->
-  <div class="report-section">
-    <div class="report-section-title">E. 제품별 분석</div>
-    <div class="grid-2"><div class="product-card">
-      <div class="product-card-header">
-        <div class="product-card-name">NMN</div>
-        <span class="tag tag-channel" style="font-size:10px">11건</span>
-      </div>
-      <div class="product-card-stats">
-        <div class="product-stat"><div class="product-stat-val">11</div><div class="product-stat-lbl">리뷰 수</div></div>
-        <div class="product-stat"><div class="product-stat-val" style="color:var(--positive)">7</div><div class="product-stat-lbl">긍정</div></div>
-        <div class="product-stat"><div class="product-stat-val" style="color:var(--negative)">0</div><div class="product-stat-lbl">부정</div></div>
-      </div>
-      <div style="margin-bottom:6px"><div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">👍 긍정 포인트</div><div class="tags"><span class="tag tag-positive" style="font-size:10px">만족</span><span class="tag tag-positive" style="font-size:10px">꾸준한 복용</span></div></div>
-      
-      <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">💬 마케팅 활용 후보</div><div style="font-size:11.5px;color:var(--text-secondary);font-style:italic;border-left:2px solid var(--blue);padding-left:8px">"만족..."</div>
-    </div><div class="product-card">
-      <div class="product-card-header">
-        <div class="product-card-name">핸드크림 세트</div>
-        <span class="tag tag-channel" style="font-size:10px">10건</span>
-      </div>
-      <div class="product-card-stats">
-        <div class="product-stat"><div class="product-stat-val">10</div><div class="product-stat-lbl">리뷰 수</div></div>
-        <div class="product-stat"><div class="product-stat-val" style="color:var(--positive)">8</div><div class="product-stat-lbl">긍정</div></div>
-        <div class="product-stat"><div class="product-stat-val" style="color:var(--negative)">2</div><div class="product-stat-lbl">부정</div></div>
-      </div>
-      <div style="margin-bottom:6px"><div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">👍 긍정 포인트</div><div class="tags"><span class="tag tag-positive" style="font-size:10px">장기 사용</span><span class="tag tag-positive" style="font-size:10px">손 안티에이징</span></div></div>
-      
-      <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">💬 마케팅 활용 후보</div><div style="font-size:11.5px;color:var(--text-secondary);font-style:italic;border-left:2px solid var(--blue);padding-left:8px">"무향이라 너무 좋아요! 임신하고 세상의 모든 냄새가 싫었는데... 이거 바르면서 심신의 안정을 찾았어요. 후..."</div>
-    </div><div class="product-card">
-      <div class="product-card-header">
-        <div class="product-card-name">마스크팩</div>
-        <span class="tag tag-channel" style="font-size:10px">6건</span>
-      </div>
-      <div class="product-card-stats">
-        <div class="product-stat"><div class="product-stat-val">6</div><div class="product-stat-lbl">리뷰 수</div></div>
-        <div class="product-stat"><div class="product-stat-val" style="color:var(--positive)">4</div><div class="product-stat-lbl">긍정</div></div>
-        <div class="product-stat"><div class="product-stat-val" style="color:var(--negative)">0</div><div class="product-stat-lbl">부정</div></div>
-      </div>
-      <div style="margin-bottom:6px"><div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">👍 긍정 포인트</div><div class="tags"><span class="tag tag-positive" style="font-size:10px">만족</span><span class="tag tag-positive" style="font-size:10px">평이한 평가</span></div></div>
-      
-      <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">💬 마케팅 활용 후보</div><div style="font-size:11.5px;color:var(--text-secondary);font-style:italic;border-left:2px solid var(--blue);padding-left:8px">"흡수도잘되고. 피부가깨끗해진거같아요..."</div>
-    </div><div class="product-card">
-      <div class="product-card-header">
-        <div class="product-card-name">어드밴스드</div>
-        <span class="tag tag-channel" style="font-size:10px">2건</span>
-      </div>
-      <div class="product-card-stats">
-        <div class="product-stat"><div class="product-stat-val">2</div><div class="product-stat-lbl">리뷰 수</div></div>
-        <div class="product-stat"><div class="product-stat-val" style="color:var(--positive)">1</div><div class="product-stat-lbl">긍정</div></div>
-        <div class="product-stat"><div class="product-stat-val" style="color:var(--negative)">0</div><div class="product-stat-lbl">부정</div></div>
-      </div>
-      <div style="margin-bottom:6px"><div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">👍 긍정 포인트</div><div class="tags"><span class="tag tag-positive" style="font-size:10px">무향</span><span class="tag tag-positive" style="font-size:10px">자외선 차단</span></div></div>
-      
-      <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">💬 마케팅 활용 후보</div><div style="font-size:11.5px;color:var(--text-secondary);font-style:italic;border-left:2px solid var(--blue);padding-left:8px">"무향이고 자외선 차단까지 되는데 끈적임 없이 가벼워서 좋아요..."</div>
-    </div></div>
-  </div>
-
-  <!-- F. 액션 아이템 -->
-  <div class="report-section">
-    <div class="report-section-title">F. 이번 주 액션 아이템</div>
-    <div class="grid-2">
-      <div>
-        <div class="action-item"><div class="action-icon blue">📄</div><div class="action-text"><div class="action-label">상세페이지 반영</div>"끈적임 없음", "빠른 흡수" 키워드를 핸드크림 라인 상세페이지 텍스처 설명 섹션에 반영</div></div>
-        <div class="action-item"><div class="action-icon blue">📢</div><div class="action-text"><div class="action-label">광고 카피 반영</div>재구매 고객의 긍정 표현("또 사달라고 해요", "N번째 구매") 활용한 SNS 소재 기획</div></div>
-      </div>
-      <div>
-        <div class="action-item"><div class="action-icon amber">💬</div><div class="action-text"><div class="action-label">CS FAQ 보완</div>향(무향/은은한향) 관련 문의 빈도 증가 — FAQ 업데이트 및 상세 설명 보강 필요</div></div>
-        <div class="action-item"><div class="action-icon green">🎥</div><div class="action-text"><div class="action-label">콘텐츠 소재화</div>효과 체감 리뷰(생리통 감소, 피부 붉은기 개선 등) 고객 사례 인터뷰 소재로 활용 검토</div></div>
-      </div>
-    </div>
-  </div>
   <!-- G. 원본 리뷰 데이터 -->
   <div class="report-section">
     <div class="report-section-title">G. 이번 주 원본 리뷰 데이터</div>
@@ -4339,52 +4287,7 @@ function updateWeeklyReport() {
     <div id="editable-special-reviews"></div>
   </div>
 
-  <!-- E. 제품별 분석 -->
-  <div class="report-section">
-    <div class="report-section-title">E. 제품별 분석</div>
-    <div class="grid-2">${prodCardsHtml}</div>
-  </div>
-
-  <!-- F. 액션 아이템 (동적 생성) -->
-  <div class="report-section">
-    <div class="report-section-title">F. 이번 주 액션 아이템</div>
-    <div class="grid-2">
-      <div>
-        ${(()=>{
-          const items = [];
-          // 마케팅 소재
-          const bestQuote = marketingCandidates[0];
-          if (bestQuote) items.push(`<div class="action-item"><div class="action-icon blue">📢</div><div class="action-text"><div class="action-label">SNS 마케팅 소재</div>"${bestQuote.text.slice(0,50)}..." — ${bestQuote.reviewer} 리뷰 활용 콘텐츠 기획</div></div>`);
-          const oyQuote = oliveYoungWeekReviews.find(r => (r._weekSentiment === '긍정' || r._weekSentiment === '혼합') && r.text && r.text.length >= 15);
-          if (oyQuote) items.push(`<div class="action-item"><div class="action-icon blue">🛒</div><div class="action-text"><div class="action-label">올리브영 리뷰 인사이트</div>올영 리뷰에서 "${oyQuote.text.slice(0,45)}..." 확인 — 올영 상세/기획전 소재에 고객 언어 반영</div></div>`);
-          // 상세페이지
-          const topPosKw2 = posKws.slice(0,2).map(([k])=>'"'+k+'"').join(', ');
-          if (topPosKw2) items.push(`<div class="action-item"><div class="action-icon blue">📄</div><div class="action-text"><div class="action-label">상세페이지 키워드 반영</div>${topPosKw2} 키워드를 상세페이지 텍스처 설명에 적극 반영</div></div>`);
-          // 선물 마케팅
-          const giftCount2 = weekReviews.filter(r=>(r.text||'').match(/선물|엄마|드렸/)).length;
-          if (giftCount2 >= 2) items.push(`<div class="action-item"><div class="action-icon green">🎁</div><div class="action-text"><div class="action-label">기프팅 마케팅</div>선물 구매 ${giftCount2}건 — "소중한 사람에게" 기프트 세트 마케팅 소재 제작</div></div>`);
-          return items.join('');
-        })()}
-      </div>
-      <div>
-        ${(()=>{
-          const items = [];
-          // CS 대응
-          if (wNegCount > 0) {
-            const negSample = weekReviews.filter(r=>r._weekSentiment==='부정')[0];
-            items.push(`<div class="action-item"><div class="action-icon red">⚠️</div><div class="action-text"><div class="action-label">CS 즉시 대응</div>부정 리뷰 ${wNegCount}건 확인 — "${negSample?(negSample.text||'').slice(0,40)+'...':''}" 등 원인 파악 및 응대</div></div>`);
-          }
-          // 가격 소구
-          const priceCount2 = weekReviews.filter(r=>(r.text||'').match(/비싸|가격/)).length;
-          if (priceCount2 >= 2) items.push(`<div class="action-item"><div class="action-icon amber">💰</div><div class="action-text"><div class="action-label">가격 가치 소구 강화</div>"비싸다" 언급 ${priceCount2}건 — 성분·기술력 중심 가치 커뮤니케이션 강화, 기획세트 할인 프로모션 강조</div></div>`);
-          // 재구매 CRM
-          const repCount = weekReviews.filter(r=>r.has_repurchase).length;
-          if (repCount > 0) items.push(`<div class="action-item"><div class="action-icon green">🔄</div><div class="action-text"><div class="action-label">재구매 고객 CRM</div>재구매 언급 ${repCount}건 — 충성 고객 전용 혜택 및 리뷰 이벤트 기획</div></div>`);
-          return items.join('');
-        })()}
-      </div>
-    </div>
-  </div>`;
+  `;
 
 
   // ── G. 원본 리뷰 데이터 테이블 ──
@@ -4397,7 +4300,7 @@ function updateWeeklyReport() {
     const sentColor = ws==='긍정'?'var(--positive)':ws==='부정'?'var(--negative)':'var(--warning)';
     const kwHtml = (r.keywords||[]).slice(0,4).map(k=>`<span class="tag tag-keyword" style="font-size:10px;padding:1px 6px;margin-bottom:2px">${k}</span>`).join(' ');
     const productShort = (r.product_category||'기타') + ' · ' + (r.product_norm||r.product||'').slice(0,20) + ((r.product_norm||r.product||'').length>20?'…':'');
-    return `<tr>
+    return `<tr draggable="true" data-review-id="${r.id}" ondragstart="handleRawDragStart(event,'${r.id}')" ondragend="this.style.opacity=''" style="cursor:grab" title="드래그해서 ⭐긍정/⚠CS/💡마케팅으로 추가">
       <td class="col-date">${r.date}</td>
       <td>${channelTag(r.channel)}</td>
       <td class="col-product" title="${r.product||''}">${productShort}</td>
@@ -4460,8 +4363,9 @@ function renderEditableMiniReview(r, section, idx){
   const ch = typeof channelTag === 'function' ? channelTag(r.channel||'') : `<span class="tag tag-channel">${r.channel||''}</span>`;
   const text = (r.text||'').slice(0,90) + ((r.text||'').length>90 ? '...' : '');
   const product = (r.product||'').slice(0,44) + ((r.product||'').length>44 ? '...' : '');
-  return `<div class="special-review-item">
-    <div class="mini-review-clickable" data-pid="${pid}" style="cursor:pointer">
+  return `<div class="special-review-item" draggable="true" ondragstart="handleSpecialDragStart(event,'${section}',${idx})" ondragend="this.style.opacity=''" style="position:relative;cursor:grab">
+    <button class="special-mini-x" onclick="deleteSpecialReview('${section}',${idx});event.stopPropagation();" title="이 카드에서 빼기" style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,.06);border:none;width:22px;height:22px;border-radius:50%;cursor:pointer;font-size:13px;color:#6b7280;display:flex;align-items:center;justify-content:center;line-height:1;z-index:2" onmouseover="this.style.background='#fee2e2';this.style.color='#dc2626'" onmouseout="this.style.background='rgba(0,0,0,.06)';this.style.color='#6b7280'">✕</button>
+    <div class="mini-review-clickable" data-pid="${pid}" style="cursor:pointer;padding-right:20px">
       <div style="display:flex;gap:6px;align-items:center;margin-bottom:4px">${ch}<span style="font-size:11px;color:var(--text-muted)">${r.date||''}</span><span style="font-size:11px;color:var(--text-muted)">${r.reviewer||''}</span></div>
       <div style="font-size:12.5px;color:var(--text-primary);line-height:1.6">"${text}"</div>
       <div style="font-size:11px;color:var(--text-muted);margin-top:4px">${product}</div>
@@ -4472,7 +4376,6 @@ function renderEditableMiniReview(r, section, idx){
       <button class="special-mini-btn" onclick="changeSpecialReviewSection('${section}',${idx},'strong_pos');event.stopPropagation();">긍정으로</button>
       <button class="special-mini-btn" onclick="changeSpecialReviewSection('${section}',${idx},'cs');event.stopPropagation();">CS로</button>
       <button class="special-mini-btn" onclick="changeSpecialReviewSection('${section}',${idx},'marketing');event.stopPropagation();">마케팅으로</button>
-      <button class="special-mini-btn danger" onclick="deleteSpecialReview('${section}',${idx});event.stopPropagation();">삭제</button>
     </div>
   </div>`;
 }
@@ -4481,15 +4384,94 @@ function renderEditableSpecialReviewsSection(){
   const container = document.getElementById('editable-special-reviews');
   if(!container || !window._currentSpecialReviews) return;
   const sections = ['strong_pos','cs','marketing'];
-  container.innerHTML = `<div class="grid-3">${sections.map(sec=>{
+  container.innerHTML = `<div style="font-size:11.5px;color:var(--text-muted);margin-bottom:8px">💡 아래 카드에 <strong>G. 원본 리뷰 데이터</strong>의 행을 드래그해서 넣을 수 있어요. 카드 내 리뷰는 ✕로 빼거나 드래그로 다른 카드에 이동 가능합니다.</div><div class="grid-3">${sections.map(sec=>{
     const meta = specialSectionMeta(sec);
     const list = window._currentSpecialReviews[sec] || [];
-    return `<div class="special-section-card">
+    return `<div class="special-section-card" data-drop-section="${sec}"
+      ondragover="event.preventDefault();event.dataTransfer.dropEffect='copy';this.classList.add('drag-over')"
+      ondragleave="this.classList.remove('drag-over')"
+      ondrop="handleDropToSpecial(event,'${sec}')">
       <div class="special-section-head"><div class="special-section-title" style="color:${meta.color}">${meta.title}</div><span class="tag tag-grey">${list.length}건</span></div>
-      ${list.length ? list.map((r,i)=>renderEditableMiniReview(r,sec,i)).join('') : `<div class="callout ${sec==='cs'?'green':''}">${meta.empty}</div>`}
+      ${list.length ? list.map((r,i)=>renderEditableMiniReview(r,sec,i)).join('') : `<div class="callout drop-hint" style="border:2px dashed #d1d5db;text-align:center;color:#9ca3af;padding:20px;font-size:12px">📥 G에서 리뷰를 끌어다 놓으세요<br><span style="font-size:11px">${meta.empty}</span></div>`}
     </div>`;
   }).join('')}</div>`;
 }
+
+// ===== 드래그앤드롭 핸들러 (G ↔ D) =====
+window._draggedFromRaw = null;
+window._draggedFromSpecial = null;
+
+window.handleRawDragStart = function(ev, reviewId) {
+  window._draggedFromRaw = reviewId;
+  window._draggedFromSpecial = null;
+  ev.dataTransfer.effectAllowed = 'copy';
+  try { ev.dataTransfer.setData('text/plain', reviewId); } catch(e) {}
+  if (ev.currentTarget) ev.currentTarget.style.opacity = '0.4';
+};
+
+window.handleSpecialDragStart = function(ev, section, idx) {
+  window._draggedFromSpecial = { section, idx };
+  window._draggedFromRaw = null;
+  ev.dataTransfer.effectAllowed = 'move';
+  try { ev.dataTransfer.setData('text/plain', section + ':' + idx); } catch(e) {}
+  if (ev.currentTarget) ev.currentTarget.style.opacity = '0.4';
+};
+
+window.handleDropToSpecial = function(ev, targetSection) {
+  ev.preventDefault();
+  if (ev.currentTarget) ev.currentTarget.classList.remove('drag-over');
+
+  // 1) G(원본 테이블)에서 드래그된 경우 — 추가
+  if (window._draggedFromRaw) {
+    const reviewId = window._draggedFromRaw;
+    window._draggedFromRaw = null;
+    const review = (ALL_REVIEWS || []).find(r => r.id === reviewId);
+    if (!review) return;
+
+    // 중복 방지 — 같은 (date + text 앞 30자 + reviewer)면 안 넣음
+    const sig = (r) => (r.date||'') + '|' + (r.text||'').slice(0,30) + '|' + (r.reviewer||'');
+    const existsAnywhere = ['strong_pos','cs','marketing'].some(s => {
+      const arr = (window._currentSpecialReviews && window._currentSpecialReviews[s]) || [];
+      return arr.some(r => sig(r) === sig(review));
+    });
+    if (existsAnywhere) {
+      if (typeof showToast === 'function') showToast('이미 특이 리뷰에 포함된 리뷰입니다', 'error');
+      return;
+    }
+
+    window._currentSpecialReviews[targetSection] = window._currentSpecialReviews[targetSection] || [];
+    const sentForSection = targetSection === 'cs' ? '혼합' : '긍정';
+    window._currentSpecialReviews[targetSection].push({
+      date: review.date, channel: review.channel, text: review.text || '',
+      product: review.product || '', reviewer: review.reviewer || '',
+      sentiment: review.sentiment, _weekSentiment: sentForSection,
+      keywords: review.keywords || []
+    });
+    saveSpecialReviews();
+    renderEditableSpecialReviewsSection();
+    if (typeof showToast === 'function') {
+      const meta = specialSectionMeta(targetSection);
+      showToast(meta.title + '에 추가했어요', 'success');
+    }
+    return;
+  }
+
+  // 2) D(특이 리뷰)에서 드래그된 경우 — 다른 섹션으로 이동
+  if (window._draggedFromSpecial) {
+    const { section: fromSection, idx } = window._draggedFromSpecial;
+    window._draggedFromSpecial = null;
+    if (fromSection === targetSection) return;
+    const item = window._currentSpecialReviews[fromSection][idx];
+    if (!item) return;
+    window._currentSpecialReviews[fromSection].splice(idx, 1);
+    item._weekSentiment = targetSection === 'cs' ? '혼합' : '긍정';
+    window._currentSpecialReviews[targetSection] = window._currentSpecialReviews[targetSection] || [];
+    window._currentSpecialReviews[targetSection].push(item);
+    saveSpecialReviews();
+    renderEditableSpecialReviewsSection();
+    if (typeof showToast === 'function') showToast('이동 완료', 'success');
+  }
+};
 
 function deleteSpecialReview(section, idx){
   if(!window._currentSpecialReviews || !window._currentSpecialReviews[section]) return;
