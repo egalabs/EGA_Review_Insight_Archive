@@ -1470,11 +1470,15 @@ window.logoutEGA = logoutEGA;
   <!-- G. 원본 리뷰 데이터 -->
   <div class="report-section">
     <div class="report-section-title">G. 이번 주 원본 리뷰 데이터</div>
+    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12.5px;color:#1e40af;line-height:1.6">
+      💡 <strong>각 행 맨 왼쪽 <span style="color:#3b6cf0;font-size:15px;font-weight:700">⋮⋮</span> 핸들을 잡고 끌어다 위쪽 D 섹션 카드(⭐긍정 / ⚠CS / 💡마케팅)에 놓으면 추가됩니다.</strong> (행 어디든 잡아도 됨)
+    </div>
     <div class="review-raw-count">총 <strong>33건</strong> · 03/23 ~ 03/29</div>
     <div class="raw-table-wrap" style="max-height:480px;overflow-y:auto">
       <table class="raw-table" id="raw-review-table">
         <thead>
           <tr>
+            <th style="width:28px;text-align:center" title="드래그 핸들">⋮⋮</th>
             <th data-col="date" onclick="sortRawTable('date')">날짜 <span class="sort-icon sort-active">↑</span></th>
             <th data-col="channel" onclick="sortRawTable('channel')">채널 <span class="sort-icon">↕</span></th>
             <th data-col="product" onclick="sortRawTable('product')" class="col-product">제품 (SKU) <span class="sort-icon">↕</span></th>
@@ -2286,7 +2290,8 @@ function renderRawTable() {
     const sentColor = ws==='긍정'?'var(--positive)':ws==='부정'?'var(--negative)':'var(--warning)';
     const kwHtml = (r.keywords||[]).slice(0,4).map(k=>`<span class="tag tag-keyword" style="font-size:10px;padding:1px 6px;margin-bottom:2px">${k}</span>`).join(' ');
     const productShort = (r.product_category||'기타') + ' · ' + (r.product_norm||r.product||'').slice(0,20) + ((r.product_norm||r.product||'').length>20?'…':'');
-    return `<tr>
+    return `<tr draggable="true" data-review-id="${r.id}" ondragstart="handleRawDragStart(event,'${r.id}')" ondragend="this.style.opacity=''" style="cursor:grab" title="이 행을 끌어서 ⭐긍정/⚠CS/💡마케팅 카드로 옮기세요">
+      <td class="col-drag" style="width:28px;text-align:center;color:#9ca3af;font-size:14px;cursor:grab;user-select:none">⋮⋮</td>
       <td class="col-date">${r.date}</td>
       <td>${channelTag(r.channel)}</td>
       <td class="col-product" title="${r.product||''}">${productShort}</td>
@@ -4300,7 +4305,8 @@ function updateWeeklyReport() {
     const sentColor = ws==='긍정'?'var(--positive)':ws==='부정'?'var(--negative)':'var(--warning)';
     const kwHtml = (r.keywords||[]).slice(0,4).map(k=>`<span class="tag tag-keyword" style="font-size:10px;padding:1px 6px;margin-bottom:2px">${k}</span>`).join(' ');
     const productShort = (r.product_category||'기타') + ' · ' + (r.product_norm||r.product||'').slice(0,20) + ((r.product_norm||r.product||'').length>20?'…':'');
-    return `<tr draggable="true" data-review-id="${r.id}" ondragstart="handleRawDragStart(event,'${r.id}')" ondragend="this.style.opacity=''" style="cursor:grab" title="드래그해서 ⭐긍정/⚠CS/💡마케팅으로 추가">
+    return `<tr draggable="true" data-review-id="${r.id}" ondragstart="handleRawDragStart(event,'${r.id}')" ondragend="this.style.opacity=''" style="cursor:grab" title="이 행을 끌어서 ⭐긍정/⚠CS/💡마케팅 카드로 옮기세요">
+      <td class="col-drag" style="width:28px;text-align:center;color:#9ca3af;font-size:14px;cursor:grab;user-select:none">⋮⋮</td>
       <td class="col-date">${r.date}</td>
       <td>${channelTag(r.channel)}</td>
       <td class="col-product" title="${r.product||''}">${productShort}</td>
@@ -4315,11 +4321,15 @@ function updateWeeklyReport() {
   <!-- G. 원본 리뷰 데이터 -->
   <div class="report-section">
     <div class="report-section-title">G. 이번 주 원본 리뷰 데이터</div>
+    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12.5px;color:#1e40af;line-height:1.6">
+      💡 <strong>각 행 맨 왼쪽 <span style="color:#3b6cf0;font-size:15px;font-weight:700">⋮⋮</span> 핸들을 잡고 끌어다 위쪽 D 섹션 카드(⭐긍정 / ⚠CS / 💡마케팅)에 놓으면 추가됩니다.</strong> (행 어디든 잡아도 됨)
+    </div>
     <div class="review-raw-count">총 <strong>${sortedWeekRevs.length}건</strong> · ${weekLabel}</div>
     <div class="raw-table-wrap" style="max-height:480px;overflow-y:auto">
       <table class="raw-table" id="raw-review-table">
         <thead>
           <tr>
+            <th style="width:28px;text-align:center" title="드래그 핸들">⋮⋮</th>
             <th data-col="date" onclick="sortRawTable('date')">날짜 <span class="sort-icon sort-active">↑</span></th>
             <th data-col="channel" onclick="sortRawTable('channel')">채널 <span class="sort-icon">↕</span></th>
             <th data-col="product" onclick="sortRawTable('product')" class="col-product">제품 (SKU) <span class="sort-icon">↕</span></th>
