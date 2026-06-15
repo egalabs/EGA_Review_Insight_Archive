@@ -566,6 +566,11 @@ window.logoutEGA = logoutEGA;
         답변 아카이브
         <span class="nav-badge" id="nav-reply-archive-count" style="background:#10b981">0</span>
       </a>
+      <a class="nav-item" onclick="showPage('inquiryArchive')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+        문의 아카이브
+        <span class="nav-badge" id="nav-inquiry-count" style="background:#8b5cf6">0</span>
+      </a>
       <div class="nav-section-label">System</div>
       <a class="nav-item" onclick="showPage('admin')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M19.07 19.07l-1.41-1.41M4.93 19.07l1.41-1.41M20 12h1M3 12H2M12 20v1M12 3V2"></path></svg>
@@ -2038,6 +2043,151 @@ window.logoutEGA = logoutEGA;
       <div class="pagination" id="reply-archive-pagination"></div>
     </div>
 
+    <!-- ===== INQUIRY ARCHIVE ===== -->
+    <div class="page" id="page-inquiryArchive">
+      <div class="page-header">
+        <div class="page-header-row">
+          <div>
+            <div class="page-title">❓ 문의 아카이브</div>
+            <div class="page-subtitle">스마트스토어/카페24/올영 등 문의·답변 직접 기록 · 검색 · 공유</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button onclick="exportInquiries()" style="padding:8px 14px;background:#fff;border:1px solid #d1d5db;border-radius:6px;font-size:13px;cursor:pointer;font-weight:500">📤 내보내기 (JSON)</button>
+            <label style="padding:8px 14px;background:#fff;border:1px solid #d1d5db;border-radius:6px;font-size:13px;cursor:pointer;font-weight:500">
+              📥 가져오기
+              <input type="file" accept=".json" onchange="importInquiries(event)" style="display:none">
+            </label>
+            <button onclick="showInquiryForm()" style="padding:8px 16px;background:#3b6cf0;border:none;border-radius:6px;font-size:13px;color:#fff;cursor:pointer;font-weight:600">+ 문의 추가</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 입력 폼 (토글) -->
+      <div id="inquiry-form" style="display:none;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:20px;margin-bottom:18px;box-shadow:0 1px 3px rgba(0,0,0,0.04)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <div style="font-size:15px;font-weight:700;color:#111" id="inquiry-form-title">새 문의 추가</div>
+          <button onclick="hideInquiryForm()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#9ca3af">✕</button>
+        </div>
+        <input type="hidden" id="inq-edit-id" value="">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
+          <div>
+            <label style="font-size:11px;color:#6b7280;font-weight:600;display:block;margin-bottom:4px">채널</label>
+            <select id="inq-channel" style="width:100%;padding:9px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px">
+              <option value="스마트스토어">🟢 스마트스토어</option>
+              <option value="카페24">🛒 카페24 (자사몰)</option>
+              <option value="올리브영">🛍️ 올리브영</option>
+              <option value="크리마">💬 크리마</option>
+              <option value="DM/카톡">💌 DM/카톡</option>
+              <option value="기타">기타</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:11px;color:#6b7280;font-weight:600;display:block;margin-bottom:4px">제품</label>
+            <select id="inq-product" style="width:100%;padding:9px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px">
+              <option value="">선택 안함</option>
+              <option value="핸드크림">🤲 핸드크림</option>
+              <option value="NMN">💊 NMN</option>
+              <option value="마스크팩">🩹 마스크팩</option>
+              <option value="앰플">💧 앰플</option>
+              <option value="에센스">✨ 에센스</option>
+              <option value="종합 패키지">📦 종합 패키지</option>
+              <option value="시즌 선물세트">🎁 시즌 선물세트</option>
+              <option value="기타">기타</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:11px;color:#6b7280;font-weight:600;display:block;margin-bottom:4px">문의자 (마스킹)</label>
+            <input type="text" id="inq-author" placeholder="예: baby*****" style="width:100%;padding:9px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px">
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
+          <div>
+            <label style="font-size:11px;color:#6b7280;font-weight:600;display:block;margin-bottom:4px">문의일</label>
+            <input type="date" id="inq-date" style="width:100%;padding:9px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px">
+          </div>
+          <div>
+            <label style="font-size:11px;color:#6b7280;font-weight:600;display:block;margin-bottom:4px">답변일 (선택)</label>
+            <input type="date" id="inq-reply-date" style="width:100%;padding:9px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px">
+          </div>
+          <div>
+            <label style="font-size:11px;color:#6b7280;font-weight:600;display:block;margin-bottom:4px">카테고리 (선택)</label>
+            <select id="inq-category" style="width:100%;padding:9px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px">
+              <option value="">선택 안함</option>
+              <option value="사용법">🙋 사용법</option>
+              <option value="배송">🚚 배송</option>
+              <option value="교환/환불">↩️ 교환/환불</option>
+              <option value="성분/효능">🧪 성분/효능</option>
+              <option value="가격/쿠폰">💰 가격/쿠폰</option>
+              <option value="재고">📦 재고</option>
+              <option value="기타">기타</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <label style="font-size:11px;color:#6b7280;font-weight:600;display:block;margin-bottom:4px">문의 내용 *</label>
+          <textarea id="inq-question" rows="3" placeholder="고객의 문의 내용을 입력하세요" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;resize:vertical;font-family:inherit"></textarea>
+        </div>
+        <div style="margin-bottom:14px">
+          <label style="font-size:11px;color:#6b7280;font-weight:600;display:block;margin-bottom:4px">답변 내용</label>
+          <textarea id="inq-answer" rows="5" placeholder="우리가 보낸 답변을 입력하세요 (모범 답변으로 활용)" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;resize:vertical;font-family:inherit"></textarea>
+        </div>
+        <div style="margin-bottom:14px">
+          <label style="font-size:11px;color:#6b7280;font-weight:600;display:block;margin-bottom:4px">태그 (쉼표 구분, 선택)</label>
+          <input type="text" id="inq-tags" placeholder="예: 자주묻는질문, 모범답안, 컴플레인" style="width:100%;padding:9px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px">
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:8px">
+          <button onclick="hideInquiryForm()" style="padding:9px 18px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:6px;font-size:13px;cursor:pointer">취소</button>
+          <button onclick="saveInquiry()" style="padding:9px 22px;background:#3b6cf0;border:none;border-radius:6px;font-size:13px;color:#fff;cursor:pointer;font-weight:600">저장</button>
+        </div>
+      </div>
+
+      <!-- 통계 -->
+      <div class="reply-stats-grid" style="margin-bottom:18px">
+        <div class="reply-stat-card"><div class="reply-stat-val" style="color:#8b5cf6" id="inq-stat-total">0</div><div class="reply-stat-lbl">총 문의</div></div>
+        <div class="reply-stat-card"><div class="reply-stat-val" style="color:#10b981" id="inq-stat-answered">0</div><div class="reply-stat-lbl">답변 완료</div></div>
+        <div class="reply-stat-card"><div class="reply-stat-val" style="color:#f59e0b" id="inq-stat-pending">0</div><div class="reply-stat-lbl">답변 대기</div></div>
+        <div class="reply-stat-card"><div class="reply-stat-val" id="inq-stat-recent">0</div><div class="reply-stat-lbl">최근 30일</div></div>
+      </div>
+
+      <!-- 필터 -->
+      <div class="reply-filter-bar" style="margin-bottom:14px;flex-wrap:wrap">
+        <div class="search-wrap" style="flex:1;min-width:240px;max-width:360px">
+          <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg>
+          <input class="search-input" placeholder="문의/답변/제품/태그 검색..." oninput="inqSearchQuery=this.value;renderInquiries()" id="inq-search">
+        </div>
+        <select class="filter-select" onchange="inqChannelFilter=this.value;renderInquiries()">
+          <option value="all">모든 채널</option>
+          <option value="스마트스토어">스마트스토어</option>
+          <option value="카페24">카페24</option>
+          <option value="올리브영">올리브영</option>
+          <option value="크리마">크리마</option>
+          <option value="DM/카톡">DM/카톡</option>
+          <option value="기타">기타</option>
+        </select>
+        <select class="filter-select" onchange="inqProductFilter=this.value;renderInquiries()">
+          <option value="all">모든 제품</option>
+          <option value="핸드크림">핸드크림</option>
+          <option value="NMN">NMN</option>
+          <option value="마스크팩">마스크팩</option>
+          <option value="앰플">앰플</option>
+          <option value="에센스">에센스</option>
+          <option value="종합 패키지">종합 패키지</option>
+          <option value="시즌 선물세트">시즌 선물세트</option>
+        </select>
+        <select class="filter-select" onchange="inqStatusFilter=this.value;renderInquiries()">
+          <option value="all">전체 상태</option>
+          <option value="answered">✅ 답변 완료</option>
+          <option value="pending">⏳ 답변 대기</option>
+        </select>
+        <select class="filter-select" onchange="inqSortOrder=this.value;renderInquiries()">
+          <option value="date_desc">문의일 최신순</option>
+          <option value="date_asc">문의일 오래된순</option>
+        </select>
+      </div>
+
+      <div id="inquiry-list"></div>
+    </div>
+
     <!-- ===== SALES ANALYSIS ===== -->
     <div class="page" id="page-sales">
       <div class="page-header">
@@ -2352,7 +2502,292 @@ function showPage(id) {
   if(id==='replyArchive') initReplyArchive();
   if(id==='writeRate') initWriteRate();
   if(id==='repurchase') initRepurchase();
+  if(id==='inquiryArchive') initInquiryArchive();
 }
+
+// ===== 문의 아카이브 =====
+let INQUIRIES = [];
+let inqSearchQuery = '';
+let inqChannelFilter = 'all';
+let inqProductFilter = 'all';
+let inqStatusFilter = 'all';
+let inqSortOrder = 'date_desc';
+const INQ_STORAGE_KEY = 'ega_inquiries_v1';
+
+function loadInquiries() {
+  try {
+    const raw = localStorage.getItem(INQ_STORAGE_KEY);
+    INQUIRIES = raw ? JSON.parse(raw) : [];
+  } catch(e) { INQUIRIES = []; }
+}
+
+function saveInquiriesStorage() {
+  try { localStorage.setItem(INQ_STORAGE_KEY, JSON.stringify(INQUIRIES)); } catch(e) { alert('저장 실패: ' + e.message); }
+}
+
+function initInquiryArchive() {
+  loadInquiries();
+  renderInquiries();
+  updateInquiryBadge();
+}
+
+function updateInquiryBadge() {
+  const badge = document.getElementById('nav-inquiry-count');
+  if (badge) badge.textContent = INQUIRIES.length;
+}
+
+function showInquiryForm(id) {
+  const form = document.getElementById('inquiry-form');
+  form.style.display = 'block';
+  const title = document.getElementById('inquiry-form-title');
+  if (id) {
+    const it = INQUIRIES.find(x => x.id === id);
+    if (it) {
+      title.textContent = '문의 수정';
+      document.getElementById('inq-edit-id').value = it.id;
+      document.getElementById('inq-channel').value = it.channel || '스마트스토어';
+      document.getElementById('inq-product').value = it.product || '';
+      document.getElementById('inq-author').value = it.author || '';
+      document.getElementById('inq-date').value = it.date || '';
+      document.getElementById('inq-reply-date').value = it.replyDate || '';
+      document.getElementById('inq-category').value = it.category || '';
+      document.getElementById('inq-question').value = it.question || '';
+      document.getElementById('inq-answer').value = it.answer || '';
+      document.getElementById('inq-tags').value = (it.tags || []).join(', ');
+    }
+  } else {
+    title.textContent = '새 문의 추가';
+    document.getElementById('inq-edit-id').value = '';
+    document.getElementById('inq-channel').value = '스마트스토어';
+    document.getElementById('inq-product').value = '';
+    document.getElementById('inq-author').value = '';
+    const today = new Date().toISOString().slice(0,10);
+    document.getElementById('inq-date').value = today;
+    document.getElementById('inq-reply-date').value = '';
+    document.getElementById('inq-category').value = '';
+    document.getElementById('inq-question').value = '';
+    document.getElementById('inq-answer').value = '';
+    document.getElementById('inq-tags').value = '';
+  }
+  form.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function hideInquiryForm() {
+  document.getElementById('inquiry-form').style.display = 'none';
+}
+
+function saveInquiry() {
+  const question = document.getElementById('inq-question').value.trim();
+  if (!question) { alert('문의 내용은 필수입니다.'); return; }
+
+  const tagsRaw = document.getElementById('inq-tags').value.trim();
+  const tags = tagsRaw ? tagsRaw.split(/[,，]/).map(t => t.trim()).filter(Boolean) : [];
+
+  const editId = document.getElementById('inq-edit-id').value;
+  const data = {
+    channel: document.getElementById('inq-channel').value,
+    product: document.getElementById('inq-product').value,
+    author: document.getElementById('inq-author').value.trim(),
+    date: document.getElementById('inq-date').value,
+    replyDate: document.getElementById('inq-reply-date').value,
+    category: document.getElementById('inq-category').value,
+    question: question,
+    answer: document.getElementById('inq-answer').value.trim(),
+    tags: tags
+  };
+
+  if (editId) {
+    const idx = INQUIRIES.findIndex(x => x.id === editId);
+    if (idx >= 0) INQUIRIES[idx] = { ...INQUIRIES[idx], ...data, updatedAt: new Date().toISOString() };
+  } else {
+    data.id = 'inq_' + Date.now() + '_' + Math.floor(Math.random()*1000);
+    data.createdAt = new Date().toISOString();
+    INQUIRIES.unshift(data);
+  }
+
+  saveInquiriesStorage();
+  hideInquiryForm();
+  renderInquiries();
+  updateInquiryBadge();
+  showInqToast(editId ? '수정 완료' : '추가 완료');
+}
+
+function deleteInquiry(id) {
+  if (!confirm('이 문의를 삭제할까요?')) return;
+  INQUIRIES = INQUIRIES.filter(x => x.id !== id);
+  saveInquiriesStorage();
+  renderInquiries();
+  updateInquiryBadge();
+  showInqToast('삭제 완료');
+}
+
+function copyInquiryAnswer(id) {
+  const it = INQUIRIES.find(x => x.id === id);
+  if (!it || !it.answer) return;
+  navigator.clipboard.writeText(it.answer).then(() => showInqToast('답변 복사됨'));
+}
+
+function exportInquiries() {
+  loadInquiries();
+  if (INQUIRIES.length === 0) { alert('내보낼 문의가 없습니다.'); return; }
+  const blob = new Blob([JSON.stringify({
+    exportedAt: new Date().toISOString(),
+    count: INQUIRIES.length,
+    inquiries: INQUIRIES
+  }, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'ega_inquiries_' + new Date().toISOString().slice(0,10) + '.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function importInquiries(ev) {
+  const file = ev.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      const incoming = Array.isArray(data) ? data : (data.inquiries || []);
+      if (!Array.isArray(incoming)) throw new Error('형식 오류');
+      const mode = confirm(`${incoming.length}건을 가져옵니다.\n\n[확인] = 기존에 합치기 (중복 ID 덮어쓰기)\n[취소] = 전체 교체`);
+      if (mode) {
+        const map = {};
+        INQUIRIES.forEach(x => map[x.id] = x);
+        incoming.forEach(x => { if (x.id) map[x.id] = x; else { x.id = 'inq_' + Date.now() + '_' + Math.floor(Math.random()*1000); map[x.id] = x; } });
+        INQUIRIES = Object.values(map);
+      } else {
+        INQUIRIES = incoming;
+      }
+      saveInquiriesStorage();
+      renderInquiries();
+      updateInquiryBadge();
+      showInqToast(`${incoming.length}건 가져옴`);
+    } catch(err) {
+      alert('가져오기 실패: ' + err.message);
+    }
+    ev.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
+function renderInquiries() {
+  // 통계
+  const total = INQUIRIES.length;
+  const answered = INQUIRIES.filter(x => x.answer && x.answer.trim()).length;
+  const pending = total - answered;
+  const now = Date.now();
+  const recent = INQUIRIES.filter(x => x.date && (now - new Date(x.date).getTime()) <= 30*86400*1000).length;
+  document.getElementById('inq-stat-total').textContent = total;
+  document.getElementById('inq-stat-answered').textContent = answered;
+  document.getElementById('inq-stat-pending').textContent = pending;
+  document.getElementById('inq-stat-recent').textContent = recent;
+
+  // 필터링
+  let list = [...INQUIRIES];
+  if (inqChannelFilter !== 'all') list = list.filter(x => x.channel === inqChannelFilter);
+  if (inqProductFilter !== 'all') list = list.filter(x => x.product === inqProductFilter);
+  if (inqStatusFilter === 'answered') list = list.filter(x => x.answer && x.answer.trim());
+  if (inqStatusFilter === 'pending') list = list.filter(x => !x.answer || !x.answer.trim());
+  if (inqSearchQuery) {
+    const q = inqSearchQuery.toLowerCase();
+    list = list.filter(x =>
+      (x.question || '').toLowerCase().includes(q) ||
+      (x.answer || '').toLowerCase().includes(q) ||
+      (x.product || '').toLowerCase().includes(q) ||
+      (x.author || '').toLowerCase().includes(q) ||
+      (x.tags || []).some(t => t.toLowerCase().includes(q))
+    );
+  }
+  list.sort((a,b) => {
+    const da = (a.date || a.createdAt || ''), db = (b.date || b.createdAt || '');
+    return inqSortOrder === 'date_asc' ? da.localeCompare(db) : db.localeCompare(da);
+  });
+
+  const container = document.getElementById('inquiry-list');
+  if (list.length === 0) {
+    container.innerHTML = `
+      <div style="text-align:center;padding:60px 20px;color:#9ca3af;background:#fff;border:1px dashed #e5e7eb;border-radius:10px">
+        <div style="font-size:42px;margin-bottom:12px">📭</div>
+        <div style="font-size:15px;font-weight:600;color:#374151;margin-bottom:6px">${INQUIRIES.length === 0 ? '아직 등록된 문의가 없습니다' : '조건에 맞는 문의가 없습니다'}</div>
+        <div style="font-size:13px">${INQUIRIES.length === 0 ? '오른쪽 위 [+ 문의 추가] 버튼으로 시작하세요' : '필터를 조정해보세요'}</div>
+      </div>`;
+    return;
+  }
+
+  const channelColor = {
+    '스마트스토어': '#03c75a',
+    '카페24': '#f97316',
+    '올리브영': '#22c55e',
+    '크리마': '#3b6cf0',
+    'DM/카톡': '#fbbf24',
+    '기타': '#9ca3af'
+  };
+
+  container.innerHTML = list.map(it => {
+    const hasAnswer = it.answer && it.answer.trim();
+    const ccolor = channelColor[it.channel] || '#9ca3af';
+    const tagsHtml = (it.tags || []).map(t => `<span style="display:inline-block;padding:2px 8px;background:#f3f4f6;color:#6b7280;border-radius:10px;font-size:11px;margin-right:4px">${escapeHtml(t)}</span>`).join('');
+    return `
+      <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:18px 20px;margin-bottom:12px;box-shadow:0 1px 2px rgba(0,0,0,0.03)">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span style="display:inline-block;padding:3px 10px;background:${ccolor};color:#fff;border-radius:4px;font-size:11px;font-weight:600">${escapeHtml(it.channel || '기타')}</span>
+            ${it.product ? `<span style="display:inline-block;padding:3px 10px;background:#eff6ff;color:#1d4ed8;border-radius:4px;font-size:11px;font-weight:600">${escapeHtml(it.product)}</span>` : ''}
+            ${it.category ? `<span style="display:inline-block;padding:3px 10px;background:#fef3c7;color:#92400e;border-radius:4px;font-size:11px;font-weight:600">${escapeHtml(it.category)}</span>` : ''}
+            ${hasAnswer
+              ? '<span style="display:inline-block;padding:3px 10px;background:#dcfce7;color:#15803d;border-radius:4px;font-size:11px;font-weight:600">✅ 답변완료</span>'
+              : '<span style="display:inline-block;padding:3px 10px;background:#fef3c7;color:#b45309;border-radius:4px;font-size:11px;font-weight:600">⏳ 답변대기</span>'}
+            ${it.author ? `<span style="font-size:12px;color:#6b7280">· ${escapeHtml(it.author)}</span>` : ''}
+            ${it.date ? `<span style="font-size:12px;color:#9ca3af">· ${escapeHtml(it.date)}</span>` : ''}
+          </div>
+          <div style="display:flex;gap:6px;flex-shrink:0">
+            ${hasAnswer ? `<button onclick="copyInquiryAnswer('${it.id}')" title="답변 복사" style="padding:5px 10px;background:#fff;border:1px solid #d1d5db;border-radius:5px;font-size:11px;cursor:pointer;color:#374151">📋 복사</button>` : ''}
+            <button onclick="showInquiryForm('${it.id}')" title="수정" style="padding:5px 10px;background:#fff;border:1px solid #d1d5db;border-radius:5px;font-size:11px;cursor:pointer;color:#374151">✏️</button>
+            <button onclick="deleteInquiry('${it.id}')" title="삭제" style="padding:5px 10px;background:#fff;border:1px solid #fecaca;border-radius:5px;font-size:11px;cursor:pointer;color:#dc2626">🗑</button>
+          </div>
+        </div>
+        <div style="background:#f9fafb;border-left:3px solid #6366f1;padding:10px 14px;border-radius:4px;margin-bottom:${hasAnswer ? '10px' : '8px'}">
+          <div style="font-size:10px;font-weight:700;color:#6366f1;margin-bottom:4px">❓ 문의</div>
+          <div style="font-size:13.5px;color:#111;line-height:1.6;white-space:pre-wrap">${escapeHtml(it.question)}</div>
+        </div>
+        ${hasAnswer ? `
+          <div style="background:#f0fdf4;border-left:3px solid #10b981;padding:10px 14px;border-radius:4px;margin-bottom:8px">
+            <div style="font-size:10px;font-weight:700;color:#10b981;margin-bottom:4px">💬 답변${it.replyDate ? ` · ${escapeHtml(it.replyDate)}` : ''}</div>
+            <div style="font-size:13.5px;color:#111;line-height:1.6;white-space:pre-wrap">${escapeHtml(it.answer)}</div>
+          </div>
+        ` : ''}
+        ${tagsHtml ? `<div style="margin-top:8px">${tagsHtml}</div>` : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+function escapeHtml(s) {
+  if (s == null) return '';
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function showInqToast(msg) {
+  let toast = document.getElementById('inq-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'inq-toast';
+    toast.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:500;z-index:9999;opacity:0;transition:opacity .2s;pointer-events:none';
+    document.body.appendChild(toast);
+  }
+  toast.textContent = msg;
+  toast.style.opacity = '1';
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => { toast.style.opacity = '0'; }, 1800);
+}
+
+// 페이지 로드 시 뱃지 한 번 동기화
+try { loadInquiries(); updateInquiryBadge(); } catch(e) {}
 
 // ===== 재구매 분석 페이지 =====
 let _repurchaseData = null;
