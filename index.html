@@ -405,6 +405,96 @@
 </style>
 </head>
 <body>
+
+<!-- ===== 🔒 로그인 게이트 (EGA 임직원 전용) ===== -->
+<div id="auth-gate" style="position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,#1a1f2e 0%,#2d3548 100%);z-index:999999;display:flex;align-items:center;justify-content:center;font-family:'Pretendard','맑은 고딕',sans-serif">
+  <div style="background:#fff;border-radius:16px;padding:40px 36px;width:380px;max-width:90vw;box-shadow:0 24px 80px rgba(0,0,0,.35);text-align:center">
+    <div style="font-size:36px;margin-bottom:12px">🔒</div>
+    <div style="font-size:22px;font-weight:800;color:#111;margin-bottom:6px">EGA Review Insight</div>
+    <div style="font-size:13px;color:#6b7280;margin-bottom:24px">EGA 임직원 전용 페이지</div>
+
+    <form id="auth-form" onsubmit="checkAuth(event)" style="display:flex;flex-direction:column;gap:10px">
+      <input type="text" id="auth-id" placeholder="ID" autocomplete="username" required style="padding:12px 14px;border:1px solid #d1d5db;border-radius:8px;font-size:14px;outline:none" onfocus="this.style.borderColor='#3b6cf0'" onblur="this.style.borderColor='#d1d5db'">
+      <input type="password" id="auth-pw" placeholder="비밀번호" autocomplete="current-password" required style="padding:12px 14px;border:1px solid #d1d5db;border-radius:8px;font-size:14px;outline:none" onfocus="this.style.borderColor='#3b6cf0'" onblur="this.style.borderColor='#d1d5db'">
+      <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#6b7280;margin:4px 0 8px;cursor:pointer">
+        <input type="checkbox" id="auth-remember" checked style="cursor:pointer"> 7일 동안 자동 로그인
+      </label>
+      <button type="submit" style="padding:12px;background:#3b6cf0;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:background .15s" onmouseover="this.style.background='#2952d9'" onmouseout="this.style.background='#3b6cf0'">접속하기</button>
+      <div id="auth-error" style="font-size:12px;color:#ef4444;margin-top:4px;min-height:18px"></div>
+    </form>
+
+    <div style="margin-top:20px;padding-top:16px;border-top:1px solid #e5e7eb;font-size:11px;color:#9ca3af">
+      © 2026 EGA · 외부 유출 금지
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== 인증 시스템 (SHA-256 해시 기반) =====
+const AUTH_HASH = '795fcd739a356edd3d7e785f6a0350027543fcc5d0954d4c6bb84492053c18ff';
+const AUTH_TOKEN_KEY = 'ega_auth_token_v1';
+
+async function sha256(str) {
+  const buf = new TextEncoder().encode(str);
+  const hash = await crypto.subtle.digest('SHA-256', buf);
+  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function checkAuth(ev) {
+  ev.preventDefault();
+  const id = document.getElementById('auth-id').value.trim();
+  const pw = document.getElementById('auth-pw').value;
+  const remember = document.getElementById('auth-remember').checked;
+  const errEl = document.getElementById('auth-error');
+  errEl.textContent = '';
+
+  if (!id || !pw) { errEl.textContent = 'ID와 비밀번호를 입력하세요'; return; }
+
+  const hash = await sha256(id + ':' + pw);
+  if (hash !== AUTH_HASH) {
+    errEl.textContent = '❌ ID 또는 비밀번호가 잘못되었습니다';
+    document.getElementById('auth-pw').value = '';
+    return;
+  }
+
+  // 인증 성공 — 토큰 저장
+  const days = remember ? 7 : 1;
+  const expiresAt = Date.now() + days * 86400 * 1000;
+  localStorage.setItem(AUTH_TOKEN_KEY, JSON.stringify({ id, expiresAt }));
+
+  // 게이트 숨김
+  document.getElementById('auth-gate').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function logoutEGA() {
+  if (!confirm('로그아웃하시겠어요?')) return;
+  localStorage.removeItem(AUTH_TOKEN_KEY);
+  location.reload();
+}
+window.logoutEGA = logoutEGA;
+
+// 페이지 로드 시 토큰 검증
+(function initAuth(){
+  try {
+    const raw = localStorage.getItem(AUTH_TOKEN_KEY);
+    if (raw) {
+      const token = JSON.parse(raw);
+      if (token.expiresAt && token.expiresAt > Date.now()) {
+        // 유효한 토큰 — 게이트 숨김
+        document.getElementById('auth-gate').style.display = 'none';
+        return;
+      }
+      // 만료 토큰 삭제
+      localStorage.removeItem(AUTH_TOKEN_KEY);
+    }
+  } catch(e) {}
+  // 토큰 없음 또는 만료 — 게이트 표시 (이미 표시되어 있음)
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => document.getElementById('auth-id')?.focus(), 100);
+})();
+</script>
+<!-- ===== 로그인 게이트 끝 ===== -->
 <div class="app">
   <!-- Sidebar -->
   <aside class="sidebar">
@@ -463,12 +553,17 @@
       </a>
     </nav>
     <div class="sidebar-footer">
-      <div class="user-info">
-        <div class="user-avatar">E</div>
-        <div>
-          <div class="user-name">EGA Team</div>
-          <div class="user-role">Admin</div>
+      <div class="user-info" style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+        <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
+          <div class="user-avatar">E</div>
+          <div style="min-width:0">
+            <div class="user-name">EGA Team</div>
+            <div class="user-role">Admin</div>
+          </div>
         </div>
+        <button onclick="logoutEGA()" title="로그아웃" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:6px 8px;color:rgba(255,255,255,.6);cursor:pointer;font-size:11px;transition:all .15s;flex-shrink:0" onmouseover="this.style.background='rgba(239,68,68,.15)';this.style.color='#fca5a5';this.style.borderColor='rgba(239,68,68,.3)'" onmouseout="this.style.background='rgba(255,255,255,.06)';this.style.color='rgba(255,255,255,.6)';this.style.borderColor='rgba(255,255,255,.1)'">
+          🚪
+        </button>
       </div>
     </div>
   </aside>
