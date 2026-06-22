@@ -343,6 +343,7 @@ function getProductCategory(name) {
   if (!name) return '기타';
   const n = name.toLowerCase();
 
+  if (n.match(/protector|uv\s*in.?&.?out|uv\s*in.?and.?out|uv\s*인앤아웃|인앤아웃\s*프로텍/i)) return '선크림';
   if (n.includes('healer')) return '앰플';
   if (n.match(/kit|마스크팩|겔마스크|지우개팩|face&neck|face&amp;neck/)) return '마스크팩';
   if (n.match(/인앤아웃|손티에이징|어워즈/)) return '핸드크림 세트';
