@@ -2087,6 +2087,7 @@ window.logoutEGA = logoutEGA;
               <option value="">선택 안함</option>
               <option value="핸드크림 에센셜">🤲 핸드크림 에센셜</option>
               <option value="핸드크림 어드밴스드">🤲 핸드크림 어드밴스드</option>
+              <option value="선크림 (UV IN&OUT Protector)">🌞 선크림 (UV IN&OUT Protector)</option>
               <option value="NMN">💊 NMN</option>
               <option value="마스크팩">🩹 마스크팩</option>
               <option value="앰플">💧 앰플</option>
@@ -2169,6 +2170,7 @@ window.logoutEGA = logoutEGA;
           <option value="all">모든 제품</option>
           <option value="핸드크림 에센셜">핸드크림 에센셜</option>
           <option value="핸드크림 어드밴스드">핸드크림 어드밴스드</option>
+          <option value="선크림 (UV IN&OUT Protector)">선크림 (UV IN&OUT Protector)</option>
           <option value="NMN">NMN</option>
           <option value="마스크팩">마스크팩</option>
           <option value="앰플">앰플</option>
@@ -3335,6 +3337,7 @@ function _categorizeForSelfShop(p) {
   if (!p) return null;
   p = p.replace(/&amp;/g, '&');
   if (/리뷰전용|\[Review\]/i.test(p)) return null;
+  if (/Protector|UV\s*IN.?&.?OUT|UV\s*IN.?AND.?OUT|UV\s*인앤아웃|인앤아웃\s*프로텍/i.test(p)) return '선크림';
   if (/UV Healer|UV힐러|앰플/i.test(p)) return '앰플';
   if (/마스크팩|지우개팩|repair.*kit|face.*neck.*kit|7일팩|자외선.*팩|얼굴목|넥팩|페이스.*넥|겔마스크팩/i.test(p)) {
     if (p.includes('&') && /핸드크림/i.test(p)) return '종합 패키지';
@@ -3374,8 +3377,8 @@ function _renderSelfShopSales(containerId, channelName, data, channelEmoji, extr
   const convColor = (r) => r >= 30 ? '#3b6cf0' : r >= 10 ? '#10b981' : r >= 3 ? '#f59e0b' : r >= 1 ? '#ef4444' : '#9ca3af';
   const convBg = (r) => r >= 30 ? '#dbeafe' : r >= 10 ? '#dcfce7' : r >= 3 ? '#fef3c7' : r >= 1 ? '#fee2e2' : '#f3f4f6';
 
-  const order = ['핸드크림','NMN','마스크팩','앰플','종합 패키지','시즌 선물세트','기타'];
-  const catEmoji = { '핸드크림':'🤲', 'NMN':'💊', '마스크팩':'🩹', '앰플':'💧', '종합 패키지':'📦', '시즌 선물세트':'🎁', '기타':'🛒' };
+  const order = ['핸드크림','선크림','NMN','마스크팩','앰플','종합 패키지','시즌 선물세트','기타'];
+  const catEmoji = { '핸드크림':'🤲', '선크림':'🌞', 'NMN':'💊', '마스크팩':'🩹', '앰플':'💧', '종합 패키지':'📦', '시즌 선물세트':'🎁', '기타':'🛒' };
 
   const totalOrders = data.totalNetOrders;
   const totalAmt = data.totalAmount;
@@ -3492,6 +3495,7 @@ function renderCafe24Sales() {
   function _catReview(r) {
     const p = (r.product || r.product_norm || r.product_category || '').replace(/&amp;/g, '&');
     if (!p) return null;
+    if (/Protector|UV\s*IN.?&.?OUT|UV\s*IN.?AND.?OUT|UV\s*인앤아웃|인앤아웃\s*프로텍/i.test(p)) return '선크림';
     if (/UV Healer|UV힐러|앰플/i.test(p)) return '앰플';
     if (/마스크팩|지우개팩|repair.*kit|face.*neck.*kit|7일팩|자외선.*팩/i.test(p)) {
       if (p.includes('&') && /핸드크림/i.test(p)) return '종합 패키지';
@@ -3516,8 +3520,8 @@ function renderCafe24Sales() {
   const convColor = (r) => r >= 5 ? '#10b981' : r >= 2 ? '#3b6cf0' : r >= 1 ? '#f59e0b' : '#ef4444';
   const convBg = (r) => r >= 5 ? '#dcfce7' : r >= 2 ? '#dbeafe' : r >= 1 ? '#fef3c7' : '#fee2e2';
 
-  const order = ['핸드크림','NMN','마스크팩','앰플','종합 패키지','시즌 선물세트','기타'];
-  const catEmoji = { '핸드크림':'🤲', 'NMN':'💊', '마스크팩':'🩹', '앰플':'💧', '종합 패키지':'📦', '시즌 선물세트':'🎁', '기타':'🛒' };
+  const order = ['핸드크림','선크림','NMN','마스크팩','앰플','종합 패키지','시즌 선물세트','기타'];
+  const catEmoji = { '핸드크림':'🤲', '선크림':'🌞', 'NMN':'💊', '마스크팩':'🩹', '앰플':'💧', '종합 패키지':'📦', '시즌 선물세트':'🎁', '기타':'🛒' };
 
   // KPI
   const totalOrders = data.totalNetOrders;
@@ -4435,6 +4439,7 @@ function updateWeeklyReport() {
   const _a0Categories = [
     { cat: '에센셜 핸드크림', title: '에센셜 리제너레이터', barColor: '' },
     { cat: '어드밴스드 핸드크림', title: '어드밴스드 리제너레이터', barColor: '' },
+    { cat: '선크림', title: 'EGA UV IN&OUT Protector', barColor: '' },
     { cat: 'NMN', title: '스킨부스터 / NMN Daily Regenerator', barColor: 'green' },
     { cat: '마스크팩', title: '마스크팩 / Face & Neck Kit', barColor: 'green' }
   ];
