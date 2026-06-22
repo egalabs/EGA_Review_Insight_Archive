@@ -4601,6 +4601,114 @@ function updateWeeklyReport() {
     </div>`;
   }
 
+  // ===== 🌞 선크림 집중 분석 (출시 전 시크릿 리뷰) =====
+  const sunReviews = ALL_REVIEWS.filter(r => r.product_category === '선크림');
+  const sStrS = s.toISOString().slice(0,10);
+  const eStrS = e.toISOString().slice(0,10);
+  const sunWeek = sunReviews.filter(r => r.date >= sStrS && r.date <= eStrS);
+  const sunByCh = {};
+  sunReviews.forEach(r => sunByCh[r.channel] = (sunByCh[r.channel]||0) + 1);
+  const sunPos = sunReviews.filter(r => r.sentiment === '긍정').length;
+  const sunNeg = sunReviews.filter(r => r.sentiment === '부정').length;
+  const sunRep = sunReviews.filter(r => r.has_repurchase).length;
+  const sunKwc = {};
+  sunReviews.forEach(r => (r.keywords || []).forEach(k => sunKwc[k] = (sunKwc[k]||0) + 1));
+  const sunTopKw = Object.entries(sunKwc).sort((a,b) => b[1]-a[1]).slice(0,8);
+  const sunMaxKw = sunTopKw[0] ? sunTopKw[0][1] : 1;
+  const sunSorted = [...sunReviews].sort((a,b) => (b.date||'').localeCompare(a.date||''));
+
+  function sunReviewCard(r) {
+    const pid = 'sun_' + Math.random().toString(36).substr(2,8);
+    window._popupReviews[pid] = {
+      date: r.date, channel: r.channel, text: r.text||'',
+      product: r.product||'', reviewer: r.reviewer||'',
+      sentiment: r.sentiment, keywords: r.keywords||[]
+    };
+    const isPos = r.sentiment === '긍정';
+    const sentColor = isPos ? '#059669' : (r.sentiment === '부정' ? '#dc2626' : '#d97706');
+    const sentBg = isPos ? '#dcfce7' : (r.sentiment === '부정' ? '#fee2e2' : '#fef3c7');
+    const previewText = (r.text||'').slice(0,90) + ((r.text||'').length>90?'...':'');
+    return `<div class="mini-review-clickable" data-pid="${pid}" style="background:#fff;border:1px solid #fed7aa;padding:12px 14px;border-radius:8px;cursor:pointer;transition:all .15s">
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
+        <span style="font-size:10px;padding:2px 8px;background:#f3f4f6;color:#374151;border-radius:3px;font-weight:600">${r.channel}</span>
+        <span style="font-size:10px;padding:2px 8px;background:${sentBg};color:${sentColor};border-radius:3px;font-weight:600">${r.sentiment}</span>
+        <span style="font-size:11px;color:#9ca3af;margin-left:auto">${r.date}</span>
+      </div>
+      <div style="font-size:12px;color:#374151;line-height:1.55;margin-bottom:8px;min-height:54px">${previewText}</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;font-size:10.5px;color:#6b7280;gap:6px">
+        <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:80px">${r.reviewer||'익명'}</span>
+        <div style="display:flex;gap:3px;flex-wrap:wrap;justify-content:flex-end">${(r.keywords||[]).slice(0,3).map(k=>`<span style="background:#fef3c7;color:#92400e;padding:1px 6px;border-radius:8px;font-size:10px">${k}</span>`).join('')}</div>
+      </div>
+    </div>`;
+  }
+
+  const sunSectionHtml = sunReviews.length === 0 ? `
+    <div class="report-section" style="border-left:4px solid #f59e0b;background:linear-gradient(135deg,#fef3c7 0%,#fff 30%);padding:18px 20px">
+      <div class="report-section-title" style="color:#92400e;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <span>🌞 선크림 집중 분석</span>
+        <span style="font-size:13px;font-weight:500">EGA UV IN&OUT Protector</span>
+      </div>
+      <div class="callout">아직 선크림 리뷰가 수집되지 않았습니다. 워크플로가 신규 리뷰를 잡으면 자동 표시됩니다.</div>
+    </div>
+  ` : `
+    <div class="report-section" style="border-left:4px solid #f59e0b;background:linear-gradient(135deg,#fef3c7 0%,#fff 25%);padding:18px 20px;margin-bottom:24px">
+      <div class="report-section-title" style="color:#92400e;display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px">
+        <span>🌞 선크림 집중 분석</span>
+        <span style="font-size:13px;font-weight:500;color:#92400e">EGA UV IN&OUT Protector · 출시 전 시크릿 리뷰</span>
+        <span style="font-size:10px;background:#dc2626;color:#fff;padding:3px 10px;border-radius:10px;font-weight:600;letter-spacing:0.5px">한달 집중 모니터링</span>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px">
+        <div class="card" style="background:#fff;border:1px solid #fde68a;padding:14px">
+          <div class="kpi-label">누적 리뷰</div>
+          <div class="kpi-value" style="color:#d97706">${sunReviews.length}<span style="font-size:14px;color:var(--text-muted);font-weight:500"> 건</span></div>
+        </div>
+        <div class="card" style="background:#fff;border:1px solid #fde68a;padding:14px">
+          <div class="kpi-label">이번 주 (${weekLabel})</div>
+          <div class="kpi-value" style="color:#d97706">${sunWeek.length}<span style="font-size:14px;color:var(--text-muted);font-weight:500"> 건</span></div>
+        </div>
+        <div class="card" style="background:#fff;border:1px solid #fde68a;padding:14px">
+          <div class="kpi-label">긍정 비율</div>
+          <div class="kpi-value" style="color:#059669">${sunReviews.length?Math.round(sunPos/sunReviews.length*100):0}<span style="font-size:14px;color:var(--text-muted);font-weight:500"> %</span></div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px">긍정 ${sunPos} · 부정 ${sunNeg}</div>
+        </div>
+        <div class="card" style="background:#fff;border:1px solid #fde68a;padding:14px">
+          <div class="kpi-label">재구매 의향</div>
+          <div class="kpi-value" style="color:#3b6cf0">${sunRep}<span style="font-size:14px;color:var(--text-muted);font-weight:500"> 건</span></div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px">${sunReviews.length?Math.round(sunRep/sunReviews.length*100):0}% of total</div>
+        </div>
+      </div>
+
+      <div class="grid-2 mb-16">
+        <div class="card" style="padding:16px">
+          <div class="card-title" style="margin-bottom:12px">🔑 누적 키워드 TOP ${sunTopKw.length}</div>
+          ${sunTopKw.length ? sunTopKw.map(([k,v])=>`<div class="hbar-item" style="margin-bottom:6px"><div class="hbar-label" style="width:100px;font-size:11.5px">${k}</div><div class="hbar-track"><div class="hbar-fill" style="width:${Math.round(v/sunMaxKw*100)}%;background:#f59e0b"></div></div><div class="hbar-count">${v}</div></div>`).join('') : '<div class="text-sm text-muted">아직 키워드가 추출되지 않았습니다.</div>'}
+        </div>
+        <div class="card" style="background:#fff7ed;border:1px solid #fed7aa;padding:16px">
+          <div class="card-title" style="color:#92400e;margin-bottom:10px">💡 상세페이지 반영 우선순위</div>
+          <div style="font-size:12.5px;line-height:1.85;color:#451a03">
+            ${sunTopKw[0]?`• 1순위 "<strong>${sunTopKw[0][0]}</strong>" — ${sunTopKw[0][1]}건<br>`:''}
+            ${sunTopKw[1]?`• 2순위 "<strong>${sunTopKw[1][0]}</strong>" — ${sunTopKw[1][1]}건<br>`:''}
+            ${sunTopKw[2]?`• 3순위 "<strong>${sunTopKw[2][0]}</strong>" — ${sunTopKw[2][1]}건<br>`:''}
+            ${sunNeg>0?`<div style="color:#dc2626;margin-top:6px">⚠ 부정 리뷰 ${sunNeg}건 — 본문 확인 후 개선 포인트 도출 필요</div>`:''}
+            ${sunRep>0?`<div style="color:#059669;margin-top:6px">👍 재구매 의향 ${sunRep}건 — 진성 충성 시그널, 상세에 강조</div>`:''}
+            <div style="margin-top:10px;padding-top:10px;border-top:1px dashed #fed7aa;font-size:11px;color:#92400e">⏱ 출시 후 한 달간 매일 이 섹션 확인</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="padding:16px">
+        <div class="card-title" style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:center">
+          <span>📝 모든 선크림 리뷰 (${sunReviews.length}건) · 최신순</span>
+          <span style="font-size:11px;color:var(--text-muted);font-weight:400">카드 클릭 → 전체 본문 보기</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+          ${sunSorted.map(sunReviewCard).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+
   let html = `
   <!-- Summary Banner -->
   <div class="insight-banner mb-24" style="background:linear-gradient(135deg,#1a1f2e 0%,#2d3548 100%)">
@@ -4652,6 +4760,7 @@ function updateWeeklyReport() {
     </div>
   </div>
 
+  ${sunSectionHtml}
 
   <!-- A-0. 제품별 누적 VOC 키워드 + 이번주 실행 제안 (자동 생성) -->
   <div class="report-section" id="voc-keyword-signal-section">
