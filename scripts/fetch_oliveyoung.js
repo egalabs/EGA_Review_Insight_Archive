@@ -231,6 +231,7 @@ async function fetchAllReviewsForProduct(goodsNo, productName) {
 function getProductCategory(name) {
   if (!name) return '기타';
   const n = name.toLowerCase();
+  if (n.match(/protector|uv\s*in.?&.?out|uv\s*in.?and.?out|uv\s*인앤아웃|인앤아웃\s*프로텍/i)) return '선크림';
   if (n.match(/에센셜.*리제너레이터|리제너레이터.*에센셜/)) return '에센셜 핸드크림';
   if (n.match(/어드밴스드/)) return '어드밴스드 핸드크림';
   if (n.match(/에센셜/)) return '에센셜 핸드크림';
