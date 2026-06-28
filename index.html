@@ -428,31 +428,67 @@
 
 <!-- ===== 🔒 로그인 게이트 (EGA 임직원 전용) ===== -->
 <div id="auth-gate" style="position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,#1a1f2e 0%,#2d3548 100%);z-index:999999;display:flex;align-items:center;justify-content:center;font-family:'Pretendard','맑은 고딕',sans-serif">
-  <div style="background:#fff;border-radius:16px;padding:40px 36px;width:380px;max-width:90vw;box-shadow:0 24px 80px rgba(0,0,0,.35);text-align:center">
-    <div style="font-size:36px;margin-bottom:12px">🔒</div>
-    <div style="font-size:22px;font-weight:800;color:#111;margin-bottom:6px">EGA Review Insight</div>
-    <div style="font-size:13px;color:#6b7280;margin-bottom:24px">EGA 임직원 전용 페이지</div>
+  <div style="background:#fff;border-radius:16px;padding:40px 36px;width:400px;max-width:92vw;box-shadow:0 24px 80px rgba(0,0,0,.35)">
 
-    <form id="auth-form" onsubmit="checkAuth(event)" style="display:flex;flex-direction:column;gap:10px">
-      <input type="text" id="auth-id" placeholder="ID" autocomplete="username" required style="padding:12px 14px;border:1px solid #d1d5db;border-radius:8px;font-size:14px;outline:none" onfocus="this.style.borderColor='#3b6cf0'" onblur="this.style.borderColor='#d1d5db'">
-      <input type="password" id="auth-pw" placeholder="비밀번호" autocomplete="current-password" required style="padding:12px 14px;border:1px solid #d1d5db;border-radius:8px;font-size:14px;outline:none" onfocus="this.style.borderColor='#3b6cf0'" onblur="this.style.borderColor='#d1d5db'">
-      <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#6b7280;margin:4px 0 8px;cursor:pointer">
-        <input type="checkbox" id="auth-remember" checked style="cursor:pointer"> 7일 동안 자동 로그인
+    <!-- ===== 로그인 폼 ===== -->
+    <form id="login-form" onsubmit="loginEGA(event)" style="display:flex;flex-direction:column;gap:6px">
+      <div style="font-size:24px;font-weight:800;color:#3b6cf0;margin-bottom:4px">EGA Review Insight</div>
+      <div style="font-size:13px;color:#6b7280;margin-bottom:18px">EGA 계정으로 로그인하세요.</div>
+
+      <label style="text-align:left;font-size:13px;font-weight:600;color:#374151;margin-bottom:4px">이메일 (ID)</label>
+      <input type="email" id="login-email" placeholder="name@ega.co.kr" autocomplete="username" required style="padding:12px 14px;border:1px solid #d1d5db;border-radius:8px;font-size:14px;outline:none" onfocus="this.style.borderColor='#3b6cf0'" onblur="this.style.borderColor='#d1d5db'">
+
+      <label style="text-align:left;font-size:13px;font-weight:600;color:#374151;margin:10px 0 4px">비밀번호</label>
+      <input type="password" id="login-pw" placeholder="비밀번호" autocomplete="current-password" required style="padding:12px 14px;border:1px solid #d1d5db;border-radius:8px;font-size:14px;outline:none" onfocus="this.style.borderColor='#3b6cf0'" onblur="this.style.borderColor='#d1d5db'">
+
+      <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#6b7280;margin:10px 0 6px;cursor:pointer">
+        <input type="checkbox" id="login-remember" checked style="cursor:pointer"> 7일 동안 자동 로그인
       </label>
-      <button type="submit" style="padding:12px;background:#3b6cf0;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:background .15s" onmouseover="this.style.background='#2952d9'" onmouseout="this.style.background='#3b6cf0'">접속하기</button>
-      <div id="auth-error" style="font-size:12px;color:#ef4444;margin-top:4px;min-height:18px"></div>
+
+      <button type="submit" style="padding:13px;background:#3b6cf0;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;transition:background .15s;margin-top:6px" onmouseover="this.style.background='#2952d9'" onmouseout="this.style.background='#3b6cf0'">로그인</button>
+      <div id="login-error" style="font-size:12px;color:#ef4444;margin-top:4px;min-height:18px"></div>
+
+      <div style="font-size:13px;color:#6b7280;text-align:center;margin-top:2px">
+        계정이 없으신가요? <a onclick="switchAuthMode('signup')" style="color:#3b6cf0;font-weight:700;cursor:pointer">가입하기</a>
+      </div>
     </form>
 
-    <div style="margin-top:20px;padding-top:16px;border-top:1px solid #e5e7eb;font-size:11px;color:#9ca3af">
-      © 2026 EGA · 외부 유출 금지
+    <!-- ===== 회원가입 폼 ===== -->
+    <form id="signup-form" onsubmit="signupEGA(event)" style="display:none;flex-direction:column;gap:6px">
+      <div style="font-size:24px;font-weight:800;color:#3b6cf0;margin-bottom:4px">EGA Review Insight</div>
+      <div style="font-size:13px;color:#6b7280;margin-bottom:18px">EGA 이메일로 새 계정을 만드세요.</div>
+
+      <label style="text-align:left;font-size:13px;font-weight:600;color:#374151;margin-bottom:4px">이름</label>
+      <input type="text" id="signup-name" placeholder="홍길동" required style="padding:12px 14px;border:1px solid #d1d5db;border-radius:8px;font-size:14px;outline:none" onfocus="this.style.borderColor='#3b6cf0'" onblur="this.style.borderColor='#d1d5db'">
+
+      <label style="text-align:left;font-size:13px;font-weight:600;color:#374151;margin:10px 0 4px">이메일 (ID)</label>
+      <input type="email" id="signup-email" placeholder="name@ega.co.kr" autocomplete="username" required style="padding:12px 14px;border:1px solid #d1d5db;border-radius:8px;font-size:14px;outline:none" onfocus="this.style.borderColor='#3b6cf0'" onblur="this.style.borderColor='#d1d5db'">
+
+      <label style="text-align:left;font-size:13px;font-weight:600;color:#374151;margin:10px 0 4px">비밀번호 (6자 이상)</label>
+      <input type="password" id="signup-pw" placeholder="비밀번호" autocomplete="new-password" required style="padding:12px 14px;border:1px solid #d1d5db;border-radius:8px;font-size:14px;outline:none" onfocus="this.style.borderColor='#3b6cf0'" onblur="this.style.borderColor='#d1d5db'">
+
+      <label style="text-align:left;font-size:13px;font-weight:600;color:#374151;margin:10px 0 4px">비밀번호 확인</label>
+      <input type="password" id="signup-pw2" placeholder="비밀번호 확인" autocomplete="new-password" required style="padding:12px 14px;border:1px solid #d1d5db;border-radius:8px;font-size:14px;outline:none" onfocus="this.style.borderColor='#3b6cf0'" onblur="this.style.borderColor='#d1d5db'">
+
+      <button type="submit" style="padding:13px;background:#3b6cf0;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;transition:background .15s;margin-top:14px" onmouseover="this.style.background='#2952d9'" onmouseout="this.style.background='#3b6cf0'">가입하기</button>
+      <div id="signup-error" style="font-size:12px;color:#ef4444;margin-top:4px;min-height:18px"></div>
+
+      <div style="font-size:13px;color:#6b7280;text-align:center;margin-top:2px">
+        이미 계정이 있으신가요? <a onclick="switchAuthMode('login')" style="color:#3b6cf0;font-weight:700;cursor:pointer">로그인</a>
+      </div>
+    </form>
+
+    <div style="margin-top:18px;padding-top:14px;border-top:1px solid #e5e7eb;font-size:11px;color:#9ca3af;line-height:1.6">
+      🔒 <b>@ega.co.kr</b> 이메일을 가진 EGA 구성원만 가입할 수 있습니다.<br>데이터는 이 브라우저(localStorage)에 계정별로 저장됩니다.
     </div>
   </div>
 </div>
 
 <script>
-// ===== 인증 시스템 (SHA-256 해시 기반) =====
-const AUTH_HASH = '795fcd739a356edd3d7e785f6a0350027543fcc5d0954d4c6bb84492053c18ff';
+// ===== 인증 시스템 (EGA 계정 회원가입/로그인, localStorage 기반) =====
 const AUTH_TOKEN_KEY = 'ega_auth_token_v1';
+const AUTH_ACCOUNTS_KEY = 'ega_accounts_v1';   // { "email": { name, hash } }
+const ALLOWED_EMAIL_DOMAIN = '@ega.co.kr';
 
 async function sha256(str) {
   const buf = new TextEncoder().encode(str);
@@ -460,32 +496,100 @@ async function sha256(str) {
   return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
-async function checkAuth(ev) {
-  ev.preventDefault();
-  const id = document.getElementById('auth-id').value.trim();
-  const pw = document.getElementById('auth-pw').value;
-  const remember = document.getElementById('auth-remember').checked;
-  const errEl = document.getElementById('auth-error');
-  errEl.textContent = '';
+function loadAccounts() {
+  try {
+    const raw = localStorage.getItem(AUTH_ACCOUNTS_KEY);
+    const obj = raw ? JSON.parse(raw) : {};
+    return (obj && typeof obj === 'object') ? obj : {};
+  } catch(e) { return {}; }
+}
 
-  if (!id || !pw) { errEl.textContent = 'ID와 비밀번호를 입력하세요'; return; }
+function saveAccounts(accounts) {
+  localStorage.setItem(AUTH_ACCOUNTS_KEY, JSON.stringify(accounts));
+}
 
-  const hash = await sha256(id + ':' + pw);
-  if (hash !== AUTH_HASH) {
-    errEl.textContent = '❌ ID 또는 비밀번호가 잘못되었습니다';
-    document.getElementById('auth-pw').value = '';
-    return;
+function isEgaEmail(email) {
+  return email.toLowerCase().endsWith(ALLOWED_EMAIL_DOMAIN);
+}
+
+// 로그인 / 회원가입 폼 전환
+function switchAuthMode(mode) {
+  const login = document.getElementById('login-form');
+  const signup = document.getElementById('signup-form');
+  document.getElementById('login-error').textContent = '';
+  document.getElementById('signup-error').textContent = '';
+  if (mode === 'signup') {
+    login.style.display = 'none';
+    signup.style.display = 'flex';
+    setTimeout(() => document.getElementById('signup-name')?.focus(), 50);
+  } else {
+    signup.style.display = 'none';
+    login.style.display = 'flex';
+    setTimeout(() => document.getElementById('login-email')?.focus(), 50);
   }
+}
+window.switchAuthMode = switchAuthMode;
 
-  // 인증 성공 — 토큰 저장
+// 인증 성공 처리 — 세션 토큰 저장 후 게이트 숨김
+function grantAccess(email, remember) {
   const days = remember ? 7 : 1;
   const expiresAt = Date.now() + days * 86400 * 1000;
-  localStorage.setItem(AUTH_TOKEN_KEY, JSON.stringify({ id, expiresAt }));
-
-  // 게이트 숨김
+  localStorage.setItem(AUTH_TOKEN_KEY, JSON.stringify({ id: email, expiresAt }));
   document.getElementById('auth-gate').style.display = 'none';
   document.body.style.overflow = '';
 }
+
+// 회원가입
+async function signupEGA(ev) {
+  ev.preventDefault();
+  const name = document.getElementById('signup-name').value.trim();
+  const email = document.getElementById('signup-email').value.trim().toLowerCase();
+  const pw = document.getElementById('signup-pw').value;
+  const pw2 = document.getElementById('signup-pw2').value;
+  const errEl = document.getElementById('signup-error');
+  errEl.textContent = '';
+
+  if (!name) { errEl.textContent = '이름을 입력하세요'; return; }
+  if (!isEgaEmail(email)) { errEl.textContent = '❌ @ega.co.kr 이메일만 가입할 수 있습니다'; return; }
+  if (pw.length < 6) { errEl.textContent = '비밀번호는 6자 이상이어야 합니다'; return; }
+  if (pw !== pw2) { errEl.textContent = '비밀번호가 일치하지 않습니다'; return; }
+
+  const accounts = loadAccounts();
+  if (accounts[email]) { errEl.textContent = '❌ 이미 가입된 이메일입니다. 로그인해주세요'; return; }
+
+  accounts[email] = { name, hash: await sha256(email + ':' + pw) };
+  saveAccounts(accounts);
+
+  // 가입 즉시 자동 로그인
+  grantAccess(email, true);
+}
+window.signupEGA = signupEGA;
+
+// 로그인
+async function loginEGA(ev) {
+  ev.preventDefault();
+  const email = document.getElementById('login-email').value.trim().toLowerCase();
+  const pw = document.getElementById('login-pw').value;
+  const remember = document.getElementById('login-remember').checked;
+  const errEl = document.getElementById('login-error');
+  errEl.textContent = '';
+
+  if (!email || !pw) { errEl.textContent = '이메일과 비밀번호를 입력하세요'; return; }
+
+  const accounts = loadAccounts();
+  const acc = accounts[email];
+  if (!acc) { errEl.textContent = '❌ 가입되지 않은 이메일입니다. 회원가입해주세요'; return; }
+
+  const hash = await sha256(email + ':' + pw);
+  if (hash !== acc.hash) {
+    errEl.textContent = '❌ 이메일 또는 비밀번호가 잘못되었습니다';
+    document.getElementById('login-pw').value = '';
+    return;
+  }
+
+  grantAccess(email, remember);
+}
+window.loginEGA = loginEGA;
 
 function logoutEGA() {
   if (!confirm('로그아웃하시겠어요?')) return;
@@ -511,7 +615,7 @@ window.logoutEGA = logoutEGA;
   } catch(e) {}
   // 토큰 없음 또는 만료 — 게이트 표시 (이미 표시되어 있음)
   document.body.style.overflow = 'hidden';
-  setTimeout(() => document.getElementById('auth-id')?.focus(), 100);
+  setTimeout(() => document.getElementById('login-email')?.focus(), 100);
 })();
 </script>
 <!-- ===== 로그인 게이트 끝 ===== -->
