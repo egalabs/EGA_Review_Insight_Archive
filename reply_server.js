@@ -121,7 +121,7 @@ async function postCremaComment({ reviewId, message }) {
     created_at: nowIsoKSTSeconds(),
     message: stripHtml(message),
     user_code: process.env.CREMA_USER_CODE || "ega",
-    user_name: process.env.CREMA_USER_NAME || "EGA",
+    user_name: process.env.CREMA_USER_NAME || "EGA 공식 온라인 스토어",
   };
 
   const body = JSON.stringify(payload);
