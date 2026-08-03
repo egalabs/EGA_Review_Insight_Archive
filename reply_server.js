@@ -120,8 +120,8 @@ async function postCremaComment({ reviewId, message }) {
     code: makeCommentCode(cremaReviewId),
     created_at: nowIsoKSTSeconds(),
     message: stripHtml(message),
-    user_code: process.env.CREMA_USER_CODE || "ega",
-    user_name: process.env.CREMA_USER_NAME || "EGA 공식 온라인 스토어",
+    user_code: "EGA 공식 온라인 스토어",
+    user_name: "EGA 공식 온라인 스토어",
   };
 
   const body = JSON.stringify(payload);
