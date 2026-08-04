@@ -371,7 +371,10 @@
   .btn-edit{background:var(--white);border:1px solid var(--border);color:var(--text-secondary);height:34px;padding:0 14px;border-radius:var(--radius-sm);font-size:12.5px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all .15s}
   .btn-edit:hover{border-color:var(--blue);color:var(--blue)}
   .reply-stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
-  .reply-stat-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center}
+  .reply-stat-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center;transition:box-shadow .15s,border-color .15s,transform .1s}
+  .reply-stat-card.clickable{cursor:pointer}
+  .reply-stat-card.clickable:hover{border-color:var(--blue);transform:translateY(-1px)}
+  .reply-stat-card.active{border-color:var(--blue);box-shadow:0 0 0 2px var(--blue) inset,var(--shadow)}
   .reply-stat-val{font-size:24px;font-weight:700;letter-spacing:-0.02em}
   .reply-stat-lbl{font-size:11px;color:var(--text-muted);margin-top:4px}
   .reply-filter-bar{display:flex;gap:8px;align-items:center;margin-bottom:16px;flex-wrap:wrap}
@@ -2406,22 +2409,22 @@ window.logoutEGA = logoutEGA;
 
       <!-- Stats -->
       <div class="reply-stats-grid" id="reply-stats">
-        <div class="reply-stat-card" title="답변 가능한 모든 리뷰 (올리브영 제외)">
+        <div class="reply-stat-card clickable" title="답변 가능한 모든 리뷰 (올리브영 제외)" onclick="setReplyFilter('all')">
           <div class="reply-stat-val" style="color:var(--text-primary)" id="rstat-total">0</div>
           <div class="reply-stat-lbl">전체 답변 대상</div>
           <div style="font-size:10px;color:#9ca3af;margin-top:2px">올영 제외 전체</div>
         </div>
-        <div class="reply-stat-card" title="AI로 답변은 생성했으나 아직 게시 안 한 리뷰" onclick="setReplyFilter('ai_generated',null);document.querySelectorAll('.reply-filter-btn').forEach((b,i)=>{b.classList.toggle('active',i===1)})" style="cursor:pointer">
+        <div class="reply-stat-card clickable" title="AI로 답변은 생성했으나 아직 게시 안 한 리뷰" onclick="setReplyFilter('ai_generated')">
           <div class="reply-stat-val" style="color:var(--mixed)" id="rstat-generated">0</div>
           <div class="reply-stat-lbl">AI 답변 생성됨</div>
           <div style="font-size:10px;color:#9ca3af;margin-top:2px">클릭하여 보기</div>
         </div>
-        <div class="reply-stat-card" title="실제 게시 완료된 답변" onclick="setReplyFilter('posted',null);document.querySelectorAll('.reply-filter-btn').forEach((b,i)=>{b.classList.toggle('active',i===2)})" style="cursor:pointer">
+        <div class="reply-stat-card clickable" title="실제 게시 완료된 답변" onclick="setReplyFilter('posted')">
           <div class="reply-stat-val" style="color:var(--positive)" id="rstat-posted">0</div>
           <div class="reply-stat-lbl">게시 완료</div>
           <div style="font-size:10px;color:#9ca3af;margin-top:2px">클릭하여 보기</div>
         </div>
-        <div class="reply-stat-card" title="아직 답변이 없는 리뷰 (트래킹 대상)" onclick="setReplyFilter('none',null);document.querySelectorAll('.reply-filter-btn').forEach((b,i)=>{b.classList.toggle('active',i===3)})" style="cursor:pointer;border:2px solid var(--negative);background:#fef2f2">
+        <div class="reply-stat-card clickable" title="아직 답변이 없는 리뷰 (트래킹 대상)" onclick="setReplyFilter('none')" style="background:#fef2f2">
           <div class="reply-stat-val" style="color:var(--negative)" id="rstat-pending">0</div>
           <div class="reply-stat-lbl" style="font-weight:600">미답변 ⚠️</div>
           <div style="font-size:10px;color:var(--negative);margin-top:2px">클릭하여 우선 답변</div>
@@ -6907,11 +6910,24 @@ function updateReplyStats() {
 }
 
 // ── 필터 변경 ──
+const REPLY_FILTER_ORDER = ['all', 'ai_generated', 'posted', 'none'];
+const REPLY_STAT_MAP = { all: 'rstat-total', ai_generated: 'rstat-generated', posted: 'rstat-posted', none: 'rstat-pending' };
+// 현재 필터에 맞춰 상단 KPI 카드의 활성(파란 링) 표시를 이동시킨다
+function syncReplyStatCards(f) {
+  document.querySelectorAll('#reply-stats .reply-stat-card').forEach(c => c.classList.remove('active'));
+  const valId = REPLY_STAT_MAP[f];
+  const val = valId && document.getElementById(valId);
+  const card = val && val.closest('.reply-stat-card');
+  if (card) card.classList.add('active');
+}
 function setReplyFilter(f, el) {
   replyFilter = f;
   replyPage = 1;
-  document.querySelectorAll('.reply-filter-btn').forEach(b => b.classList.remove('active'));
-  if (el) el.classList.add('active');
+  const idx = REPLY_FILTER_ORDER.indexOf(f);
+  // 필터 버튼: 클릭한 버튼(el) 우선, 없으면 필터값 기준 index로 동기화
+  document.querySelectorAll('.reply-filter-btn').forEach((b, i) => b.classList.toggle('active', el ? (b === el) : (i === idx)));
+  // 상단 KPI 카드도 함께 활성 표시
+  syncReplyStatCards(f);
   renderReplyList();
 }
 
@@ -7133,6 +7149,7 @@ window.markIssueAsHandled = function(id) {
 
 // ── 답변 카드 렌더링 ──
 function renderReplyList() {
+  if (typeof syncReplyStatCards === 'function') syncReplyStatCards(replyFilter);
   const reviews = getFilteredReplyReviews();
   // 현재 필터에 없는 선택은 자동 해제 (필터 바꿨을 때 이전 선택 누적 방지)
   const _visibleIds = new Set(reviews.map(r => r.id));
