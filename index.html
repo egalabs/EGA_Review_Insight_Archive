@@ -631,7 +631,7 @@ window.logoutEGA = logoutEGA;
     <div class="sidebar-logo">
       <div class="brand">EGA</div>
       <div class="tagline">Review Insight Archive</div>
-      <div class="tagline" id="build-stamp" style="color:#4ade80;font-weight:600;margin-top:4px">BUILD 250804-C · 일괄게시 중앙팝업</div>
+      <div class="tagline" id="build-stamp" style="color:#4ade80;font-weight:600;margin-top:4px">BUILD 250804-D · 자사몰 답변반영</div>
     </div>
     <nav class="sidebar-nav">
       <div class="nav-section-label">Analytics</div>
@@ -6523,6 +6523,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   // 페이지 로드 직후 저장된 답변/게시 상태를 ALL_REVIEWS에 복원
   // (이거 빠지면 대시보드·모달·위클리리포트에서 답변/게시 정보가 안 보임)
   if (typeof applySavedReplies === 'function') applySavedReplies();
+  // 자사몰(카페24 게시판) 실제 답변 상태 반영 — 이미 답변 단 리뷰를 미답변에서 제외
+  if (typeof applyBoardReplyStatus === 'function') await applyBoardReplyStatus();
   // 사용자가 수동 정정한 감정도 복원
   if (typeof applySentimentOverrides === 'function') applySentimentOverrides();
   updateDashboard();
@@ -6866,6 +6868,32 @@ async function generateCurrentReplyPage() {
   showToast('✅ ' + ok + '/' + pageReviews.length + '건 생성 완료', 'success');
 }
 
+// ── 자사몰(카페24 게시판) 실제 답변 상태 반영 ──
+// board_reply_status.json: 실제 자사몰 리뷰 게시판(board_no=4)에서 판매자 답변이 달린 리뷰의 키 집합.
+// 대시보드 리뷰(크리마 기반)와 (날짜+본문 앞부분)으로 매칭해, 이미 답변된 것은 미답변에서 제외한다.
+let BOARD_ANSWERED_KEYS = null;
+function _boardKey(text, date) {
+  const t = (text || '').replace(/<[^>]+>/g, '').replace(/\s/g, '').replace(/[!-/:-@[-`{-~]/g, '').toLowerCase().slice(0, 14);
+  return (date || '').slice(0, 10) + '|' + t;
+}
+async function applyBoardReplyStatus() {
+  try {
+    const res = await fetch('board_reply_status.json?t=' + Date.now(), { cache: 'no-store' });
+    if (!res.ok) return;
+    const data = await res.json();
+    BOARD_ANSWERED_KEYS = new Set(data.answeredKeys || []);
+    let n = 0;
+    (ALL_REVIEWS || []).forEach(r => {
+      if (r.channel === '올리브영') return;
+      if (r.reply_status === 'posted') return;
+      if (BOARD_ANSWERED_KEYS.has(_boardKey(r.text, r.date))) { r.board_answered = true; n++; }
+    });
+    window._boardAnsweredCount = n;
+  } catch (e) { console.warn('board_reply_status 로드 실패', e); }
+}
+// 리뷰가 (자사몰 게시판 또는 크리마) 답변 완료 상태인가
+function isReplyDone(r) { return r.reply_status === 'posted' || r.board_answered === true; }
+
 // ── 답변 대상 리뷰 필터 (올리브영 제외) ──
 function getReplyReviews() {
   return ALL_REVIEWS.filter(r => r.channel !== '올리브영');
@@ -6873,9 +6901,9 @@ function getReplyReviews() {
 
 function getFilteredReplyReviews() {
   let reviews = getReplyReviews();
-  if (replyFilter === 'ai_generated') reviews = reviews.filter(r => r.reply_status === 'ai_generated');
-  else if (replyFilter === 'posted') reviews = reviews.filter(r => r.reply_status === 'posted');
-  else if (replyFilter === 'none') reviews = reviews.filter(r => !r.reply_status || r.reply_status === '');
+  if (replyFilter === 'ai_generated') reviews = reviews.filter(r => r.reply_status === 'ai_generated' && !r.board_answered);
+  else if (replyFilter === 'posted') reviews = reviews.filter(r => isReplyDone(r));
+  else if (replyFilter === 'none') reviews = reviews.filter(r => (!r.reply_status || r.reply_status === '') && !r.board_answered);
   if (replyChannelFilter !== 'all') reviews = reviews.filter(r => r.channel === replyChannelFilter);
   // 감정 필터 (혼합/중립 → 둘 다 포함)
   if (replySentimentFilter !== 'all') {
@@ -6900,8 +6928,8 @@ function getFilteredReplyReviews() {
   // 정렬
   if (replySortOrder === 'unanswered_first') {
     reviews.sort((a, b) => {
-      const aDone = (a.reply_status === 'posted') ? 2 : (a.reply_status === 'ai_generated' ? 1 : 0);
-      const bDone = (b.reply_status === 'posted') ? 2 : (b.reply_status === 'ai_generated' ? 1 : 0);
+      const aDone = isReplyDone(a) ? 2 : (a.reply_status === 'ai_generated' ? 1 : 0);
+      const bDone = isReplyDone(b) ? 2 : (b.reply_status === 'ai_generated' ? 1 : 0);
       if (aDone !== bDone) return aDone - bDone; // 미답변(0) → AI생성(1) → 게시(2)
       return b.date.localeCompare(a.date);
     });
@@ -6923,9 +6951,9 @@ function getFilteredReplyReviews() {
 // ── 통계 업데이트 ──
 function updateReplyStats() {
   const all = getReplyReviews();
-  const generated = all.filter(r => r.reply_status === 'ai_generated').length;
-  const posted = all.filter(r => r.reply_status === 'posted').length;
-  const pending = all.length - generated - posted;
+  const posted = all.filter(r => isReplyDone(r)).length;               // 게시/자사몰 답변 완료
+  const generated = all.filter(r => r.reply_status === 'ai_generated' && !r.board_answered).length;
+  const pending = all.length - generated - posted;                     // 진짜 미답변
   document.getElementById('rstat-total').textContent = all.length;
   document.getElementById('rstat-generated').textContent = generated;
   document.getElementById('rstat-posted').textContent = posted;
@@ -7201,14 +7229,14 @@ function renderReplyList() {
   }
 
   listEl.innerHTML = pageReviews.map(r => {
-    const statusClass = r.reply_status || 'none';
-    const statusLabel = r.reply_status === 'posted' ? '게시 완료' : r.reply_status === 'ai_generated' ? 'AI 답변 생성됨' : '미답변';
+    const statusClass = r.board_answered ? 'posted' : (r.reply_status || 'none');
+    const statusLabel = r.reply_status === 'posted' ? '게시 완료' : (r.board_answered ? '자사몰 답변완료' : (r.reply_status === 'ai_generated' ? 'AI 답변 생성됨' : '미답변'));
     const isEditing = replyEditingId === r.id;
     const isSelected = bulkSelected.has(r.id);
     const canPost = r.reply_status === 'ai_generated' && r.ai_reply && getCremaReviewId(r);
     const channelEmoji = r.channel === '스마트스토어' ? '🟢' : '🛒';
 
-    const selectable = r.reply_status !== 'posted';
+    const selectable = !isReplyDone(r);
     return `
     <div class="reply-card status-${statusClass}${selectable?' selectable':''}${isSelected?' selected':''}" id="reply-card-${r.id}"${selectable?` onclick="onReplyCardClick(event,'${r.id}')"`:''}>
       <div class="reply-header">
