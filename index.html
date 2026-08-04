@@ -346,6 +346,9 @@
   /* ── 답변 관리 페이지 ── */
   .reply-card{border:1px solid var(--border);border-radius:var(--radius);background:var(--white);padding:18px 20px;margin-bottom:12px;transition:all .15s}
   .reply-card:hover{box-shadow:var(--shadow)}
+  .reply-card.selectable{cursor:pointer}
+  .reply-card.selectable:hover{border-color:var(--primary,#1e50ff)}
+  .reply-card.selected{border-color:var(--primary,#1e50ff);box-shadow:0 0 0 2px var(--primary,#1e50ff) inset,var(--shadow);background:rgba(30,80,255,0.035)}
   .reply-card.status-posted{border-left:3px solid var(--positive)}
   .reply-card.status-ai_generated{border-left:3px solid var(--mixed)}
   .reply-card.status-none{border-left:3px solid var(--border)}
@@ -7162,8 +7165,9 @@ function renderReplyList() {
     const canPost = r.reply_status === 'ai_generated' && r.ai_reply && getCremaReviewId(r);
     const channelEmoji = r.channel === '스마트스토어' ? '🟢' : '🛒';
 
+    const selectable = r.reply_status !== 'posted';
     return `
-    <div class="reply-card status-${statusClass}" id="reply-card-${r.id}">
+    <div class="reply-card status-${statusClass}${selectable?' selectable':''}${isSelected?' selected':''}" id="reply-card-${r.id}"${selectable?` onclick="onReplyCardClick(event,'${r.id}')"`:''}>
       <div class="reply-header">
         <div style="flex:1">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap">
@@ -7325,9 +7329,26 @@ async function postSingleReply(id) {
 }
 
 // ── 일괄 선택/게시 ──
+function _syncCardSelected(id) {
+  const card = document.getElementById('reply-card-' + id);
+  if (!card) return;
+  const on = bulkSelected.has(id);
+  card.classList.toggle('selected', on);
+  const cb = card.querySelector('.reply-select-cb');
+  if (cb) cb.checked = on;
+}
 function toggleBulkSelect(id) {
   if (bulkSelected.has(id)) bulkSelected.delete(id);
   else bulkSelected.add(id);
+  _syncCardSelected(id);
+  updateBulkBar();
+}
+// 카드 아무 곳이나 클릭해도 선택 (버튼·입력·리뷰텍스트 등 조작 요소 클릭은 제외)
+function onReplyCardClick(e, id) {
+  if (e.target.closest('button, input, textarea, select, a, label, .reply-review-text, .reply-edit-area, .sentiment-override-select')) return;
+  if (bulkSelected.has(id)) bulkSelected.delete(id);
+  else bulkSelected.add(id);
+  _syncCardSelected(id);
   updateBulkBar();
 }
 function clearBulkSelection() {
