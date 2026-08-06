@@ -631,7 +631,7 @@ window.logoutEGA = logoutEGA;
     <div class="sidebar-logo">
       <div class="brand">EGA</div>
       <div class="tagline">Review Insight Archive</div>
-      <div class="tagline" id="build-stamp" style="color:#4ade80;font-weight:600;margin-top:4px">BUILD 250806-A · 미답변 크리마 실측</div>
+      <div class="tagline" id="build-stamp" style="color:#4ade80;font-weight:600;margin-top:4px">BUILD 250806-B · 프롬프트 관리</div>
     </div>
     <nav class="sidebar-nav">
       <div class="nav-section-label">Analytics</div>
@@ -696,6 +696,10 @@ window.logoutEGA = logoutEGA;
       <a class="nav-item" onclick="showPage('admin')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M19.07 19.07l-1.41-1.41M4.93 19.07l1.41-1.41M20 12h1M3 12H2M12 20v1M12 3V2"></path></svg>
         Admin
+      </a>
+      <a class="nav-item" onclick="showPage('promptConfig')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a7 7 0 0 1 7 7c0 2.5-1.4 4-2.5 5.2-.7.8-1.5 1.6-1.5 2.8H9c0-1.2-.8-2-1.5-2.8C6.4 13 5 11.5 5 9a7 7 0 0 1 7-7z"></path><path d="M9 21h6M10 18h4"></path></svg>
+        프롬프트 관리
       </a>
     </nav>
     <div class="sidebar-footer">
@@ -2506,6 +2510,21 @@ window.logoutEGA = logoutEGA;
       <div class="pagination" id="reply-pagination"></div>
     </div>
 
+    <!-- 🧠 프롬프트 관리 -->
+    <div class="page" id="page-promptConfig">
+      <div class="page-header">
+        <h1 class="page-title">🧠 프롬프트 관리</h1>
+        <div class="page-subtitle">제품별 AI 답변 프롬프트를 직접 수정 → 저장하면 다음 생성부터 즉시 반영됩니다 (팀 공유)</div>
+      </div>
+      <div id="promptcfg-status" style="margin-bottom:14px"></div>
+      <div id="promptcfg-list"></div>
+      <div style="position:sticky;bottom:0;background:var(--white);padding:14px 0;margin-top:8px;border-top:1px solid var(--border);display:flex;gap:10px;align-items:center;flex-wrap:wrap;z-index:5">
+        <button class="btn btn-primary" onclick="savePromptConfig()">💾 저장 (즉시 반영)</button>
+        <button class="btn btn-outline" onclick="initPromptConfig()">↩ 서버값 다시 불러오기</button>
+        <span id="promptcfg-saveresult" style="font-size:13px"></span>
+      </div>
+    </div>
+
     <!-- Toast notification -->
     <div class="toast" id="toast-msg"></div>
 
@@ -2711,6 +2730,66 @@ function showPage(id) {
   if(id==='inquiryArchive') initInquiryArchive();
   if(id==='reviewWorkflow') initReviewWorkflow();
   if(id==='cafe24qa') initCafe24QA();
+  if(id==='promptConfig') initPromptConfig();
+}
+
+// ===== 🧠 프롬프트 관리 (제품별 AI 답변 프롬프트 웹 편집) =====
+let _promptCfg = null;
+function _pcfgEsc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+async function initPromptConfig(){
+  const statusEl=document.getElementById('promptcfg-status');
+  const listEl=document.getElementById('promptcfg-list');
+  if(!statusEl||!listEl) return;
+  if(!serverOnline){
+    statusEl.innerHTML='<div style="padding:12px;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;color:#991b1b">서버에 연결되어 있지 않습니다. 우측 상단 "서버 확인"을 눌러 연결한 뒤 다시 열어주세요.</div>';
+    listEl.innerHTML=''; return;
+  }
+  statusEl.innerHTML='<div style="color:var(--text-muted);font-size:13px">불러오는 중…</div>';
+  try{
+    const res=await fetch(REPLY_SERVER+'/api/prompt-config?t='+Date.now());
+    const data=await res.json();
+    _promptCfg=data.config||{products:{},labels:{},order:[]};
+    const order=(_promptCfg.order&&_promptCfg.order.length)?_promptCfg.order:Object.keys(_promptCfg.products||{});
+    const labels=_promptCfg.labels||{};
+    listEl.innerHTML=order.map(k=>{
+      const val=(_promptCfg.products&&_promptCfg.products[k])||'';
+      const rows=Math.min(18,Math.max(5,val.split('\n').length+1));
+      return '<div style="margin-bottom:16px">'+
+        '<label style="display:block;font-weight:700;font-size:14px;margin-bottom:6px;color:var(--text-primary)">'+_pcfgEsc(labels[k]||k)+'</label>'+
+        '<textarea id="pcfg-'+k+'" rows="'+rows+'" style="width:100%;font-size:13px;line-height:1.6;padding:12px;border:1px solid var(--border);border-radius:8px;font-family:inherit;resize:vertical;box-sizing:border-box">'+_pcfgEsc(val)+'</textarea>'+
+      '</div>';
+    }).join('');
+    const upd=_promptCfg.updatedAt?(' · 최근 저장 '+String(_promptCfg.updatedAt).slice(0,16).replace('T',' ')):'';
+    statusEl.innerHTML='<div style="padding:10px 12px;background:#eef2ff;border-radius:8px;font-size:12.5px;color:#3730a3">✏️ 각 제품 프롬프트를 수정하고 아래 "저장"을 누르면 <b>다음 AI 생성부터 바로 반영</b>돼요. (팀 공유)'+upd+'</div>';
+  }catch(e){
+    statusEl.innerHTML='<div style="padding:12px;background:#fef2f2;color:#991b1b;border-radius:8px">불러오기 실패: '+_pcfgEsc(e.message)+' (서버가 잠자기 상태면 30초 뒤 다시)</div>';
+  }
+}
+async function savePromptConfig(){
+  if(!_promptCfg){ showCenterPopup('먼저 불러오기','프롬프트를 먼저 불러온 뒤 저장해주세요.','error'); return; }
+  const resultEl=document.getElementById('promptcfg-saveresult');
+  const order=(_promptCfg.order&&_promptCfg.order.length)?_promptCfg.order:Object.keys(_promptCfg.products||{});
+  const products={};
+  order.forEach(k=>{ const ta=document.getElementById('pcfg-'+k); if(ta) products[k]=ta.value; });
+  const cfg=Object.assign({},_promptCfg,{products:products});
+  if(resultEl){ resultEl.textContent='저장 중…'; resultEl.style.color='var(--text-muted)'; }
+  try{
+    const res=await fetch(REPLY_SERVER+'/api/prompt-config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({config:cfg})});
+    const data=await res.json().catch(()=>({}));
+    if(data.ok){
+      _promptCfg=cfg;
+      if(resultEl){ resultEl.textContent=data.committed?'✅ 저장 완료(서버 영구저장)':'✅ 즉시 반영됨(영구저장 미설정)'; resultEl.style.color=data.committed?'#166534':'#92400e'; }
+      showCenterPopup('프롬프트 저장 완료', data.committed
+        ? '수정한 프롬프트가 서버에 반영·저장됐어요. 다음 AI 답변 생성부터 적용돼요. 👏'
+        : '수정한 프롬프트가 지금 즉시 반영됐어요.\n\n(단, "서버 영구 저장(GH_TOKEN)"이 아직 설정 전이라, 서버가 재시작되면 초기화될 수 있어요. 영구 저장을 켜려면 GH_TOKEN 설정이 필요해요.)','success');
+    }else{
+      if(resultEl){ resultEl.textContent='저장 실패: '+(data.message||('HTTP '+res.status)); resultEl.style.color='#991b1b'; }
+      showCenterPopup('저장 실패', data.message||('HTTP '+res.status),'error');
+    }
+  }catch(e){
+    if(resultEl){ resultEl.textContent='서버 연결 오류: '+e.message; resultEl.style.color='#991b1b'; }
+    showCenterPopup('서버 연결 오류', e.message,'error');
+  }
 }
 
 // ===== 💬 카페24 Q&A (문의글 주제/제품별) =====
