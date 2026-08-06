@@ -631,7 +631,7 @@ window.logoutEGA = logoutEGA;
     <div class="sidebar-logo">
       <div class="brand">EGA</div>
       <div class="tagline">Review Insight Archive</div>
-      <div class="tagline" id="build-stamp" style="color:#4ade80;font-weight:600;margin-top:4px">BUILD 250804-F · 생성·게시 진행률바</div>
+      <div class="tagline" id="build-stamp" style="color:#4ade80;font-weight:600;margin-top:4px">BUILD 250806-A · 미답변 크리마 실측</div>
     </div>
     <nav class="sidebar-nav">
       <div class="nav-section-label">Analytics</div>
@@ -6899,7 +6899,27 @@ function _boardKey(text, date) {
   const t = (text || '').replace(/<[^>]+>/g, '').replace(/\s/g, '').replace(/[!-/:-@[-`{-~]/g, '').toLowerCase().slice(0, 14);
   return (date || '').slice(0, 10) + '|' + t;
 }
+let CREMA_ANSWERED_IDS = null;
 async function applyBoardReplyStatus() {
+  // 1순위: 크리마 실측(crema_answered.json) — 리뷰 ID로 정확 매칭 (텍스트 충돌 없음)
+  try {
+    const res = await fetch('crema_answered.json?t=' + Date.now(), { cache: 'no-store' });
+    if (res.ok) {
+      const data = await res.json();
+      CREMA_ANSWERED_IDS = new Set((data.answeredIds || []).map(String));
+      let n = 0;
+      (ALL_REVIEWS || []).forEach(r => {
+        if (r.channel === '올리브영') return;
+        if (r.reply_status === 'posted') return;
+        const cid = getCremaReviewId(r);
+        if (cid && CREMA_ANSWERED_IDS.has(String(cid))) { r.board_answered = true; n++; }
+      });
+      window._boardAnsweredCount = n;
+      window._answeredSource = 'crema(' + CREMA_ANSWERED_IDS.size + ')';
+      return;
+    }
+  } catch (e) { /* 게시판 폴백으로 */ }
+  // 2순위(폴백): 게시판 키 매칭
   try {
     const res = await fetch('board_reply_status.json?t=' + Date.now(), { cache: 'no-store' });
     if (!res.ok) return;
@@ -6912,7 +6932,8 @@ async function applyBoardReplyStatus() {
       if (BOARD_ANSWERED_KEYS.has(_boardKey(r.text, r.date))) { r.board_answered = true; n++; }
     });
     window._boardAnsweredCount = n;
-  } catch (e) { console.warn('board_reply_status 로드 실패', e); }
+    window._answeredSource = 'board';
+  } catch (e) { console.warn('답변상태 로드 실패', e); }
 }
 // 리뷰가 (자사몰 게시판 또는 크리마) 답변 완료 상태인가
 function isReplyDone(r) { return r.reply_status === 'posted' || r.board_answered === true; }
