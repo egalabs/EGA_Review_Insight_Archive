@@ -116,6 +116,31 @@ async function postCremaComment({ reviewId, message }) {
 
   const accessToken = await getCremaAccessToken();
 
+  // 🛡 중복 방지: 이미 "EGA 공식 온라인 스토어" 판매자 답변이 있으면 다시 게시하지 않고 건너뛴다.
+  try {
+    const existRes = await request({
+      hostname: "api.cre.ma",
+      path: `/v1/reviews/${encodeURIComponent(cremaReviewId)}/comments?access_token=${encodeURIComponent(accessToken)}&limit=100`,
+      method: "GET",
+      headers: { Accept: "application/json" },
+    });
+    const list = Array.isArray(existRes.body)
+      ? existRes.body
+      : (existRes.body && existRes.body.comments) || [];
+    const hasEga = list.some(
+      (c) =>
+        c &&
+        (c.user_name === "EGA 공식 온라인 스토어" ||
+          c.user_code === "EGA 공식 온라인 스토어" ||
+          /^ega_reply_/.test(c.code || ""))
+    );
+    if (hasEga) {
+      return { cremaReviewId, skipped: true, reason: "already_answered" };
+    }
+  } catch (e) {
+    // 조회 실패 시에는 안전하게 그냥 게시 진행
+  }
+
   const payload = {
     code: makeCommentCode(cremaReviewId),
     created_at: nowIsoKSTSeconds(),
