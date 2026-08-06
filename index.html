@@ -631,7 +631,7 @@ window.logoutEGA = logoutEGA;
     <div class="sidebar-logo">
       <div class="brand">EGA</div>
       <div class="tagline">Review Insight Archive</div>
-      <div class="tagline" id="build-stamp" style="color:#4ade80;font-weight:600;margin-top:4px">BUILD 250806-B · 프롬프트 관리</div>
+      <div class="tagline" id="build-stamp" style="color:#4ade80;font-weight:600;margin-top:4px">BUILD 250806-C · 아카이브탭 정리·미답변뱃지</div>
     </div>
     <nav class="sidebar-nav">
       <div class="nav-section-label">Analytics</div>
@@ -671,16 +671,6 @@ window.logoutEGA = logoutEGA;
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"></path></svg>
         답변 관리
         <span class="nav-badge" id="nav-reply-count" style="background:#f59e0b">0</span>
-      </a>
-      <a class="nav-item" onclick="showPage('replyArchive')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-        답변 아카이브
-        <span class="nav-badge" id="nav-reply-archive-count" style="background:#10b981">0</span>
-      </a>
-      <a class="nav-item" onclick="showPage('inquiryArchive')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-        문의 아카이브
-        <span class="nav-badge" id="nav-inquiry-count" style="background:#8b5cf6">0</span>
       </a>
       <a class="nav-item" onclick="showPage('cafe24qa')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
@@ -6613,6 +6603,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (typeof applyBoardReplyStatus === 'function') await applyBoardReplyStatus();
   // 사용자가 수동 정정한 감정도 복원
   if (typeof applySentimentOverrides === 'function') applySentimentOverrides();
+  // 답변 상태 반영 후 미답변 뱃지 재계산 (사이드바 '답변 관리' 옆 숫자 = 미답변 수)
+  if (typeof updateReplyStats === 'function') updateReplyStats();
   updateDashboard();
   buildWeekOptions();
   updateWeeklyReport();
@@ -7081,9 +7073,9 @@ function updateReplyStats() {
   document.getElementById('rstat-generated').textContent = generated;
   document.getElementById('rstat-posted').textContent = posted;
   document.getElementById('rstat-pending').textContent = pending;
-  // nav badge
+  // nav badge = 미답변 수
   const badge = document.getElementById('nav-reply-count');
-  if (badge) badge.textContent = generated;
+  if (badge) badge.textContent = pending;
 }
 
 // ── 필터 변경 ──
