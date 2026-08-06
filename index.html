@@ -631,7 +631,7 @@ window.logoutEGA = logoutEGA;
     <div class="sidebar-logo">
       <div class="brand">EGA</div>
       <div class="tagline">Review Insight Archive</div>
-      <div class="tagline" id="build-stamp" style="color:#4ade80;font-weight:600;margin-top:4px">BUILD 250806-C · 아카이브탭 정리·미답변뱃지</div>
+      <div class="tagline" id="build-stamp" style="color:#4ade80;font-weight:600;margin-top:4px">BUILD 250806-D · Q&A 미답변뱃지</div>
     </div>
     <nav class="sidebar-nav">
       <div class="nav-section-label">Analytics</div>
@@ -2806,7 +2806,7 @@ async function initCafe24QA(force) {
     return;
   }
   const badge = document.getElementById('nav-qa-count');
-  if (badge) badge.textContent = _qaData.total;
+  if (badge) badge.textContent = (_qaData.inquiries || []).filter(iq => !iq.answered).length;  // 미답변 문의 수
   const upd = document.getElementById('qa-updated');
   if (upd && _qaData.generatedAt) upd.textContent = '업데이트 ' + _qaData.generatedAt.slice(0,10);
   renderCafe24QA();
@@ -6608,6 +6608,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   updateDashboard();
   buildWeekOptions();
   updateWeeklyReport();
+  // 사이드바 카페24 Q&A '미답변' 뱃지를 시작 시에도 채우기 (백그라운드, 렌더는 숨김 컨테이너)
+  if (typeof initCafe24QA === 'function') { try { initCafe24QA(); } catch(e) {} }
   // pre-load archive
   archiveInitialized = false;
 });
