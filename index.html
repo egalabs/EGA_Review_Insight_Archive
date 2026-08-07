@@ -631,7 +631,7 @@ window.logoutEGA = logoutEGA;
     <div class="sidebar-logo">
       <div class="brand">EGA</div>
       <div class="tagline">Review Insight Archive</div>
-      <div class="tagline" id="build-stamp" style="color:#4ade80;font-weight:600;margin-top:4px">BUILD 250806-F · 선크림 카테고리</div>
+      <div class="tagline" id="build-stamp" style="color:#4ade80;font-weight:600;margin-top:4px">BUILD 250806-G · Q&A 새로고침 피드백</div>
     </div>
     <nav class="sidebar-nav">
       <div class="nav-section-label">Analytics</div>
@@ -2818,9 +2818,15 @@ async function initCafe24QA(force) {
 
 async function refreshCafe24QA() {
   const btn = document.getElementById('qa-refresh-btn');
-  if (btn) { btn.style.opacity = '0.6'; btn.style.pointerEvents = 'none'; }
+  const beforeN = _qaData ? (_qaData.inquiries || []).length : 0;
+  if (btn) { btn.style.opacity = '0.6'; btn.style.pointerEvents = 'none'; if (!btn.dataset.orig) btn.dataset.orig = btn.innerHTML; btn.innerHTML = '⏳ 불러오는 중…'; }
   await initCafe24QA(true);
-  if (btn) { btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; }
+  if (btn) { btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; if (btn.dataset.orig) btn.innerHTML = btn.dataset.orig; }
+  if (!_qaData) { showToast('새로고침 실패 — 문의 데이터를 불러오지 못했어요', 'error'); return; }
+  const inq = _qaData.inquiries || [];
+  const upd = _qaData.generatedAt ? _qaData.generatedAt.slice(0, 16).replace('T', ' ') : '알 수 없음';
+  const delta = inq.length - beforeN;
+  showToast('✅ 새로고침 완료 · 마지막 자동수집 ' + upd + (delta > 0 ? (' · 새 문의 ' + delta + '건') : ' · 새 문의 없음'), 'success');
 }
 
 // KPI 카드 클릭 → 답변상태 필터 + 목록으로 스크롤
