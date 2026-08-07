@@ -632,7 +632,7 @@ window.logoutEGA = logoutEGA;
     <div class="sidebar-logo">
       <div class="brand">EGA</div>
       <div class="tagline">Review Insight Archive</div>
-      <div class="tagline" id="build-stamp" style="color:#4ade80;font-weight:600;margin-top:4px">BUILD 250806-J · 제품분류 강화(에센셜·올인원·내용추정)</div>
+      <div class="tagline" id="build-stamp" style="color:#4ade80;font-weight:600;margin-top:4px">BUILD 250806-K · 올영(매장) 답변관리 제외</div>
     </div>
     <nav class="sidebar-nav">
       <div class="nav-section-label">Analytics</div>
@@ -7018,7 +7018,7 @@ async function applyBoardReplyStatus() {
       CREMA_ANSWERED_IDS = new Set((data.answeredIds || []).map(String));
       let n = 0;
       (ALL_REVIEWS || []).forEach(r => {
-        if (r.channel === '올리브영') return;
+        if (/올리브영/.test(r.channel || '')) return;
         if (r.reply_status === 'posted') return;
         const cid = getCremaReviewId(r);
         if (cid && CREMA_ANSWERED_IDS.has(String(cid))) { r.board_answered = true; n++; }
@@ -7036,7 +7036,7 @@ async function applyBoardReplyStatus() {
     BOARD_ANSWERED_KEYS = new Set(data.answeredKeys || []);
     let n = 0;
     (ALL_REVIEWS || []).forEach(r => {
-      if (r.channel === '올리브영') return;
+      if (/올리브영/.test(r.channel || '')) return;
       if (r.reply_status === 'posted') return;
       if (BOARD_ANSWERED_KEYS.has(_boardKey(r.text, r.date))) { r.board_answered = true; n++; }
     });
@@ -7049,7 +7049,8 @@ function isReplyDone(r) { return r.reply_status === 'posted' || r.board_answered
 
 // ── 답변 대상 리뷰 필터 (올리브영 제외) ──
 function getReplyReviews() {
-  return ALL_REVIEWS.filter(r => r.channel !== '올리브영');
+  // 올리브영은 크리마 게시 불가 → 답변 관리에서 제외. "올리브영 (매장)" 등 변형까지 모두 제외.
+  return ALL_REVIEWS.filter(r => !/올리브영/.test(r.channel || ''));
 }
 
 function getFilteredReplyReviews() {
