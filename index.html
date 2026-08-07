@@ -631,7 +631,7 @@ window.logoutEGA = logoutEGA;
     <div class="sidebar-logo">
       <div class="brand">EGA</div>
       <div class="tagline">Review Insight Archive</div>
-      <div class="tagline" id="build-stamp" style="color:#4ade80;font-weight:600;margin-top:4px">BUILD 250806-G · Q&A 새로고침 피드백</div>
+      <div class="tagline" id="build-stamp" style="color:#4ade80;font-weight:600;margin-top:4px">BUILD 250806-H · [Review] 마스크팩 분류</div>
     </div>
     <nav class="sidebar-nav">
       <div class="nav-section-label">Analytics</div>
@@ -4317,7 +4317,9 @@ function switchSalesTab(channel, btnEl) {
 function _categorizeForSelfShop(p) {
   if (!p) return null;
   p = p.replace(/&amp;/g, '&');
-  if (/리뷰전용|\[Review\]/i.test(p)) return null;
+  if (/리뷰전용/i.test(p)) return null;
+  // [Review] 접두어(리뷰작업용 SKU)라도 실제 제품 그대로 분류한다 (예: [Review] ...White repair face&neck kit → 마스크팩)
+  p = p.replace(/^\s*\[Review\]\s*/i, '');
   if (/Protector|UV\s*IN.?&.?OUT|UV\s*IN.?AND.?OUT|UV\s*인앤아웃|인앤아웃\s*프로텍/i.test(p)) return '선크림';
   if (/UV Healer|UV힐러|앰플/i.test(p)) return '앰플';
   if (/마스크팩|지우개팩|repair.*kit|face.*neck.*kit|7일팩|자외선.*팩|얼굴목|넥팩|페이스.*넥|겔마스크팩/i.test(p)) {
