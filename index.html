@@ -632,7 +632,7 @@ window.logoutEGA = logoutEGA;
     <div class="sidebar-logo">
       <div class="brand">EGA</div>
       <div class="tagline">Review Insight Archive</div>
-      <div class="tagline" id="build-stamp" style="color:#4ade80;font-weight:600;margin-top:4px">BUILD 250806-I · Q&A 시간 KST·파란토스트</div>
+      <div class="tagline" id="build-stamp" style="color:#4ade80;font-weight:600;margin-top:4px">BUILD 250806-J · 제품분류 강화(에센셜·올인원·내용추정)</div>
     </div>
     <nav class="sidebar-nav">
       <div class="nav-section-label">Analytics</div>
@@ -4187,7 +4187,7 @@ function getArchiveReviews() {
   if (archiveProductFilter !== 'all') {
     reviews = reviews.filter(r => {
       const p = (r.product || r.product_norm || r.product_category || '');
-      const cat = (typeof _categorizeForSelfShop === 'function') ? _categorizeForSelfShop(p) : null;
+      const cat = (typeof _categorizeForSelfShop === 'function') ? _categorizeForSelfShop(p, r.text) : null;
       return cat === archiveProductFilter;
     });
   }
@@ -4315,24 +4315,40 @@ function switchSalesTab(channel, btnEl) {
 }
 
 // ───── 공통: 자사몰 카테고리 분류 (카페24/스마트스토어 공용) ─────
-function _categorizeForSelfShop(p) {
+function _categorizeForSelfShop(p, text) {
+  const byName = _catByName(p);
+  if (byName) return byName;
+  // 제품명으로 유추가 안 되면(예: "EGA Partner sale") 리뷰 내용으로 추정
+  if (text) return _catByText(text);
+  return null;
+}
+function _catByName(p) {
   if (!p) return null;
   p = p.replace(/&amp;/g, '&');
   if (/리뷰전용/i.test(p)) return null;
-  // [Review] 접두어(리뷰작업용 SKU)라도 실제 제품 그대로 분류한다 (예: [Review] ...White repair face&neck kit → 마스크팩)
-  p = p.replace(/^\s*\[Review\]\s*/i, '');
+  p = p.replace(/^\s*\[Review\]\s*/i, '');   // [Review] 접두어(리뷰작업 SKU)라도 실제 제품으로 분류
+  // 전체품(패키지) 신호 우선 — 올인원/완성팩/리버스 키트·루틴·스타터 등
+  if (/올인원\s*패키지|올인원\s*세트|올인원|리버스\s*루틴|리버스\s*스타터|리버스\s*키트|완성팩|루틴\s*완성|역노화.*패키지|리버스.*패키지/i.test(p)) return '종합 패키지';
   if (/Protector|UV\s*IN.?&.?OUT|UV\s*IN.?AND.?OUT|UV\s*인앤아웃|인앤아웃\s*프로텍/i.test(p)) return '선크림';
   if (/UV Healer|UV힐러|앰플/i.test(p)) return '앰플';
-  if (/마스크팩|지우개팩|repair.*kit|face.*neck.*kit|7일팩|자외선.*팩|얼굴목|넥팩|페이스.*넥|겔마스크팩/i.test(p)) {
+  if (/마스크팩|지우개팩|repair.*kit|face.*neck.*kit|7일팩|자외선.*팩|얼굴목|넥팩|페이스.*넥|겔마스크팩|넥패치/i.test(p)) {
     if (p.includes('&') && /핸드크림/i.test(p)) return '종합 패키지';
     return '마스크팩';
   }
-  if (/NMN.*Daily Routine|NMN.*Daily Regenerator|NMN.*스킨.?부스터|NMN.*Solution|NMN Skin booster|NMN.*Regenerator|NMN 스킨부스터|NMN 영양제|스킨부스터|NMN.*분말|NMN.*고함량|고함량.*NMN|엔엠엔/i.test(p)) return 'NMN';
-  if (/Daily Regenerator/i.test(p)) return 'NMN';
-  if (/FISETIN.*NMN|NMN.*특별/i.test(p)) return 'NMN';
-  if (/에센셜 리제너레이터|어드밴스드 리제너레이터|손티에이징 크림|손티에이징 핸드크림|핸드크림 인앤아웃|에센셜 미니어처|에센셜.*기프트|어드밴스드.*기프트|에센셜.*50ml|어드밴스드.*30ml|핸드크림|인앤아웃 세트/i.test(p)) return '핸드크림';
-  if (/리버스 루틴|리버스 스타터|역노화.*패키지|리버스.*패키지/i.test(p)) return '종합 패키지';
+  if (/NMN.*Daily Routine|NMN.*Daily Regenerator|NMN.*스킨.?부스터|NMN.*Solution|NMN Skin booster|NMN.*Regenerator|NMN 스킨부스터|NMN 영양제|스킨부스터|NMN.*분말|NMN.*고함량|고함량.*NMN|엔엠엔|Daily Regenerator|FISETIN.*NMN|NMN.*특별/i.test(p)) return 'NMN';
+  // 핸드크림: 에센셜·어드밴스드 키워드 포함 (예: "[기획] 에센셜 + 에센셜10ml", "[옵션][단품] 어드밴스드")
+  if (/에센셜 리제너레이터|어드밴스드 리제너레이터|손티에이징|핸드크림|인앤아웃 세트|에센셜|어드밴스드/i.test(p)) return '핸드크림';
   if (/Holiday|명절|선물세트|선물 세트|종합선물|추석|설 명절/i.test(p)) return '시즌 선물세트';
+  return null;
+}
+// 제품명으로 안 잡힐 때 리뷰 본문 키워드로 카테고리 추정
+function _catByText(t) {
+  t = (t || '').toLowerCase().replace(/\s/g, '');
+  if (/마스크팩|시트팩|겔마스크|넥패치|넥마스크|지우개팩|얼굴에붙|목에붙|붙이는팩|팩을하|팩을붙|시트를/.test(t)) return '마스크팩';
+  if (/핸드크림|손등|손에바|손피부|손을|손이|손주름|손티에이징/.test(t)) return '핸드크림';
+  if (/선크림|썬크림|자차|자외선차단|백탁|덧발|spf/.test(t)) return '선크림';
+  if (/앰플|바이알/.test(t)) return '앰플';
+  if (/먹으니|먹고|한포|1포|스틱|복용|알약|가루|분말|물없이|맛이|이너뷰티|영양제|챙겨먹|섭취/.test(t)) return 'NMN';
   return null;
 }
 
@@ -4354,7 +4370,7 @@ function _renderSelfShopSales(containerId, channelName, data, channelEmoji, extr
   const reviewByCat = {};
   channelReviews.forEach(r => {
     const p = (r.product || r.product_norm || r.product_category || '');
-    const cat = _categorizeForSelfShop(p);
+    const cat = _categorizeForSelfShop(p, r.text);
     if (cat) reviewByCat[cat] = (reviewByCat[cat] || 0) + 1;
   });
 
@@ -7054,7 +7070,7 @@ function getFilteredReplyReviews() {
   if (replyProductFilter !== 'all') {
     reviews = reviews.filter(r => {
       const p = (r.product || r.product_norm || r.product_category || '');
-      const cat = (typeof _categorizeForSelfShop === 'function') ? _categorizeForSelfShop(p) : null;
+      const cat = (typeof _categorizeForSelfShop === 'function') ? _categorizeForSelfShop(p, r.text) : null;
       return cat === replyProductFilter;
     });
   }
