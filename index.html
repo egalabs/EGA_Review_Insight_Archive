@@ -417,6 +417,38 @@
   .special-mini-btn:hover{border-color:var(--blue);color:var(--blue)}
   .special-mini-btn.danger:hover{border-color:var(--negative);color:var(--negative)}
 
+  /* CS 답변 템플릿 */
+  .cst-basics-row{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start}
+  .cst-basics-row .b-item{font-size:12px;color:var(--text-muted)}
+  .cst-basics-row .b-item b{color:var(--text-primary);font-weight:650}
+  .cst-principles{margin-top:8px;font-size:12px;color:var(--text-muted);line-height:1.7}
+  .cst-cat-chip{appearance:none;border:1px solid var(--border);background:var(--white);color:var(--text-muted);font-size:12px;font-weight:600;padding:6px 12px;border-radius:999px;cursor:pointer;transition:all .15s}
+  .cst-cat-chip:hover{border-color:var(--blue);color:var(--blue)}
+  .cst-cat-chip.active{background:var(--blue);border-color:var(--blue);color:#fff}
+  .cst-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin-bottom:12px}
+  .cst-card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+  .cst-card-title{font-size:13.5px;font-weight:650;color:var(--text-primary);display:flex;align-items:center;gap:8px}
+  .cst-card-cat{font-size:10.5px;font-weight:600;color:var(--blue);background:var(--blue-light);padding:2px 8px;border-radius:999px}
+  .cst-copy-btn{appearance:none;border:1px solid var(--blue);background:var(--blue);color:#fff;font-size:12px;font-weight:650;padding:6px 13px;border-radius:7px;cursor:pointer;transition:all .15s;flex-shrink:0}
+  .cst-copy-btn:hover{background:#2952d9}
+  .cst-copy-btn.copied{background:var(--positive);border-color:var(--positive)}
+  .cst-vars{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+  .cst-var{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--text-muted)}
+  .cst-var input{border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:12px;font-family:inherit;width:120px}
+  .cst-var input:focus{outline:none;border-color:var(--blue)}
+  .cst-body{white-space:pre-wrap;font-size:12.5px;line-height:1.65;color:var(--text-primary);background:var(--bg);border:1px solid var(--border-light);border-radius:var(--radius-sm);padding:12px 14px}
+  .cst-note{font-size:11px;color:var(--mixed);background:var(--mixed-bg);border-radius:6px;padding:5px 9px;margin-top:8px;display:inline-block}
+  .cst-empty{text-align:center;padding:40px 20px;color:var(--text-muted);font-size:13px}
+  .cst-phrase-group{margin-bottom:12px}
+  .cst-phrase-group:last-child{margin-bottom:0}
+  .cst-phrase-label{font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.03em;margin-bottom:6px}
+  .cst-phrase-item{font-size:12px;color:var(--text-primary);padding:6px 0;border-bottom:1px solid var(--border-light);cursor:pointer}
+  .cst-phrase-item:last-child{border-bottom:none}
+  .cst-phrase-item:hover{color:var(--blue)}
+  .cst-check-item{display:flex;gap:8px;align-items:flex-start;font-size:12px;color:var(--text-primary);padding:6px 0;border-bottom:1px solid var(--border-light)}
+  .cst-check-item:last-child{border-bottom:none}
+  .cst-check-item input{margin-top:2px}
+
 </style>
 </head>
 <body>
@@ -640,7 +672,7 @@ window.logoutEGA = logoutEGA;
     <div class="sidebar-logo">
       <div class="brand">EGA</div>
       <div class="tagline">Review Insight Archive</div>
-      <div class="tagline" id="build-stamp" style="color:#4ade80;font-weight:600;margin-top:4px">BUILD 250806-L · 올영(매장) 답변관리 제외</div>
+      <div class="tagline" id="build-stamp" style="color:#4ade80;font-weight:600;margin-top:4px">BUILD 250806-M · 올영(매장) 답변관리 제외</div>
     </div>
     <nav class="sidebar-nav">
       <div class="nav-section-label">Analytics</div>
@@ -689,6 +721,11 @@ window.logoutEGA = logoutEGA;
       <a class="nav-item" onclick="showPage('reviewWorkflow')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
         리뷰 워크플로
+        <span class="nav-badge">NEW</span>
+      </a>
+      <a class="nav-item" onclick="showPage('csTemplates')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2h-2"></path><rect x="8" y="2" width="8" height="4" rx="1"></rect><path d="M9 12h6M9 16h4"></path></svg>
+        CS 답변 템플릿
         <span class="nav-badge">NEW</span>
       </a>
       <div class="nav-section-label">System</div>
@@ -2376,6 +2413,43 @@ window.logoutEGA = logoutEGA;
       </div>
     </div>
 
+    <!-- ===== CS 답변 템플릿 ===== -->
+    <div class="page" id="page-csTemplates">
+      <div class="page-header">
+        <div class="page-header-row">
+          <div>
+            <div class="page-title">💬 CS 답변 템플릿</div>
+            <div class="page-subtitle">자주 쓰는 CS 응대 문구를 빈칸만 채워 바로 복사</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mb-16" id="cst-basics" style="padding:14px 18px"></div>
+
+      <div class="card mb-16" style="padding:14px 18px">
+        <div class="filter-bar" style="margin-bottom:0;padding:0;flex-wrap:wrap;gap:8px">
+          <div class="search-wrap" style="flex:1;min-width:200px">
+            <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg>
+            <input type="text" class="search-input" id="cst-search" placeholder="템플릿 제목·내용 검색..." oninput="renderCsTemplates()">
+          </div>
+          <div id="cst-cats" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+        </div>
+      </div>
+
+      <div id="cst-list" class="mb-16"></div>
+
+      <div class="grid-2 mb-16">
+        <div class="card">
+          <div class="card-title">자주 쓰는 표현</div>
+          <div id="cst-phrasebank"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">답변 전 체크리스트</div>
+          <div id="cst-checklist"></div>
+        </div>
+      </div>
+    </div>
+
     <!-- ===== SALES ANALYSIS ===== -->
     <div class="page" id="page-sales">
       <div class="page-header">
@@ -2736,8 +2810,161 @@ function showPage(id) {
   if(id==='repurchase') initRepurchase();
   if(id==='inquiryArchive') initInquiryArchive();
   if(id==='reviewWorkflow') initReviewWorkflow();
+  if(id==='csTemplates') initCsTemplates();
   if(id==='cafe24qa') initCafe24QA();
   if(id==='promptConfig') initPromptConfig();
+}
+
+// ===== 💬 CS 답변 템플릿 =====
+let _cstData = null;
+let _cstActiveCat = 'all';
+let _cstVarValues = {}; // { [templateId]: { [varName]: value } }
+
+function _cstEsc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+async function initCsTemplates(){
+  const listEl = document.getElementById('cst-list');
+  if(!_cstData){
+    listEl.innerHTML = '<div class="cst-empty">불러오는 중...</div>';
+    try{
+      const res = await fetch('cs_templates.json?t=' + Date.now());
+      _cstData = await res.json();
+    }catch(e){
+      listEl.innerHTML = '<div class="cst-empty">cs_templates.json을 불러오지 못했습니다.</div>';
+      return;
+    }
+  }
+  _cstRenderBasics();
+  _cstRenderCats();
+  _cstRenderPhraseBank();
+  _cstRenderChecklist();
+  renderCsTemplates();
+}
+
+function _cstRenderBasics(){
+  const b = _cstData.basics;
+  const el = document.getElementById('cst-basics');
+  el.innerHTML = `
+    <div class="cst-basics-row">
+      <div class="b-item">회사명 <b>${_cstEsc(b.company)}</b></div>
+      <div class="b-item">브랜드명 <b>${_cstEsc(b.brand)}</b></div>
+      <div class="b-item">NMN 표기 <b>${_cstEsc(b.nmnLabel)}</b></div>
+      <div class="b-item">기본 톤 <b>${_cstEsc(b.tone)}</b></div>
+    </div>
+    <div class="cst-principles">${b.principles.map(p=>'· '+_cstEsc(p)).join('<br>')}</div>`;
+}
+
+function _cstRenderCats(){
+  const el = document.getElementById('cst-cats');
+  const cats = [{id:'all',label:'전체'}, ..._cstData.categories];
+  el.innerHTML = cats.map(c =>
+    `<button class="cst-cat-chip ${c.id===_cstActiveCat?'active':''}" data-cat="${c.id}">${_cstEsc(c.label)}</button>`
+  ).join('');
+  el.querySelectorAll('.cst-cat-chip').forEach(btn=>{
+    btn.onclick = () => { _cstActiveCat = btn.dataset.cat; _cstRenderCats(); renderCsTemplates(); };
+  });
+}
+
+function _cstResolveText(tpl){
+  const vals = _cstVarValues[tpl.id] || {};
+  let text = tpl.text;
+  (tpl.vars||[]).forEach(v => {
+    const val = (vals[v] || '').trim();
+    text = text.split('{{'+v+'}}').join(val || '{{'+v+'}}');
+  });
+  return text;
+}
+
+function renderCsTemplates(){
+  if(!_cstData) return;
+  const q = (document.getElementById('cst-search').value || '').trim().toLowerCase();
+  const listEl = document.getElementById('cst-list');
+  const catLabel = id => (_cstData.categories.find(c=>c.id===id)||{}).label || id;
+
+  const filtered = _cstData.templates.filter(t => {
+    if(_cstActiveCat !== 'all' && t.category !== _cstActiveCat) return false;
+    if(!q) return true;
+    return t.title.toLowerCase().includes(q) || t.text.toLowerCase().includes(q);
+  });
+
+  if(!filtered.length){
+    listEl.innerHTML = '<div class="cst-empty">조건에 맞는 템플릿이 없습니다.</div>';
+    return;
+  }
+
+  listEl.innerHTML = filtered.map(t => `
+    <div class="cst-card" id="cst-card-${t.id}">
+      <div class="cst-card-head">
+        <div class="cst-card-title"><span class="cst-card-cat">${_cstEsc(catLabel(t.category))}</span>${_cstEsc(t.title)}</div>
+        <button class="cst-copy-btn" data-id="${t.id}">복사하기</button>
+      </div>
+      ${(t.vars&&t.vars.length) ? `<div class="cst-vars">${t.vars.map(v=>`
+        <div class="cst-var">${_cstEsc(v)} <input type="text" data-id="${t.id}" data-var="${_cstEsc(v)}" placeholder="${_cstEsc(v)}" value="${_cstEsc((_cstVarValues[t.id]||{})[v]||'')}"></div>
+      `).join('')}</div>` : ''}
+      <div class="cst-body" id="cst-body-${t.id}">${_cstEsc(_cstResolveText(t))}</div>
+      ${t.note ? `<div class="cst-note">⚠ ${_cstEsc(t.note)}</div>` : ''}
+    </div>
+  `).join('');
+
+  listEl.querySelectorAll('.cst-var input').forEach(inp => {
+    inp.oninput = () => {
+      const id = inp.dataset.id, v = inp.dataset.var;
+      _cstVarValues[id] = _cstVarValues[id] || {};
+      _cstVarValues[id][v] = inp.value;
+      const tpl = _cstData.templates.find(x=>String(x.id)===String(id));
+      document.getElementById('cst-body-'+id).textContent = _cstResolveText(tpl);
+    };
+  });
+
+  listEl.querySelectorAll('.cst-copy-btn').forEach(btn => {
+    btn.onclick = () => {
+      const id = btn.dataset.id;
+      const tpl = _cstData.templates.find(x=>String(x.id)===String(id));
+      const text = _cstResolveText(tpl);
+      const done = () => {
+        const orig = btn.textContent;
+        btn.textContent = '복사됨 ✓';
+        btn.classList.add('copied');
+        setTimeout(()=>{ btn.textContent = orig; btn.classList.remove('copied'); }, 1500);
+      };
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(done).catch(()=>{
+          const ta=document.createElement('textarea'); ta.value=text; document.body.appendChild(ta); ta.select();
+          try{ document.execCommand('copy'); done(); }catch(e){} document.body.removeChild(ta);
+        });
+      }else{
+        const ta=document.createElement('textarea'); ta.value=text; document.body.appendChild(ta); ta.select();
+        try{ document.execCommand('copy'); done(); }catch(e){} document.body.removeChild(ta);
+      }
+    };
+  });
+}
+
+function _cstRenderPhraseBank(){
+  const el = document.getElementById('cst-phrasebank');
+  const pb = _cstData.phraseBank;
+  el.innerHTML = Object.keys(pb).map(label => `
+    <div class="cst-phrase-group">
+      <div class="cst-phrase-label">${_cstEsc(label)}</div>
+      ${pb[label].map(p => `<div class="cst-phrase-item" data-text="${_cstEsc(p)}">${_cstEsc(p)}</div>`).join('')}
+    </div>
+  `).join('');
+  el.querySelectorAll('.cst-phrase-item').forEach(item => {
+    item.onclick = () => {
+      const text = item.dataset.text;
+      const copy = () => { item.style.color = 'var(--positive)'; setTimeout(()=>{ item.style.color=''; }, 1000); };
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(copy).catch(()=>{});
+      }
+    };
+  });
+}
+
+function _cstRenderChecklist(){
+  const el = document.getElementById('cst-checklist');
+  el.innerHTML = _cstData.checklist.map((c,i) => `
+    <label class="cst-check-item"><input type="checkbox" id="cst-chk-${i}">${_cstEsc(c)}</label>
+  `).join('');
 }
 
 // ===== 🧠 프롬프트 관리 (제품별 AI 답변 프롬프트 웹 편집) =====
