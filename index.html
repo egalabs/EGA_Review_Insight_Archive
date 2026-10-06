@@ -67,6 +67,15 @@
   .page{display:none;padding:28px 32px;min-height:100%}
   .page.active{display:block}
 
+  /* Reports 내부 탭 (Weekly/Insights/판매/작성률/재구매) */
+  #reports-tabbar{display:none;position:sticky;top:0;z-index:20;background:var(--bg);padding:14px 32px 0;border-bottom:1px solid var(--border)}
+  #reports-tabbar.show{display:flex;gap:2px;flex-wrap:wrap}
+  .rtab{appearance:none;border:none;background:transparent;color:var(--text-muted);font-family:inherit;font-size:13px;font-weight:600;padding:9px 16px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;display:flex;align-items:center;gap:6px;transition:color .15s}
+  .rtab:hover{color:var(--text-primary)}
+  .rtab.active{color:var(--blue);border-bottom-color:var(--blue)}
+  .rtab .nav-badge{margin-left:0}
+  @media (max-width:900px){#reports-tabbar{padding:12px 16px 0}}
+
   /* Page header */
   .page-header{margin-bottom:28px}
   .page-header .page-title{font-size:22px;font-weight:700;color:var(--text-primary);letter-spacing:-0.01em}
@@ -672,7 +681,7 @@ window.logoutEGA = logoutEGA;
     <div class="sidebar-logo">
       <div class="brand">EGA</div>
       <div class="tagline">Review Insight Archive</div>
-      <div class="tagline" id="build-stamp" style="color:#4ade80;font-weight:600;margin-top:4px">BUILD 250806-M · 올영(매장) 답변관리 제외</div>
+      <div class="tagline" id="build-stamp" style="color:#4ade80;font-weight:600;margin-top:4px">BUILD 250806-N · 올영(매장) 답변관리 제외</div>
     </div>
     <nav class="sidebar-nav">
       <div class="nav-section-label">Analytics</div>
@@ -686,26 +695,9 @@ window.logoutEGA = logoutEGA;
         <span class="nav-badge" id="nav-total">4163</span>
       </a>
       <div class="nav-section-label">Reports</div>
-      <a class="nav-item active" onclick="showPage('weekly')">
+      <a class="nav-item active" id="nav-reports" onclick="showPage('reports')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"></path></svg>
-        Weekly Report
-      </a>
-      <a class="nav-item" onclick="showPage('insights')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
-        Insights
-      </a>
-      <a class="nav-item" onclick="showPage('sales')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="20" x2="12" y2="10"></line><line x1="18" y1="20" x2="18" y2="4"></line><line x1="6" y1="20" x2="6" y2="16"></line></svg>
-        판매 분석
-      </a>
-      <a class="nav-item" onclick="showPage('writeRate')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"></path><path d="m7 14 4-4 4 4 6-6"></path></svg>
-        리뷰 작성률
-      </a>
-      <a class="nav-item" onclick="showPage('repurchase')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path><path d="m9 12 2 2 4-4"></path></svg>
-        재구매 분석
-        <span class="nav-badge">NEW</span>
+        Reports
       </a>
       <div class="nav-section-label">CS 관리</div>
       <a class="nav-item" onclick="showPage('replies')">
@@ -756,6 +748,14 @@ window.logoutEGA = logoutEGA;
 
   <!-- Main -->
   <main class="main">
+
+    <div id="reports-tabbar">
+      <button class="rtab" data-rtab="weekly" onclick="showPage('weekly')">Weekly Report</button>
+      <button class="rtab" data-rtab="insights" onclick="showPage('insights')">Insights</button>
+      <button class="rtab" data-rtab="sales" onclick="showPage('sales')">판매 분석</button>
+      <button class="rtab" data-rtab="writeRate" onclick="showPage('writeRate')">리뷰 작성률</button>
+      <button class="rtab" data-rtab="repurchase" onclick="showPage('repurchase')">재구매 분석 <span class="nav-badge">NEW</span></button>
+    </div>
 
     <!-- ===== DASHBOARD ===== -->
     <div class="page" id="page-dashboard">
@@ -2790,14 +2790,27 @@ function searchKeyword(kw) {
 })();
 
 // ===== NAVIGATION =====
+const REPORT_TABS = ['weekly','insights','sales','writeRate','repurchase'];
+let _lastReportTab = 'weekly';
+function _syncReportsNav(id) {
+  const isReport = REPORT_TABS.includes(id);
+  const navRep = document.getElementById('nav-reports');
+  if (navRep) navRep.classList.toggle('active', isReport);
+  const bar = document.getElementById('reports-tabbar');
+  if (bar) bar.classList.toggle('show', isReport);
+  document.querySelectorAll('.rtab').forEach(b => b.classList.toggle('active', b.dataset.rtab === id));
+}
 function showPage(id) {
+  if (id === 'reports') id = _lastReportTab;
+  if (REPORT_TABS.includes(id)) _lastReportTab = id;
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
   event && event.currentTarget && event.currentTarget.classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n=>{
-    if(n.getAttribute('onclick') && n.getAttribute('onclick').includes(id)) n.classList.add('active');
+    if(n.getAttribute('onclick') && n.getAttribute('onclick').includes("'"+id+"'")) n.classList.add('active');
   });
+  _syncReportsNav(id);
   if(id==='insights') initInsights();
   if(id==='archive') { if(!archiveInitialized) { initArchive(); archiveInitialized=true; } }
   if(id==='weekly') updateWeeklyReport();
@@ -2814,6 +2827,7 @@ function showPage(id) {
   if(id==='cafe24qa') initCafe24QA();
   if(id==='promptConfig') initPromptConfig();
 }
+_syncReportsNav('weekly');
 
 // ===== 💬 CS 답변 템플릿 =====
 let _cstData = null;
