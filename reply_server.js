@@ -513,6 +513,125 @@ app.post("/api/post-bulk", async (req, res) => {
   }
 });
 
+// ===== CS 답변 AI 생성 (상황 입력 → 답변 초안) =====
+const CS_CHANNELS = {
+  board: "카페24 게시판/문의 답변 (글로 보내는 답변)",
+  phone: "전화 통화 후 보내는 문자 (짧고 핵심만, 2~3문단)",
+  etc: "기타 고객 응대 (메신저·메일 등)",
+};
+
+function loadCsTemplates() {
+  try {
+    return JSON.parse(fs.readFileSync(path.join(__dirname, "cs_templates.json"), "utf8"));
+  } catch (e) {
+    return null;
+  }
+}
+
+function bigrams(s) {
+  const t = String(s || "").replace(/[\s{}\[\]()·,.!?~\-:;'"“”‘’]/g, "");
+  const out = new Set();
+  for (let i = 0; i < t.length - 1; i++) out.add(t.slice(i, i + 2));
+  return out;
+}
+
+function pickCsTemplates(data, situation, channel, k) {
+  if (!data || !Array.isArray(data.templates)) return [];
+  const q = bigrams(situation);
+  const docs = data.templates.map((t) => ({ t, title: bigrams(t.title), body: bigrams(t.text) }));
+  const df = {};
+  docs.forEach((d) => {
+    new Set([...d.title, ...d.body]).forEach((g) => { df[g] = (df[g] || 0) + 1; });
+  });
+  const N = docs.length;
+  const scored = docs.map((d) => {
+    let score = 0;
+    q.forEach((g) => {
+      if (!df[g]) return;
+      const idf = Math.log(N / df[g]);
+      if (d.title.has(g)) score += idf * 3;
+      else if (d.body.has(g)) score += idf;
+    });
+    if (channel === "phone" && d.t.category === "phone") score += 2;
+    return { t: d.t, score };
+  });
+  scored.sort((a, b) => b.score - a.score);
+  return scored.slice(0, k).map((x) => x.t);
+}
+
+function buildCsPrompt(situation, channel, extra) {
+  const data = loadCsTemplates();
+  const principles = (data && data.basics && data.basics.principles) || [];
+  const opening = (data && data.basics && data.basics.defaultOpening) || "안녕하세요, 고객님.\n리버스 에이징 브랜드 EGA입니다😊";
+  const closing = (data && data.basics && data.basics.defaultClosing) || "추가로 궁금하신 점이 있으시면 언제든 편하게 문의해 주세요.\n\n감사합니다.\nEGA 드림💙";
+  const refs = pickCsTemplates(data, situation, channel, 60);
+  const refBlock = refs.length
+    ? refs.map((t, i) => `[참고 문구 ${i + 1}] ${t.title}\n${t.text}`).join("\n\n")
+    : "(비슷한 참고 문구 없음 — 기본 시작/마무리와 작성 원칙만 따른다)";
+
+  return `
+너는 리버스 에이징 브랜드 EGA(회사명 디파이넘버)의 고객응대(CS) 담당자다.
+아래 [상황]을 읽고, 고객에게 그대로 보낼 수 있는 답변 초안을 한국어로 작성한다.
+
+[채널]
+${CS_CHANNELS[channel] || CS_CHANNELS.board}
+
+[기본 시작 문구 — 특별한 상황이 아니면 그대로 사용]
+${opening}
+
+[기본 마무리 문구 — 특별한 상황이 아니면 그대로 사용]
+${closing}
+
+[작성 원칙]
+${principles.map((p) => "- " + p).join("\n")}
+- 공식적이되 딱딱하지 않게, 짧고 친절하게. 고객이 궁금해하는 핵심을 첫 1~2문단 안에 답한다.
+- ★[상황]에 적혀 있지 않은 사실(택배사, 운송장 번호, 날짜, 금액, 수량, 재고, 처리 결과, 환불 일정 등)은 절대 지어내지 않는다. 필요한데 모르면 {{항목명}} 형태의 빈칸으로 남긴다.
+- 확인되지 않은 내용은 단정하지 않는다. 고객 과실을 지적하지 않고 해결 방법 중심으로 안내한다.
+- 제품 효능·성분·섭취량은 아래 [제품 지식]과 [참고 문구]에 있는 내용만 쓴다. 없으면 상세페이지/전성분 확인 후 안내하겠다고 쓴다.
+- EGA 제품 범위 안에서만 안내하고 타사 제품과 비교하지 않는다.
+- “자차”라는 표현은 쓰지 않고 “자외선 차단”이라고 쓴다. 마케팅 신조어(투인원·올인원 등)는 쓰지 않는다.
+- 이모지는 시작·마무리 문구 외에는 꼭 필요할 때만 쓴다.
+- 아래 [참고 문구]는 실제로 쓰는 문구이며 상황과 비슷한 순서로 앞쪽에 놓여 있다. 상황과 가장 가까운 문구를 골라 표현과 톤을 최대한 그대로 살려 상황에 맞게 고쳐 쓴다. 상황과 관련 없는 문구의 내용은 가져오지 않는다.
+
+${refBlock}
+
+[제품 지식 — 제품 관련 내용은 이 사실만 활용]
+${activeProductKnowledge()}
+
+[상황]
+${situation}
+${extra ? "\n[추가 요청]\n" + extra : ""}
+
+[출력]
+고객에게 보낼 답변 본문만 출력한다. 설명, 제목, 따옴표, 마크다운 없이 본문만.
+`;
+}
+
+app.post("/api/generate-cs-reply", async (req, res) => {
+  try {
+    const situation = String((req.body && req.body.situation) || "").trim();
+    const channel = String((req.body && req.body.channel) || "board");
+    const extra = String((req.body && req.body.extra) || "").trim().slice(0, 500);
+
+    if (!situation) {
+      return res.status(400).json({ ok: false, message: "상황 내용이 없습니다." });
+    }
+    if (situation.length > 3000) {
+      return res.status(400).json({ ok: false, message: "상황 설명이 너무 깁니다. (3000자 이내)" });
+    }
+
+    const response = await openai.responses.create({
+      model: "gpt-4.1-mini",
+      input: buildCsPrompt(situation, channel, extra),
+    });
+
+    res.json({ ok: true, reply: response.output_text });
+  } catch (error) {
+    console.error("[generate-cs-reply error]", error);
+    res.status(500).json({ ok: false, message: error.message || "CS 답변 생성 실패" });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`EGA reply server running on port ${PORT}`);
 });
