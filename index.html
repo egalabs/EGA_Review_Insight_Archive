@@ -457,6 +457,26 @@
   .cst-check-item{display:flex;gap:8px;align-items:flex-start;font-size:12px;color:var(--text-primary);padding:6px 0;border-bottom:1px solid var(--border-light)}
   .cst-check-item:last-child{border-bottom:none}
   .cst-check-item input{margin-top:2px}
+  .cst-ai-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+  .cst-ai-label{font-size:12px;color:var(--text-muted);font-weight:600}
+  .cst-ai-select{border:1px solid var(--border);border-radius:7px;padding:6px 10px;font-size:12.5px;font-family:inherit;background:var(--white);color:var(--text-primary)}
+  .cst-ai-input{width:100%;border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;font-size:13px;font-family:inherit;line-height:1.6;resize:vertical;color:var(--text-primary);background:var(--white)}
+  .cst-ai-input:focus,.cst-ai-extra:focus,.cst-ai-select:focus{outline:none;border-color:var(--blue)}
+  .cst-ai-extra{width:100%;margin-top:8px;border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 12px;font-size:12.5px;font-family:inherit}
+  .cst-ai-actions{display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap}
+  .cst-ai-status{font-size:12px;color:var(--text-muted)}
+  .cst-ai-status.error{color:var(--negative)}
+  .cst-ai-warn{font-size:11.5px;color:var(--mixed)}
+  .cst-ai-result{margin-top:14px;background:var(--bg)}
+  .cst-ai-ghost{appearance:none;border:1px solid var(--border);background:var(--white);color:var(--text-primary);font-size:12px;font-weight:650;padding:6px 13px;border-radius:7px;cursor:pointer}
+  .cst-ai-ghost:hover{border-color:var(--blue);color:var(--blue)}
+  .cst-copy-btn:disabled{opacity:.6;cursor:wait}
+  .cst-head-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .cst-card-actions{display:flex;gap:6px;align-items:center;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end}
+  .cst-ai-ghost.danger:hover{border-color:var(--negative);color:var(--negative)}
+  .cst-badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:999px;margin-left:2px}
+  .cst-badge.mine{background:var(--positive-bg);color:var(--positive)}
+  .cst-badge.edited{background:var(--mixed-bg);color:var(--mixed)}
 
 </style>
 </head>
@@ -681,7 +701,7 @@ window.logoutEGA = logoutEGA;
     <div class="sidebar-logo">
       <div class="brand">EGA</div>
       <div class="tagline">Review Insight Archive</div>
-      <div class="tagline" id="build-stamp" style="color:#4ade80;font-weight:600;margin-top:4px">BUILD 250806-N · 올영(매장) 답변관리 제외</div>
+      <div class="tagline" id="build-stamp" style="color:#4ade80;font-weight:600;margin-top:4px">BUILD 250806-P · 올영(매장) 답변관리 제외</div>
     </div>
     <nav class="sidebar-nav">
       <div class="nav-section-label">Analytics</div>
@@ -2421,10 +2441,62 @@ window.logoutEGA = logoutEGA;
             <div class="page-title">💬 CS 답변 템플릿</div>
             <div class="page-subtitle">자주 쓰는 CS 응대 문구를 빈칸만 채워 바로 복사</div>
           </div>
+          <div class="cst-head-actions">
+            <button class="cst-copy-btn" onclick="cstOpenEditor(null)">＋ 새 템플릿</button>
+            <button class="cst-ai-ghost" onclick="cstExport()">내보내기</button>
+            <button class="cst-ai-ghost" onclick="document.getElementById('cst-import-file').click()">가져오기</button>
+            <input type="file" id="cst-import-file" accept=".json,application/json" style="display:none" onchange="cstImport(this)">
+          </div>
         </div>
       </div>
 
+      <div class="card mb-16" id="cst-editor" hidden>
+        <div class="card-title" id="cst-ed-title-label">새 템플릿 만들기</div>
+        <div class="cst-ai-row">
+          <label class="cst-ai-label" for="cst-ed-cat">분류</label>
+          <select id="cst-ed-cat" class="cst-ai-select"></select>
+        </div>
+        <input id="cst-ed-title" class="cst-ai-extra" style="margin-top:0" type="text" maxlength="80" placeholder="제목 (예: 반품 접수 완료 안내)">
+        <textarea id="cst-ed-text" class="cst-ai-input" style="margin-top:8px" rows="10" placeholder="답변 내용을 적어주세요.&#10;매번 바뀌는 부분은 {{택배사}}처럼 적으면 입력칸이 자동으로 생겨요."></textarea>
+        <input id="cst-ed-note" class="cst-ai-extra" type="text" maxlength="200" placeholder="주의 메모 (선택) 예) 전성분표 확인 후 사용">
+        <div class="cst-ai-actions">
+          <button class="cst-copy-btn" onclick="cstSaveEditor()">저장</button>
+          <button class="cst-ai-ghost" onclick="cstCloseEditor()">취소</button>
+          <button class="cst-ai-ghost" onclick="cstInsertBasics('open')">기본 시작 문구 넣기</button>
+          <button class="cst-ai-ghost" onclick="cstInsertBasics('close')">기본 마무리 문구 넣기</button>
+          <span id="cst-ed-status" class="cst-ai-status"></span>
+        </div>
+        <div class="cst-note" style="margin-top:8px">내 템플릿은 이 브라우저에 저장돼요. 다른 PC나 동료와 쓰려면 "내보내기"로 파일을 받아 상대가 "가져오기" 하면 돼요.</div>
+      </div>
+
       <div class="card mb-16" id="cst-basics" style="padding:14px 18px"></div>
+
+      <div class="card mb-16" id="cst-ai" hidden>
+        <div class="card-title">✨ AI 답변 생성 <span class="card-subtitle">상황만 적으면 아래 템플릿 문구를 바탕으로 답변 초안을 만들어요</span></div>
+        <div class="cst-ai-row">
+          <label class="cst-ai-label" for="cst-ai-channel">채널</label>
+          <select id="cst-ai-channel" class="cst-ai-select">
+            <option value="board">카페24 게시판·문의 답변</option>
+            <option value="phone">전화 후 문자</option>
+            <option value="etc">기타 (메신저·메일 등)</option>
+          </select>
+        </div>
+        <textarea id="cst-ai-situation" class="cst-ai-input" rows="4" maxlength="3000" placeholder="상황을 적어주세요.&#10;예) 고객이 전화로 통관번호를 잘못 알려줘서 맞는 번호로 수정함. 수정된 번호로 배송 이어진다고 문자로 안내 필요"></textarea>
+        <input id="cst-ai-extra" class="cst-ai-extra" type="text" maxlength="500" placeholder="추가 요청 (선택) 예) 더 짧게, 사과 표현 강조">
+        <div class="cst-ai-actions">
+          <button class="cst-copy-btn" id="cst-ai-btn" onclick="generateCsReply()">답변 생성</button>
+          <span id="cst-ai-status" class="cst-ai-status"></span>
+        </div>
+        <div id="cst-ai-result-wrap" hidden>
+          <textarea id="cst-ai-result" class="cst-ai-input cst-ai-result" rows="12"></textarea>
+          <div class="cst-ai-actions">
+            <button class="cst-copy-btn" id="cst-ai-copy" onclick="copyCsAiResult()">복사하기</button>
+            <button class="cst-ai-ghost" onclick="generateCsReply()">다시 생성</button>
+            <span id="cst-ai-warn" class="cst-ai-warn"></span>
+          </div>
+          <div class="cst-note" style="margin-top:8px">⚠ AI 초안이에요. {{ }} 빈칸과 택배사·운송장·날짜 같은 사실은 확인 후 채워서 보내세요.</div>
+        </div>
+      </div>
 
       <div class="card mb-16" style="padding:14px 18px">
         <div class="filter-bar" style="margin-bottom:0;padding:0;flex-wrap:wrap;gap:8px">
@@ -2836,6 +2908,22 @@ let _cstVarValues = {}; // { [templateId]: { [varName]: value } }
 
 function _cstEsc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
+// 내 템플릿(직접 추가/수정) — 이 브라우저(localStorage)에 저장
+const CST_LS_CUSTOM = 'ega_cst_custom';
+const CST_LS_OVR = 'ega_cst_overrides';
+let _cstCustom = [];
+let _cstOverrides = {};
+let _cstEditingId = null;
+function _cstLsLoad(key, fallback){ try{ const v = JSON.parse(localStorage.getItem(key)); return v == null ? fallback : v; }catch(e){ return fallback; } }
+function _cstLsSave(key, val){ try{ localStorage.setItem(key, JSON.stringify(val)); return true; }catch(e){ return false; } }
+function _cstNormalizeText(text){ return String(text||'').replace(/\{\{\s*([^{}]+?)\s*\}\}/g, '{{$1}}'); }
+function _cstExtractVars(text){ const s = new Set(); (text.match(/\{\{([^{}]+)\}\}/g)||[]).forEach(m => s.add(m.slice(2,-2).trim())); return [...s]; }
+function _cstAll(){
+  const base = _cstData.templates.map(t => _cstOverrides[t.id] ? Object.assign({}, t, _cstOverrides[t.id], {id:t.id, _edited:true}) : t);
+  return base.concat(_cstCustom.map(t => Object.assign({}, t, {_custom:true})));
+}
+function _cstFind(id){ return _cstAll().find(x => String(x.id) === String(id)); }
+
 async function initCsTemplates(){
   const listEl = document.getElementById('cst-list');
   if(!_cstData){
@@ -2847,6 +2935,10 @@ async function initCsTemplates(){
       listEl.innerHTML = '<div class="cst-empty">cs_templates.json을 불러오지 못했습니다.</div>';
       return;
     }
+    _cstCustom = _cstLsLoad(CST_LS_CUSTOM, []);
+    _cstOverrides = _cstLsLoad(CST_LS_OVR, {});
+    const sel = document.getElementById('cst-ed-cat');
+    if(sel) sel.innerHTML = _cstData.categories.map(c => `<option value="${c.id}">${_cstEsc(c.label)}</option>`).join('');
   }
   _cstRenderBasics();
   _cstRenderCats();
@@ -2895,7 +2987,7 @@ function renderCsTemplates(){
   const listEl = document.getElementById('cst-list');
   const catLabel = id => (_cstData.categories.find(c=>c.id===id)||{}).label || id;
 
-  const filtered = _cstData.templates.filter(t => {
+  const filtered = _cstAll().filter(t => {
     if(_cstActiveCat !== 'all' && t.category !== _cstActiveCat) return false;
     if(!q) return true;
     return t.title.toLowerCase().includes(q) || t.text.toLowerCase().includes(q);
@@ -2909,8 +3001,13 @@ function renderCsTemplates(){
   listEl.innerHTML = filtered.map(t => `
     <div class="cst-card" id="cst-card-${t.id}">
       <div class="cst-card-head">
-        <div class="cst-card-title"><span class="cst-card-cat">${_cstEsc(catLabel(t.category))}</span>${_cstEsc(t.title)}</div>
-        <button class="cst-copy-btn" data-id="${t.id}">복사하기</button>
+        <div class="cst-card-title"><span class="cst-card-cat">${_cstEsc(catLabel(t.category))}</span>${_cstEsc(t.title)}${t._custom?'<span class="cst-badge mine">내 템플릿</span>':''}${t._edited?'<span class="cst-badge edited">수정됨</span>':''}</div>
+        <div class="cst-card-actions">
+          <button class="cst-ai-ghost" data-edit="${t.id}">수정</button>
+          ${t._custom?`<button class="cst-ai-ghost danger" data-del="${t.id}">삭제</button>`:''}
+          ${t._edited?`<button class="cst-ai-ghost" data-revert="${t.id}">원본으로</button>`:''}
+          <button class="cst-copy-btn" data-id="${t.id}">복사하기</button>
+        </div>
       </div>
       ${(t.vars&&t.vars.length) ? `<div class="cst-vars">${t.vars.map(v=>`
         <div class="cst-var">${_cstEsc(v)} <input type="text" data-id="${t.id}" data-var="${_cstEsc(v)}" placeholder="${_cstEsc(v)}" value="${_cstEsc((_cstVarValues[t.id]||{})[v]||'')}"></div>
@@ -2925,15 +3022,19 @@ function renderCsTemplates(){
       const id = inp.dataset.id, v = inp.dataset.var;
       _cstVarValues[id] = _cstVarValues[id] || {};
       _cstVarValues[id][v] = inp.value;
-      const tpl = _cstData.templates.find(x=>String(x.id)===String(id));
+      const tpl = _cstFind(id);
       document.getElementById('cst-body-'+id).textContent = _cstResolveText(tpl);
     };
   });
 
+  listEl.querySelectorAll('[data-edit]').forEach(b => { b.onclick = () => cstOpenEditor(b.dataset.edit); });
+  listEl.querySelectorAll('[data-del]').forEach(b => { b.onclick = () => cstDelete(b.dataset.del); });
+  listEl.querySelectorAll('[data-revert]').forEach(b => { b.onclick = () => cstRevert(b.dataset.revert); });
+
   listEl.querySelectorAll('.cst-copy-btn').forEach(btn => {
     btn.onclick = () => {
       const id = btn.dataset.id;
-      const tpl = _cstData.templates.find(x=>String(x.id)===String(id));
+      const tpl = _cstFind(id);
       const text = _cstResolveText(tpl);
       const done = () => {
         const orig = btn.textContent;
@@ -2952,6 +3053,191 @@ function renderCsTemplates(){
       }
     };
   });
+}
+
+function cstOpenEditor(id){
+  if(!_cstData){ return; }
+  _cstEditingId = id;
+  const ed = document.getElementById('cst-editor');
+  const status = document.getElementById('cst-ed-status');
+  status.textContent = ''; status.className = 'cst-ai-status';
+  if(id == null){
+    document.getElementById('cst-ed-title-label').textContent = '새 템플릿 만들기';
+    document.getElementById('cst-ed-cat').value = (_cstActiveCat !== 'all' ? _cstActiveCat : _cstData.categories[0].id);
+    document.getElementById('cst-ed-title').value = '';
+    document.getElementById('cst-ed-text').value = '';
+    document.getElementById('cst-ed-note').value = '';
+  }else{
+    const t = _cstFind(id);
+    if(!t) return;
+    document.getElementById('cst-ed-title-label').textContent = '템플릿 수정' + (t._custom ? '' : ' (원본은 그대로 두고 내 버전으로 저장돼요)');
+    document.getElementById('cst-ed-cat').value = t.category;
+    document.getElementById('cst-ed-title').value = t.title;
+    document.getElementById('cst-ed-text').value = t.text;
+    document.getElementById('cst-ed-note').value = t.note || '';
+  }
+  ed.hidden = false;
+  ed.scrollIntoView({behavior:'smooth', block:'start'});
+  document.getElementById('cst-ed-title').focus();
+}
+
+function cstCloseEditor(){
+  document.getElementById('cst-editor').hidden = true;
+  _cstEditingId = null;
+}
+
+function cstInsertBasics(which){
+  const ta = document.getElementById('cst-ed-text');
+  const b = _cstData.basics;
+  if(which === 'open'){
+    if(!ta.value.startsWith(b.defaultOpening)) ta.value = b.defaultOpening + '\n\n' + ta.value;
+  }else{
+    if(!ta.value.trim().endsWith(b.defaultClosing.trim())) ta.value = ta.value.replace(/\s+$/,'') + '\n\n' + b.defaultClosing;
+  }
+}
+
+function cstSaveEditor(){
+  const status = document.getElementById('cst-ed-status');
+  const category = document.getElementById('cst-ed-cat').value;
+  const title = document.getElementById('cst-ed-title').value.trim();
+  const text = _cstNormalizeText(document.getElementById('cst-ed-text').value.trim());
+  const note = document.getElementById('cst-ed-note').value.trim();
+  status.className = 'cst-ai-status';
+  if(!title || !text){ status.textContent = '제목과 내용을 입력해주세요.'; status.classList.add('error'); return; }
+  const vars = _cstExtractVars(text);
+  const entry = { category, title, text, vars };
+  if(note) entry.note = note;
+  let ok;
+  if(_cstEditingId == null){
+    entry.id = 'u' + Date.now();
+    _cstCustom.push(entry);
+    ok = _cstLsSave(CST_LS_CUSTOM, _cstCustom);
+  }else{
+    const idx = _cstCustom.findIndex(x => String(x.id) === String(_cstEditingId));
+    if(idx >= 0){
+      entry.id = _cstCustom[idx].id;
+      _cstCustom[idx] = entry;
+      ok = _cstLsSave(CST_LS_CUSTOM, _cstCustom);
+    }else{
+      _cstOverrides[_cstEditingId] = entry;
+      ok = _cstLsSave(CST_LS_OVR, _cstOverrides);
+    }
+    delete _cstVarValues[_cstEditingId];
+  }
+  if(!ok){ status.textContent = '저장 실패: 브라우저 저장공간을 쓸 수 없어요.'; status.classList.add('error'); return; }
+  _cstActiveCat = category;
+  document.getElementById('cst-search').value = '';
+  cstCloseEditor();
+  _cstRenderCats();
+  renderCsTemplates();
+}
+
+function cstDelete(id){
+  const t = _cstFind(id);
+  if(!t || !confirm('"' + t.title + '" 템플릿을 삭제할까요?')) return;
+  _cstCustom = _cstCustom.filter(x => String(x.id) !== String(id));
+  _cstLsSave(CST_LS_CUSTOM, _cstCustom);
+  renderCsTemplates();
+}
+
+function cstRevert(id){
+  const t = _cstFind(id);
+  if(!t || !confirm('"' + t.title + '" 수정 내용을 지우고 원본으로 되돌릴까요?')) return;
+  delete _cstOverrides[id];
+  delete _cstVarValues[id];
+  _cstLsSave(CST_LS_OVR, _cstOverrides);
+  renderCsTemplates();
+}
+
+function cstExport(){
+  const payload = { type: 'ega_cs_templates_mine', version: 1, exportedAt: new Date().toISOString(), custom: _cstCustom, overrides: _cstOverrides };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'ega_cs_templates_mine_' + new Date().toISOString().slice(0,10) + '.json';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+function cstImport(input){
+  const file = input.files && input.files[0];
+  input.value = '';
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try{
+      const data = JSON.parse(reader.result);
+      if(!data || data.type !== 'ega_cs_templates_mine') throw new Error('형식이 맞지 않는 파일이에요.');
+      let added = 0, updated = 0;
+      (data.custom || []).forEach(t => {
+        if(!t || !t.title || !t.text) return;
+        const idx = _cstCustom.findIndex(x => String(x.id) === String(t.id));
+        if(idx >= 0){ _cstCustom[idx] = t; updated++; } else { _cstCustom.push(t); added++; }
+      });
+      Object.keys(data.overrides || {}).forEach(k => { _cstOverrides[k] = data.overrides[k]; updated++; });
+      _cstLsSave(CST_LS_CUSTOM, _cstCustom);
+      _cstLsSave(CST_LS_OVR, _cstOverrides);
+      renderCsTemplates();
+      alert('가져오기 완료: 새 템플릿 ' + added + '개, 수정 반영 ' + updated + '개');
+    }catch(e){
+      alert('가져오기 실패: ' + (e.message || e));
+    }
+  };
+  reader.readAsText(file);
+}
+
+async function generateCsReply(){
+  const situation = document.getElementById('cst-ai-situation').value.trim();
+  const channel = document.getElementById('cst-ai-channel').value;
+  const extra = document.getElementById('cst-ai-extra').value.trim();
+  const btn = document.getElementById('cst-ai-btn');
+  const status = document.getElementById('cst-ai-status');
+  const wrap = document.getElementById('cst-ai-result-wrap');
+  const result = document.getElementById('cst-ai-result');
+  status.className = 'cst-ai-status';
+  if(!situation){ status.textContent = '상황을 먼저 적어주세요.'; status.classList.add('error'); return; }
+  btn.disabled = true;
+  status.textContent = '생성 중… (서버가 잠자는 중이면 최대 1분 걸려요)';
+  try{
+    const res = await fetch(REPLY_SERVER + '/api/generate-cs-reply', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ situation, channel, extra })
+    });
+    let data = null;
+    try{ data = await res.json(); }catch(e){}
+    if(!res.ok || !data || !data.ok){
+      const msg = res.status === 404
+        ? '서버에 아직 반영 전이에요. 2~5분 뒤 다시 시도해주세요.'
+        : ((data && data.message) || ('생성 실패 (' + res.status + ')'));
+      throw new Error(msg);
+    }
+    result.value = data.reply.trim();
+    wrap.hidden = false;
+    const left = (result.value.match(/\{\{[^}]+\}\}/g) || []);
+    document.getElementById('cst-ai-warn').textContent = left.length ? ('채워야 할 빈칸 ' + left.length + '개: ' + [...new Set(left)].join(' ')) : '';
+    status.textContent = '완료';
+  }catch(e){
+    status.textContent = '오류: ' + (e.message || e) + (e.name === 'TypeError' ? ' (서버 연결 실패 — 잠시 후 다시 시도)' : '');
+    status.classList.add('error');
+  }finally{
+    btn.disabled = false;
+  }
+}
+
+function copyCsAiResult(){
+  const btn = document.getElementById('cst-ai-copy');
+  const el = document.getElementById('cst-ai-result');
+  const text = el.value;
+  const done = () => {
+    const orig = '복사하기';
+    btn.textContent = '복사됨 ✓'; btn.classList.add('copied');
+    setTimeout(()=>{ btn.textContent = orig; btn.classList.remove('copied'); }, 1500);
+  };
+  const fallback = () => { el.select(); try{ document.execCommand('copy'); done(); }catch(e){} };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(done).catch(fallback);
+  }else{ fallback(); }
 }
 
 function _cstRenderPhraseBank(){
