@@ -701,7 +701,7 @@ window.logoutEGA = logoutEGA;
     <div class="sidebar-logo">
       <div class="brand">EGA</div>
       <div class="tagline">Review Insight Archive</div>
-      <div class="tagline" id="build-stamp" style="color:#4ade80;font-weight:600;margin-top:4px">BUILD 250806-P · 올영(매장) 답변관리 제외</div>
+      <div class="tagline" id="build-stamp" style="color:#4ade80;font-weight:600;margin-top:4px">BUILD 250806-Q · 올영(매장) 답변관리 제외</div>
     </div>
     <nav class="sidebar-nav">
       <div class="nav-section-label">Analytics</div>
@@ -2471,7 +2471,7 @@ window.logoutEGA = logoutEGA;
 
       <div class="card mb-16" id="cst-basics" style="padding:14px 18px"></div>
 
-      <div class="card mb-16" id="cst-ai" hidden>
+      <div class="card mb-16" id="cst-ai">
         <div class="card-title">✨ AI 답변 생성 <span class="card-subtitle">상황만 적으면 아래 템플릿 문구를 바탕으로 답변 초안을 만들어요</span></div>
         <div class="cst-ai-row">
           <label class="cst-ai-label" for="cst-ai-channel">채널</label>
@@ -3199,17 +3199,25 @@ async function generateCsReply(){
   btn.disabled = true;
   status.textContent = '생성 중… (서버가 잠자는 중이면 최대 1분 걸려요)';
   try{
-    const res = await fetch(REPLY_SERVER + '/api/generate-cs-reply', {
+    // 회사 서버(egalabs.co.kr)에서 열었으면 같은 서버(로그인 세션)로, 아니면 onrender 서버로 요청
+    const sameOrigin = !!window.__EGA_USER__;
+    const url = sameOrigin
+      ? location.pathname.replace(/[^/]*$/, '') + 'api/generate-cs-reply'
+      : REPLY_SERVER + '/api/generate-cs-reply';
+    const res = await fetch(url, {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
+      credentials: sameOrigin ? 'same-origin' : 'omit',
       body: JSON.stringify({ situation, channel, extra })
     });
     let data = null;
     try{ data = await res.json(); }catch(e){}
     if(!res.ok || !data || !data.ok){
-      const msg = res.status === 404
-        ? '서버에 아직 반영 전이에요. 2~5분 뒤 다시 시도해주세요.'
-        : ((data && data.message) || ('생성 실패 (' + res.status + ')'));
+      const msg = res.status === 401
+        ? '로그인이 만료됐어요. 새로고침 후 다시 로그인해주세요.'
+        : res.status === 404
+          ? '서버에 아직 반영 전이에요. 2~5분 뒤 다시 시도해주세요.'
+          : ((data && data.message) || ('생성 실패 (' + res.status + ')'));
       throw new Error(msg);
     }
     result.value = data.reply.trim();
