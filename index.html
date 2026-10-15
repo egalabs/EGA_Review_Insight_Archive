@@ -11,9 +11,10 @@
   :root{
     --bg:#fafafa;
     --white:#ffffff;
-    --sidebar:#1a1f2e;
-    --sidebar-hover:#252c3d;
-    --sidebar-active:#2d3548;
+    --sidebar:#eef3ff;
+    --sidebar-hover:#dfe8ff;
+    --sidebar-active:#ffffff;
+    --sidebar-border:#dbe4fb;
     --blue:#3b6cf0;
     --blue-light:#eef2ff;
     --blue-mid:#6b8ff5;
@@ -40,25 +41,33 @@
 
   /* Layout */
   .app{display:flex;height:100vh;overflow:hidden}
-  .sidebar{width:240px;min-width:240px;background:var(--sidebar);display:flex;flex-direction:column;padding:0;overflow:hidden;z-index:10}
-  .sidebar-logo{padding:24px 20px 20px;border-bottom:1px solid rgba(255,255,255,.06)}
-  .sidebar-logo .brand{font-size:17px;font-weight:700;color:#fff;letter-spacing:0.04em}
-  .sidebar-logo .tagline{font-size:10.5px;color:rgba(255,255,255,.38);margin-top:2px;letter-spacing:0.02em;font-weight:400}
-  .sidebar-nav{flex:1;padding:12px 0;overflow-y:auto}
+  .sidebar{width:240px;min-width:240px;background:var(--sidebar);border-right:1px solid var(--sidebar-border);display:flex;flex-direction:column;padding:0;overflow:hidden;z-index:10}
+  .sidebar-logo{padding:22px 20px 14px;display:flex;align-items:baseline;gap:8px}
+  .sidebar-logo .brand{font-size:18px;font-weight:800;color:var(--text-primary);letter-spacing:0.04em}
+  .sidebar-logo .tagline{font-size:11.5px;color:var(--text-secondary);letter-spacing:0.01em;font-weight:500}
+  .sidebar-nav{flex:1;padding:4px 12px 12px;overflow-y:auto}
   .sidebar-nav::-webkit-scrollbar{width:3px}
-  .sidebar-nav::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px}
-  .nav-section-label{font-size:9.5px;font-weight:600;color:rgba(255,255,255,.25);letter-spacing:0.1em;text-transform:uppercase;padding:16px 20px 6px}
-  .nav-item{display:flex;align-items:center;gap:10px;padding:9px 20px;cursor:pointer;color:rgba(255,255,255,.55);font-size:13px;font-weight:450;transition:all .15s;border-left:2px solid transparent;text-decoration:none}
-  .nav-item:hover{color:rgba(255,255,255,.88);background:var(--sidebar-hover)}
-  .nav-item.active{color:#fff;background:var(--sidebar-active);border-left-color:var(--blue)}
-  .nav-item svg{width:16px;height:16px;flex-shrink:0;opacity:.7}
+  .sidebar-nav::-webkit-scrollbar-thumb{background:rgba(59,108,240,.18);border-radius:2px}
+  .nav-section-label{font-size:11px;font-weight:700;color:var(--text-muted);letter-spacing:0.02em;padding:16px 10px 6px}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;margin:1px 0;cursor:pointer;color:var(--text-primary);font-size:13.5px;font-weight:500;transition:background .15s,color .15s;border-radius:9px;text-decoration:none}
+  .nav-item:hover{background:var(--sidebar-hover)}
+  .nav-item.active{color:var(--blue);background:var(--sidebar-active);font-weight:700;box-shadow:0 1px 3px rgba(59,108,240,.16)}
+  .nav-item svg{width:17px;height:17px;flex-shrink:0;opacity:.6}
   .nav-item.active svg{opacity:1}
-  .nav-badge{margin-left:auto;background:var(--blue);color:#fff;font-size:10px;font-weight:600;padding:1px 7px;border-radius:10px;min-width:20px;text-align:center}
-  .sidebar-footer{padding:16px 20px;border-top:1px solid rgba(255,255,255,.06)}
+  .nav-badge{margin-left:auto;background:#e5e9f2;color:var(--text-secondary);font-size:10.5px;font-weight:700;padding:1px 8px;border-radius:999px;min-width:22px;text-align:center}
+  .nav-badge.alert{background:var(--negative-bg);color:var(--negative)}
+  .nav-badge.warn{background:#fff4e0;color:#c76a00}
+  .nav-fold{display:flex;align-items:center;justify-content:space-between;width:100%;border:0;background:transparent;font:inherit;font-size:11px;font-weight:700;color:var(--text-muted);letter-spacing:0.02em;padding:16px 10px 6px;cursor:pointer}
+  .nav-fold:hover{color:var(--text-secondary)}
+  .nav-fold-body[hidden]{display:none}
+  .sidebar-footer{padding:12px 16px 14px;border-top:1px solid var(--sidebar-border)}
   .sidebar-footer .user-info{display:flex;align-items:center;gap:10px}
   .user-avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#3b6cf0,#6b8ff5);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
-  .user-name{font-size:12px;color:rgba(255,255,255,.7);font-weight:500}
-  .user-role{font-size:10px;color:rgba(255,255,255,.3)}
+  .user-name{font-size:12.5px;color:var(--text-primary);font-weight:600}
+  .user-role{font-size:10.5px;color:var(--text-muted)}
+  .logout-btn{background:#fff;border:1px solid var(--sidebar-border);border-radius:7px;padding:5px 9px;color:var(--text-secondary);cursor:pointer;font-size:11px;font-weight:600;flex-shrink:0;transition:all .15s}
+  .logout-btn:hover{border-color:var(--negative);color:var(--negative);background:var(--negative-bg)}
+  #build-stamp{font-size:10.5px;color:var(--text-muted);margin-top:8px}
 
   /* Main content */
   .main{flex:1;overflow-y:auto;overflow-x:hidden;background:var(--bg)}
@@ -75,6 +84,57 @@
   .rtab.active{color:var(--blue);border-bottom-color:var(--blue)}
   .rtab .nav-badge{margin-left:0}
   @media (max-width:900px){#reports-tabbar{padding:12px 16px 0}}
+
+  /* 홈: 오늘 할 일 */
+  .section-label{font-size:12px;font-weight:700;color:var(--text-secondary);letter-spacing:.02em}
+  .todo-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+  .todo-card{background:var(--white);border:1px solid var(--border);border-left:4px solid var(--border);border-radius:var(--radius);padding:16px 18px;cursor:pointer;display:flex;flex-direction:column;gap:4px;box-shadow:var(--shadow-sm);transition:transform .12s,box-shadow .12s}
+  .todo-card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+  .todo-card.red{border-left-color:var(--negative)}
+  .todo-card.amber{border-left-color:var(--mixed)}
+  .todo-card.blue{border-left-color:var(--blue)}
+  .todo-l{font-size:12.5px;color:var(--text-secondary);font-weight:600}
+  .todo-v{font-size:26px;font-weight:800;color:var(--text-primary);font-variant-numeric:tabular-nums;line-height:1.2}
+  .todo-v small{font-size:13px;font-weight:600;color:var(--text-secondary);margin-left:4px}
+  .todo-go{font-size:12px;font-weight:700;color:var(--blue)}
+  @media (max-width:900px){.todo-strip{grid-template-columns:1fr}}
+
+  /* 리뷰 아카이브: 주간 고객의 소리 */
+  .voc-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+  .voc-title{font-size:15px;font-weight:800;color:var(--text-primary)}
+  .voc-title small{display:block;font-size:12px;font-weight:500;color:var(--text-secondary);margin-top:2px}
+  .voc-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .voc-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px}
+  .voc-kpi{background:var(--bg);border:1px solid var(--border-light);border-radius:var(--radius-sm);padding:10px 12px}
+  .voc-kpi .k{font-size:11.5px;color:var(--text-secondary);font-weight:600}
+  .voc-kpi .v{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--text-primary)}
+  .voc-kpi .d{font-size:11.5px;font-weight:600;color:var(--text-muted)}
+  .voc-kpi .d.up{color:var(--positive)} .voc-kpi .d.down{color:var(--negative)}
+  .voc-insights{list-style:none;margin:0 0 16px;padding:12px 14px;background:var(--blue-light);border-radius:var(--radius-sm);display:flex;flex-direction:column;gap:6px}
+  .voc-insights li{font-size:13px;line-height:1.55;color:var(--text-primary);padding-left:16px;position:relative}
+  .voc-insights li::before{content:'';position:absolute;left:2px;top:8px;width:6px;height:6px;border-radius:50%;background:var(--blue)}
+  .voc-insights li.warn::before{background:var(--negative)}
+  .voc-sub{font-size:12.5px;font-weight:700;color:var(--text-secondary);margin:4px 0 8px}
+  .voc-table-wrap{overflow-x:auto;margin-bottom:16px;border:1px solid var(--border-light);border-radius:var(--radius-sm)}
+  .voc-table{width:100%;border-collapse:collapse;font-size:12.5px;min-width:720px}
+  .voc-table th{background:var(--bg);color:var(--text-secondary);font-weight:700;text-align:left;padding:8px 10px;font-size:11.5px;white-space:nowrap}
+  .voc-table td{padding:8px 10px;border-top:1px solid var(--border-light);vertical-align:top;color:var(--text-primary)}
+  .voc-table td.num{font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+  .voc-table tr.empty td{color:var(--text-muted)}
+  .voc-issue-txt{color:var(--text-secondary);cursor:pointer}
+  .voc-issue-txt:hover{color:var(--blue)}
+  .voc-cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+  @media (max-width:1100px){.voc-cols{grid-template-columns:1fr}}
+  .voc-col{border:1px solid var(--border-light);border-radius:var(--radius-sm);padding:10px 12px;min-width:0}
+  .voc-col h4{font-size:12.5px;font-weight:800;margin:0 0 8px;display:flex;justify-content:space-between}
+  .voc-col h4 span{color:var(--text-muted);font-weight:600}
+  .voc-rv{padding:8px 0;border-top:1px solid var(--border-light);cursor:pointer}
+  .voc-rv:first-of-type{border-top:0}
+  .voc-rv:hover .voc-rv-t{color:var(--blue)}
+  .voc-rv-m{font-size:11px;color:var(--text-muted);margin-bottom:2px}
+  .voc-rv-t{font-size:12.5px;line-height:1.5;color:var(--text-primary)}
+  .voc-empty{font-size:12px;color:var(--text-muted);padding:6px 0}
+  .voc-status{font-size:12px;color:var(--text-muted)}
 
   /* Page header */
   .page-header{margin-bottom:28px}
@@ -700,58 +760,56 @@ window.logoutEGA = logoutEGA;
   <aside class="sidebar">
     <div class="sidebar-logo">
       <div class="brand">EGA</div>
-      <div class="tagline">Review Insight Archive</div>
-      <div class="tagline" id="build-stamp" style="color:#4ade80;font-weight:600;margin-top:4px">BUILD 250806-Q · 올영(매장) 답변관리 제외</div>
+      <div class="tagline">리뷰 인사이트</div>
     </div>
     <nav class="sidebar-nav">
-      <div class="nav-section-label">Analytics</div>
-      <a class="nav-item" onclick="showPage('dashboard')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect></svg>
-        Dashboard
-      </a>
-      <a class="nav-item" onclick="showPage('archive')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 10h16M4 14h10"></path><circle cx="17" cy="17" r="3"></circle><path d="m21 21-1.5-1.5"></path></svg>
-        Review Archive
-        <span class="nav-badge" id="nav-total">4163</span>
-      </a>
-      <div class="nav-section-label">Reports</div>
-      <a class="nav-item active" id="nav-reports" onclick="showPage('reports')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"></path></svg>
-        Reports
-      </a>
-      <div class="nav-section-label">CS 관리</div>
+      <div class="nav-section-label">업무</div>
       <a class="nav-item" onclick="showPage('replies')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"></path></svg>
         답변 관리
-        <span class="nav-badge" id="nav-reply-count">0</span>
+        <span class="nav-badge alert" id="nav-reply-count" title="답변 안 한 리뷰" hidden>0</span>
       </a>
       <a class="nav-item" onclick="showPage('cafe24qa')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-        카페24 Q&A
-        <span class="nav-badge" id="nav-qa-count">0</span>
-      </a>
-      <a class="nav-item" onclick="showPage('reviewWorkflow')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-        리뷰 워크플로
-        <span class="nav-badge">NEW</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.1 9a3 3 0 015.8 1c0 2-3 3-3 3"></path><path d="M12 17h.01"></path></svg>
+        Q&amp;A 문의
+        <span class="nav-badge warn" id="nav-qa-count" title="답변 대기 문의" hidden>0</span>
       </a>
       <a class="nav-item" onclick="showPage('csTemplates')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2h-2"></path><rect x="8" y="2" width="8" height="4" rx="1"></rect><path d="M9 12h6M9 16h4"></path></svg>
         CS 답변 템플릿
-        <span class="nav-badge">NEW</span>
       </a>
-      <div class="nav-section-label">System</div>
-      <a class="nav-item" onclick="showPage('admin')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M19.07 19.07l-1.41-1.41M4.93 19.07l1.41-1.41M20 12h1M3 12H2M12 20v1M12 3V2"></path></svg>
-        Admin
+      <div class="nav-section-label">분석</div>
+      <a class="nav-item active" onclick="showPage('dashboard')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5 9.5V21h14V9.5"></path></svg>
+        홈 · 대시보드
       </a>
-      <a class="nav-item" onclick="showPage('promptConfig')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a7 7 0 0 1 7 7c0 2.5-1.4 4-2.5 5.2-.7.8-1.5 1.6-1.5 2.8H9c0-1.2-.8-2-1.5-2.8C6.4 13 5 11.5 5 9a7 7 0 0 1 7-7z"></path><path d="M9 21h6M10 18h4"></path></svg>
-        프롬프트 관리
+      <a class="nav-item" onclick="showPage('archive')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 10h16M4 14h10"></path><circle cx="17" cy="17" r="3"></circle><path d="m21 21-1.5-1.5"></path></svg>
+        리뷰 아카이브
+        <span class="nav-badge" id="nav-total" title="누적 리뷰">0</span>
       </a>
+      <a class="nav-item" id="nav-reports" onclick="showPage('reports')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"></path></svg>
+        리포트
+      </a>
+      <a class="nav-item" onclick="showPage('reviewWorkflow')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        리뷰 워크플로
+      </a>
+      <button class="nav-fold" id="nav-fold-settings" onclick="toggleNavSettings()">설정 <span id="nav-fold-ic">▸</span></button>
+      <div class="nav-fold-body" id="nav-settings" hidden>
+        <a class="nav-item" onclick="showPage('admin')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M19.07 19.07l-1.41-1.41M4.93 19.07l1.41-1.41M20 12h1M3 12H2M12 20v1M12 3V2"></path></svg>
+          데이터 관리
+        </a>
+        <a class="nav-item" onclick="showPage('promptConfig')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a7 7 0 0 1 7 7c0 2.5-1.4 4-2.5 5.2-.7.8-1.5 1.6-1.5 2.8H9c0-1.2-.8-2-1.5-2.8C6.4 13 5 11.5 5 9a7 7 0 0 1 7-7z"></path><path d="M9 21h6M10 18h4"></path></svg>
+          프롬프트 관리
+        </a>
+      </div>
     </nav>
     <div class="sidebar-footer">
-      <div class="user-info" style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+      <div class="user-info" style="justify-content:space-between">
         <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
           <div class="user-avatar">E</div>
           <div style="min-width:0">
@@ -759,10 +817,9 @@ window.logoutEGA = logoutEGA;
             <div class="user-role">Admin</div>
           </div>
         </div>
-        <button onclick="logoutEGA()" title="로그아웃" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:6px 8px;color:rgba(255,255,255,.6);cursor:pointer;font-size:11px;transition:all .15s;flex-shrink:0" onmouseover="this.style.background='rgba(239,68,68,.15)';this.style.color='#fca5a5';this.style.borderColor='rgba(239,68,68,.3)'" onmouseout="this.style.background='rgba(255,255,255,.06)';this.style.color='rgba(255,255,255,.6)';this.style.borderColor='rgba(255,255,255,.1)'">
-          🚪
-        </button>
+        <button class="logout-btn" onclick="logoutEGA()" title="로그아웃">로그아웃</button>
       </div>
+      <div id="build-stamp">BUILD 250806-R · 올영(매장) 답변관리 제외</div>
     </div>
   </aside>
 
@@ -778,18 +835,36 @@ window.logoutEGA = logoutEGA;
     </div>
 
     <!-- ===== DASHBOARD ===== -->
-    <div class="page" id="page-dashboard">
+    <div class="page active" id="page-dashboard">
       <div class="page-header">
         <div class="page-header-row">
           <div>
-            <div class="page-title">Dashboard</div>
-            <div class="page-subtitle">Customer Voice, Organized — 최근 4주 고객 반응을 한눈에</div>
-          </div>
-          <div class="week-select-wrap">
-            <span style="font-size:12px;color:var(--text-muted);font-weight:500;padding:6px 12px;background:var(--bg-soft);border-radius:6px;">📅 최근 4주 기준</span>
+            <div class="page-title">홈</div>
+            <div class="page-subtitle">오늘 처리할 일과 최근 고객 반응을 한눈에</div>
           </div>
         </div>
       </div>
+
+      <!-- 오늘 할 일 -->
+      <div class="todo-strip mb-24">
+        <div class="todo-card red" onclick="showPage('replies')">
+          <div class="todo-l">답변 안 한 리뷰</div>
+          <div class="todo-v" id="todo-replies">–</div>
+          <div class="todo-go">답변 관리로 →</div>
+        </div>
+        <div class="todo-card amber" onclick="showPage('cafe24qa')">
+          <div class="todo-l">답변 대기 Q&amp;A·문의</div>
+          <div class="todo-v" id="todo-qa">–</div>
+          <div class="todo-go">Q&amp;A 문의로 →</div>
+        </div>
+        <div class="todo-card blue" onclick="showPage('archive')">
+          <div class="todo-l">지난주 고객의 소리</div>
+          <div class="todo-v" id="todo-voc">–</div>
+          <div class="todo-go">주간 요약 보기 →</div>
+        </div>
+      </div>
+
+      <div class="section-label" style="margin-bottom:12px">최근 4주 고객 반응</div>
 
       <!-- Summary Banner -->
       <div class="insight-banner mb-24" id="dash-banner">
@@ -1023,15 +1098,30 @@ window.logoutEGA = logoutEGA;
       <div class="page-header">
         <div class="page-header-row">
           <div>
-            <div class="page-title">Review Archive</div>
-            <div class="page-subtitle">모든 리뷰를 통합 아카이빙 — 검색하고, 분석하고, 활용하세요</div>
+            <div class="page-title">리뷰 아카이브</div>
+            <div class="page-subtitle">고객의 소리를 데이터로 쌓고, 매주 무엇이 있었는지 확인해요</div>
           </div>
           <button class="btn btn-outline btn-sm" onclick="exportCSV()">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-            CSV 내보내기
+            전체 CSV 내보내기
           </button>
         </div>
       </div>
+
+      <!-- 주간 고객의 소리 -->
+      <div class="card mb-16" id="voc-card">
+        <div class="voc-head">
+          <div class="voc-title">📣 주간 고객의 소리<small>요일별로 어떤 이슈가 있었는지, 눈여겨볼 리뷰는 무엇인지 정리했어요</small></div>
+          <div class="voc-actions">
+            <select class="filter-select" id="voc-week" onchange="renderVoc()"></select>
+            <button class="btn btn-primary btn-sm" onclick="downloadVocExcel()">📥 회의용 엑셀 다운로드</button>
+            <button class="btn btn-outline btn-sm" id="voc-copy-btn" onclick="copyVocText()">슬랙용 요약 복사</button>
+          </div>
+        </div>
+        <div id="voc-body"><div class="voc-empty">불러오는 중...</div></div>
+      </div>
+
+      <div class="section-label" style="margin-bottom:12px">전체 리뷰 검색</div>
 
       <!-- Filters -->
       <div class="card mb-16" style="padding:14px 18px">
@@ -1460,7 +1550,7 @@ window.logoutEGA = logoutEGA;
     </div>
 
     <!-- ===== WEEKLY REPORT ===== -->
-    <div class="page active" id="page-weekly">
+    <div class="page" id="page-weekly">
       <div class="page-header">
         <div class="page-header-row">
           <div>
@@ -2043,7 +2133,7 @@ window.logoutEGA = logoutEGA;
     <!-- ===== ADMIN ===== -->
     <div class="page" id="page-admin">
       <div class="page-header">
-        <div class="page-title">Admin</div>
+        <div class="page-title">데이터 관리</div>
         <div class="page-subtitle">데이터 관리 · 키워드 사전 · 감정 분류 기준</div>
       </div>
 
@@ -2883,8 +2973,9 @@ function showPage(id) {
     if(n.getAttribute('onclick') && n.getAttribute('onclick').includes("'"+id+"'")) n.classList.add('active');
   });
   _syncReportsNav(id);
+  if (id === 'admin' || id === 'promptConfig') toggleNavSettings(true);
   if(id==='insights') initInsights();
-  if(id==='archive') { if(!archiveInitialized) { initArchive(); archiveInitialized=true; } }
+  if(id==='archive') { if(!archiveInitialized) { initArchive(); archiveInitialized=true; } renderVoc(); }
   if(id==='weekly') updateWeeklyReport();
   if(id==='admin') initAdmin();
   if(id==='dashboard') updateDashboard();
@@ -2899,7 +2990,250 @@ function showPage(id) {
   if(id==='cafe24qa') initCafe24QA();
   if(id==='promptConfig') initPromptConfig();
 }
-_syncReportsNav('weekly');
+_syncReportsNav('dashboard');
+
+function toggleNavSettings(forceOpen) {
+  const body = document.getElementById('nav-settings');
+  if (!body) return;
+  const open = forceOpen === true ? true : body.hidden;
+  body.hidden = !open;
+  const ic = document.getElementById('nav-fold-ic');
+  if (ic) ic.textContent = open ? '▾' : '▸';
+}
+
+// 사이드바 숫자: 0이면 숨기고, 숫자가 바뀌면 홈의 '오늘 할 일'도 갱신
+function _setNavBadge(id, n) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const num = Number(n) || 0;
+  el.textContent = num.toLocaleString();
+  el.hidden = num === 0;
+  if (typeof updateTodoStrip === 'function') updateTodoStrip();
+}
+
+// ===== 📣 주간 고객의 소리 (리뷰 아카이브) =====
+const VOC_DOW = ['월','화','수','목','금','토','일'];
+function _vocYmd(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function _vocAddDays(ymd, n){ const [y,m,d] = ymd.split('-').map(Number); const x = new Date(y, m-1, d); x.setDate(x.getDate()+n); return _vocYmd(x); }
+function _vocMonday(ymd){ const [y,m,d] = ymd.split('-').map(Number); const x = new Date(y, m-1, d); x.setDate(x.getDate() - ((x.getDay()+6)%7)); return _vocYmd(x); }
+function _vocMd(ymd){ const p = ymd.split('-'); return Number(p[1])+'/'+Number(p[2]); }
+function _vocToday(){ return _vocYmd(new Date()); }
+function _vocIsIssue(r){ return r.sentiment === '부정' || !!r.issue_flag; }
+function _vocIsQuestion(r){ return /\?|궁금|문의|어떻게|되나요|될까요|인가요/.test(r.text || ''); }
+function _vocCount(list, fn){ const m = {}; list.forEach(r => { (fn(r) || []).forEach(k => { if(k) m[k] = (m[k]||0)+1; }); }); return Object.entries(m).sort((a,b) => b[1]-a[1]); }
+function _vocProduct(r){ return r.product_category || r.product_norm || r.product || '기타'; }
+function _vocCut(s, n){ s = String(s||'').replace(/\s+/g,' ').trim(); return s.length > n ? s.slice(0,n)+'…' : s; }
+
+function _vocStats(start){
+  const end = _vocAddDays(start, 6);
+  const list = ALL_REVIEWS.filter(r => r.date >= start && r.date <= end);
+  const pos = list.filter(r => r.sentiment === '긍정').length;
+  const neg = list.filter(r => r.sentiment === '부정').length;
+  const mix = list.filter(r => r.sentiment === '혼합').length;
+  const issues = list.filter(_vocIsIssue).sort((a,b) => (b.date||'').localeCompare(a.date||''));
+  return {
+    start, end, list, total: list.length, pos, neg, mix, issues,
+    posPct: list.length ? Math.round(pos/list.length*100) : 0,
+    negPct: list.length ? Math.round(neg/list.length*100) : 0,
+    repurchase: list.filter(r => r.has_repurchase).length,
+    keywords: _vocCount(list, r => r.keywords),
+    issueKeywords: _vocCount(issues, r => r.keywords),
+    channels: _vocCount(list, r => [r.channel || '기타']),
+    products: _vocCount(list, r => [_vocProduct(r)]),
+    questions: list.filter(_vocIsQuestion).sort((a,b) => (b.date||'').localeCompare(a.date||'')),
+    praise: list.filter(r => r.sentiment === '긍정' && (r.text||'').length >= 40)
+      .sort((a,b) => (b.sentiment_score||0)-(a.sentiment_score||0) || (b.text||'').length-(a.text||'').length).slice(0,5),
+  };
+}
+
+function _vocRising(start, cur){
+  // 지난 4주 주평균 대비 이번 주에 크게 늘어난 키워드
+  const prev = [1,2,3,4].map(i => _vocStats(_vocAddDays(start, -7*i)));
+  const avg = {};
+  prev.forEach(p => p.keywords.forEach(([k,v]) => { avg[k] = (avg[k]||0) + v/4; }));
+  return cur.keywords
+    .map(([k,v]) => ({k, v, a: avg[k]||0}))
+    .filter(x => x.v >= 3 && x.v >= x.a*1.5 + 1)
+    .sort((a,b) => (b.v-b.a)-(a.v-a.a)).slice(0,3);
+}
+
+function _vocInsights(cur, prev, rising){
+  const out = [];
+  if (!cur.total) { out.push({t:'이 주에는 수집된 리뷰가 없어요.'}); return out; }
+  const diff = cur.total - prev.total;
+  const pct = prev.total ? Math.round(diff/prev.total*100) : null;
+  out.push({t:`리뷰 ${cur.total}건 수집 · 전주 대비 ${diff>=0?'+':''}${diff}건${pct!==null?` (${pct>=0?'+':''}${pct}%)`:''}`});
+  const negDiff = cur.negPct - prev.negPct;
+  out.push({t:`긍정 ${cur.posPct}% · 부정 ${cur.negPct}%${prev.total?` (부정 비율 전주 대비 ${negDiff>=0?'+':''}${negDiff}%p)`:''}`, warn: negDiff >= 5});
+  if (cur.keywords.length) out.push({t:`가장 많이 나온 말: ${cur.keywords.slice(0,3).map(([k,v])=>`${k}(${v})`).join(', ')}`});
+  if (rising.length) out.push({t:`평소보다 크게 늘어난 말: ${rising.map(x=>`${x.k} (주평균 ${x.a.toFixed(1)}→${x.v})`).join(', ')}`, warn: true});
+  if (cur.issues.length) out.push({t:`확인 필요 리뷰 ${cur.issues.length}건${cur.issueKeywords.length?` — 주요 불만: ${cur.issueKeywords.slice(0,3).map(([k,v])=>`${k}(${v})`).join(', ')}`:''}`, warn: true});
+  if (cur.questions.length) out.push({t:`질문이 담긴 리뷰 ${cur.questions.length}건 — 상세페이지·CS 안내 보완 포인트`});
+  if (cur.repurchase) out.push({t:`재구매 언급 ${cur.repurchase}건`});
+  if (cur.products.length) out.push({t:`리뷰가 많은 제품: ${cur.products.slice(0,3).map(([k,v])=>`${k}(${v})`).join(', ')} · 채널: ${cur.channels.slice(0,3).map(([k,v])=>`${k} ${v}`).join(', ')}`});
+  return out;
+}
+
+function _vocDays(cur){
+  return [0,1,2,3,4,5,6].map(i => {
+    const day = _vocAddDays(cur.start, i);
+    const list = cur.list.filter(r => r.date === day);
+    const issues = list.filter(_vocIsIssue);
+    return {
+      day, dow: VOC_DOW[i], total: list.length,
+      pos: list.filter(r => r.sentiment === '긍정').length,
+      mix: list.filter(r => r.sentiment === '혼합').length,
+      neg: list.filter(r => r.sentiment === '부정').length,
+      issues,
+      kw: _vocCount(list, r => r.keywords).slice(0,3).map(([k]) => k),
+    };
+  });
+}
+
+function _vocWeekOptions(){
+  const sel = document.getElementById('voc-week');
+  if (!sel || sel.options.length) return;
+  const thisMon = _vocMonday(_vocToday());
+  const opts = [];
+  for (let i = 0; i < 16; i++) {
+    const s = _vocAddDays(thisMon, -7*i);
+    const label = `${_vocMd(s)}(월) ~ ${_vocMd(_vocAddDays(s,6))}(일)` + (i === 0 ? ' · 이번 주(진행 중)' : i === 1 ? ' · 지난주' : '');
+    opts.push(`<option value="${s}">${label}</option>`);
+  }
+  sel.innerHTML = opts.join('');
+  sel.value = _vocAddDays(thisMon, -7);  // 월요일 회의 기준: 지난주
+}
+
+let _vocCurrent = null;
+function renderVoc(){
+  const body = document.getElementById('voc-body');
+  if (!body) return;
+  if (!Array.isArray(ALL_REVIEWS) || !ALL_REVIEWS.length) { body.innerHTML = '<div class="voc-empty">리뷰 데이터를 불러오는 중이에요.</div>'; return; }
+  _vocWeekOptions();
+  const start = document.getElementById('voc-week').value;
+  const cur = _vocStats(start);
+  const prev = _vocStats(_vocAddDays(start, -7));
+  const rising = _vocRising(start, cur);
+  const insights = _vocInsights(cur, prev, rising);
+  const days = _vocDays(cur);
+  _vocCurrent = { cur, prev, rising, insights, days };
+
+  const delta = (a, b, unit, goodUp) => {
+    const d = a - b; if (!d) return `<div class="d">전주와 같음</div>`;
+    const good = goodUp ? d > 0 : d < 0;
+    return `<div class="d ${good?'up':'down'}">전주 대비 ${d>0?'+':''}${d}${unit}</div>`;
+  };
+  const rv = r => `<div class="voc-rv" onclick="showReviewDetail('${r.id}',true)"><div class="voc-rv-m">${r.date} · ${_cstEsc(r.channel||'')} · ${_cstEsc(_vocProduct(r))}</div><div class="voc-rv-t">${_cstEsc(_vocCut(r.text, 110))}</div></div>`;
+  const col = (title, list, limit) => `<div class="voc-col"><h4>${title} <span>${list.length}건</span></h4>${list.length ? list.slice(0,limit).map(rv).join('') + (list.length>limit?`<div class="voc-empty">외 ${list.length-limit}건은 엑셀에 모두 담겨요</div>`:'') : '<div class="voc-empty">없음</div>'}</div>`;
+
+  body.innerHTML = `
+    <div class="voc-kpis">
+      <div class="voc-kpi"><div class="k">리뷰 수</div><div class="v">${cur.total}</div>${delta(cur.total, prev.total, '건', true)}</div>
+      <div class="voc-kpi"><div class="k">긍정 비율</div><div class="v">${cur.posPct}%</div>${delta(cur.posPct, prev.posPct, '%p', true)}</div>
+      <div class="voc-kpi"><div class="k">확인 필요(부정·이슈)</div><div class="v">${cur.issues.length}</div>${delta(cur.issues.length, prev.issues.length, '건', false)}</div>
+      <div class="voc-kpi"><div class="k">재구매 언급</div><div class="v">${cur.repurchase}</div>${delta(cur.repurchase, prev.repurchase, '건', true)}</div>
+    </div>
+    <div class="voc-sub">이번 주 인사이트</div>
+    <ul class="voc-insights">${insights.map(x => `<li class="${x.warn?'warn':''}">${_cstEsc(x.t)}</li>`).join('')}</ul>
+    <div class="voc-sub">요일별 흐름</div>
+    <div class="voc-table-wrap"><table class="voc-table">
+      <thead><tr><th>날짜</th><th>리뷰</th><th>긍정</th><th>혼합</th><th>부정</th><th>주요 키워드</th><th>확인 필요 리뷰</th></tr></thead>
+      <tbody>${days.map(d => `<tr class="${d.total?'':'empty'}">
+        <td>${_vocMd(d.day)}(${d.dow})</td><td class="num">${d.total}</td><td class="num">${d.pos}</td><td class="num">${d.mix}</td><td class="num">${d.neg}</td>
+        <td>${_cstEsc(d.kw.join(', ') || '-')}</td>
+        <td>${d.issues.length ? d.issues.slice(0,2).map(r => `<div class="voc-issue-txt" onclick="showReviewDetail('${r.id}',true)">· ${_cstEsc(_vocCut(r.text, 45))}</div>`).join('') + (d.issues.length>2?`<div class="voc-status">외 ${d.issues.length-2}건</div>`:'') : '-'}</td>
+      </tr>`).join('')}</tbody>
+    </table></div>
+    <div class="voc-sub">눈여겨볼 리뷰</div>
+    <div class="voc-cols">
+      ${col('⚠ 확인 필요 (부정·이슈)', cur.issues, 6)}
+      ${col('❓ 질문이 담긴 리뷰', cur.questions, 5)}
+      ${col('👍 마케팅 활용 후보', cur.praise, 5)}
+    </div>`;
+}
+
+function _vocReviewRow(r){
+  return { '날짜': r.date, '채널': r.channel || '', '제품': _vocProduct(r), '상품명': r.product || '', '감정': r.sentiment || '', '키워드': (r.keywords||[]).join(', '), '재구매 언급': r.has_repurchase ? 'Y' : '', '리뷰 원문': r.text || '' };
+}
+
+function downloadVocExcel(){
+  if (!_vocCurrent) renderVoc();
+  if (!_vocCurrent || typeof XLSX === 'undefined') { alert('엑셀 라이브러리를 불러오지 못했어요. 새로고침 후 다시 시도해주세요.'); return; }
+  const { cur, prev, insights, days } = _vocCurrent;
+  const period = `${cur.start} ~ ${cur.end}`;
+  const wb = XLSX.utils.book_new();
+
+  const summary = [
+    ['EGA 주간 고객의 소리'], ['기간', period], ['만든 날', _vocToday()], [],
+    ['항목', '이번 주', '전주', '변화'],
+    ['리뷰 수', cur.total, prev.total, cur.total - prev.total],
+    ['긍정 비율(%)', cur.posPct, prev.posPct, cur.posPct - prev.posPct],
+    ['부정 비율(%)', cur.negPct, prev.negPct, cur.negPct - prev.negPct],
+    ['확인 필요(부정·이슈)', cur.issues.length, prev.issues.length, cur.issues.length - prev.issues.length],
+    ['질문이 담긴 리뷰', cur.questions.length, prev.questions.length, cur.questions.length - prev.questions.length],
+    ['재구매 언급', cur.repurchase, prev.repurchase, cur.repurchase - prev.repurchase],
+    [], ['이번 주 인사이트'], ...insights.map(x => ['• ' + x.t]),
+    [], ['많이 나온 키워드', '건수'], ...cur.keywords.slice(0,10),
+    [], ['불만·이슈 키워드', '건수'], ...cur.issueKeywords.slice(0,10),
+  ];
+  const ws1 = XLSX.utils.aoa_to_sheet(summary);
+  ws1['!cols'] = [{wch:60},{wch:12},{wch:12},{wch:10}];
+  XLSX.utils.book_append_sheet(wb, ws1, '요약');
+
+  const dayRows = days.map(d => ({ '날짜': d.day, '요일': d.dow, '리뷰 수': d.total, '긍정': d.pos, '혼합': d.mix, '부정': d.neg, '확인 필요': d.issues.length, '주요 키워드': d.kw.join(', '), '확인 필요 리뷰': d.issues.map(r => '· ' + _vocCut(r.text, 80)).join('\n') }));
+  const ws2 = XLSX.utils.json_to_sheet(dayRows);
+  ws2['!cols'] = [{wch:12},{wch:5},{wch:8},{wch:6},{wch:6},{wch:6},{wch:9},{wch:30},{wch:80}];
+  XLSX.utils.book_append_sheet(wb, ws2, '요일별');
+
+  const addList = (name, list) => {
+    const ws = XLSX.utils.json_to_sheet(list.length ? list.map(_vocReviewRow) : [{'날짜':'해당 없음'}]);
+    ws['!cols'] = [{wch:12},{wch:12},{wch:18},{wch:30},{wch:6},{wch:28},{wch:9},{wch:90}];
+    XLSX.utils.book_append_sheet(wb, ws, name);
+  };
+  addList('확인 필요 리뷰', cur.issues);
+  addList('질문 리뷰', cur.questions);
+  addList('마케팅 후보', cur.praise);
+  addList('이번 주 전체', cur.list.slice().sort((a,b) => (a.date||'').localeCompare(b.date||'')));
+
+  XLSX.writeFile(wb, `EGA_고객의소리_${cur.start}_${cur.end}.xlsx`);
+}
+
+function copyVocText(){
+  if (!_vocCurrent) renderVoc();
+  if (!_vocCurrent) return;
+  const { cur, insights } = _vocCurrent;
+  const lines = [
+    `📣 EGA 주간 고객의 소리 (${_vocMd(cur.start)}~${_vocMd(cur.end)})`,
+    ...insights.map(x => '• ' + x.t),
+  ];
+  if (cur.issues.length) {
+    lines.push('', '⚠ 확인 필요 리뷰');
+    cur.issues.slice(0,3).forEach(r => lines.push(`- [${r.channel||''}/${_vocProduct(r)}] ${_vocCut(r.text, 70)}`));
+  }
+  if (cur.praise.length) {
+    lines.push('', '👍 마케팅 활용 후보');
+    cur.praise.slice(0,2).forEach(r => lines.push(`- [${_vocProduct(r)}] ${_vocCut(r.text, 70)}`));
+  }
+  const text = lines.join('\n');
+  const btn = document.getElementById('voc-copy-btn');
+  const done = () => { const o = btn.textContent; btn.textContent = '복사됨 ✓'; setTimeout(() => { btn.textContent = o; }, 1500); };
+  const fallback = () => { const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); done(); } catch(e) {} document.body.removeChild(ta); };
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done).catch(fallback); else fallback();
+}
+
+function updateTodoStrip(){
+  const rep = document.getElementById('nav-reply-count');
+  const qa = document.getElementById('nav-qa-count');
+  const tr = document.getElementById('todo-replies');
+  const tq = document.getElementById('todo-qa');
+  const tv = document.getElementById('todo-voc');
+  if (tr && rep) tr.textContent = rep.textContent || '0';
+  if (tq && qa) tq.textContent = qa.textContent || '0';
+  if (tv && Array.isArray(ALL_REVIEWS) && ALL_REVIEWS.length) {
+    const last = _vocStats(_vocAddDays(_vocMonday(_vocToday()), -7));
+    tv.innerHTML = `${last.total}건<small>확인 필요 ${last.issues.length}건</small>`;
+  }
+}
 
 // ===== 💬 CS 답변 템플릿 =====
 let _cstData = null;
@@ -3357,8 +3691,7 @@ async function initCafe24QA(force) {
     container.innerHTML = '<div style="text-align:center;padding:80px 20px;color:#9ca3af"><div style="font-size:42px;margin-bottom:12px">📭</div><div style="font-size:15px;font-weight:600;color:#374151;margin-bottom:6px">문의 데이터 없음</div><div style="font-size:13px">inquiries_cafe24.json 파일이 필요합니다</div></div>';
     return;
   }
-  const badge = document.getElementById('nav-qa-count');
-  if (badge) badge.textContent = (_qaData.inquiries || []).filter(iq => !iq.answered).length;  // 미답변 문의 수
+  _setNavBadge('nav-qa-count', (_qaData.inquiries || []).filter(iq => !iq.answered).length);  // 미답변 문의 수
   const upd = document.getElementById('qa-updated');
   if (upd && _qaData.generatedAt) upd.textContent = '업데이트 ' + _fmtKST(_qaData.generatedAt, true) + ' (KST)';
   renderCafe24QA();
@@ -7668,8 +8001,7 @@ function updateReplyStats() {
   document.getElementById('rstat-posted').textContent = posted;
   document.getElementById('rstat-pending').textContent = pending;
   // nav badge = 미답변 수
-  const badge = document.getElementById('nav-reply-count');
-  if (badge) badge.textContent = pending;
+  _setNavBadge('nav-reply-count', pending);
 }
 
 // ── 필터 변경 ──
