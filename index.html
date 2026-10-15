@@ -134,6 +134,40 @@
   .voc-rv-m{font-size:11px;color:var(--text-muted);margin-bottom:2px}
   .voc-rv-t{font-size:12.5px;line-height:1.5;color:var(--text-primary)}
   .voc-empty{font-size:12px;color:var(--text-muted);padding:6px 0}
+  .voc-mode{display:flex;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:3px}
+  .voc-mode button{border:0;background:transparent;font:inherit;font-size:12.5px;font-weight:700;color:var(--text-secondary);padding:5px 12px;border-radius:6px;cursor:pointer}
+  .voc-mode button.on{background:var(--white);color:var(--blue);box-shadow:var(--shadow-sm)}
+  .voc-grid2{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:16px;margin-bottom:4px}
+  @media (max-width:1100px){.voc-grid2{grid-template-columns:1fr}}
+  .voc-legend{font-weight:500;font-size:11px;color:var(--text-muted);margin-left:8px}
+  .voc-legend i{display:inline-block;width:8px;height:8px;border-radius:2px;margin:0 3px 0 6px;vertical-align:middle}
+  .voc-legend i.pos,.voc-prod-bar .pos{background:var(--positive)}
+  .voc-legend i.mix,.voc-prod-bar .mix{background:var(--mixed)}
+  .voc-legend i.neg,.voc-prod-bar .neg{background:var(--negative)}
+  .voc-prods{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+  .voc-prod{cursor:pointer;padding:6px 8px;border-radius:var(--radius-sm)}
+  .voc-prod:hover{background:var(--blue-light)}
+  .voc-prod-top{display:flex;align-items:center;gap:8px;font-size:12.5px}
+  .voc-prod-rank{width:18px;height:18px;border-radius:50%;background:var(--blue-light);color:var(--blue);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .voc-prod-name{font-weight:700;color:var(--text-primary);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .voc-prod-n{margin-left:auto;font-weight:700;color:var(--text-secondary);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .voc-prod-bar{display:flex;height:7px;border-radius:4px;background:var(--border-light);overflow:hidden;margin:5px 0 3px 26px}
+  .voc-prod-bar span{height:100%}
+  .voc-prod-sub{font-size:11px;color:var(--text-muted);margin-left:26px}
+  .voc-rv-more{font-size:11px;font-weight:700;color:var(--blue);margin-top:3px;opacity:0;transition:opacity .12s}
+  .voc-rv:hover .voc-rv-more{opacity:1}
+  .voc-modal{position:fixed;inset:0;background:rgba(17,24,39,.45);display:flex;align-items:center;justify-content:center;z-index:1000;padding:16px}
+  .voc-modal[hidden]{display:none}
+  .voc-modal-box{background:var(--white);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);width:min(560px,100%);max-height:85vh;overflow:auto;padding:18px 20px}
+  .voc-modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;font-size:14px}
+  .voc-modal-x{border:0;background:transparent;font-size:16px;cursor:pointer;color:var(--text-muted);padding:4px 8px;border-radius:6px}
+  .voc-modal-x:hover{background:var(--bg);color:var(--text-primary)}
+  .voc-m-meta{font-size:11.5px;color:var(--text-muted)}
+  .voc-m-product{font-size:14px;font-weight:700;color:var(--text-primary);margin:4px 0 8px;line-height:1.4}
+  .voc-m-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+  .voc-m-text{font-size:14px;line-height:1.75;color:var(--text-primary);background:var(--bg);border:1px solid var(--border-light);border-radius:var(--radius-sm);padding:12px 14px;white-space:pre-wrap}
+  .voc-m-kw{font-size:12px;color:var(--text-secondary);margin-top:10px}
+  .voc-m-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
   .voc-status{font-size:12px;color:var(--text-muted)}
 
   /* Page header */
@@ -819,7 +853,7 @@ window.logoutEGA = logoutEGA;
         </div>
         <button class="logout-btn" onclick="logoutEGA()" title="로그아웃">로그아웃</button>
       </div>
-      <div id="build-stamp">BUILD 250806-R · 올영(매장) 답변관리 제외</div>
+      <div id="build-stamp">BUILD 250806-S · 올영(매장) 답변관리 제외</div>
     </div>
   </aside>
 
@@ -1111,14 +1145,25 @@ window.logoutEGA = logoutEGA;
       <!-- 주간 고객의 소리 -->
       <div class="card mb-16" id="voc-card">
         <div class="voc-head">
-          <div class="voc-title">📣 주간 고객의 소리<small>요일별로 어떤 이슈가 있었는지, 눈여겨볼 리뷰는 무엇인지 정리했어요</small></div>
+          <div class="voc-title">📣 고객의 소리<small>기간별로 어떤 이슈가 있었는지, 어떤 제품 리뷰가 많았는지, 눈여겨볼 리뷰는 무엇인지 정리했어요</small></div>
           <div class="voc-actions">
-            <select class="filter-select" id="voc-week" onchange="renderVoc()"></select>
+            <div class="voc-mode">
+              <button data-mode="week" class="on" onclick="setVocMode('week')">주간</button>
+              <button data-mode="month" onclick="setVocMode('month')">월간</button>
+            </div>
+            <select class="filter-select" id="voc-period" onchange="renderVoc()"></select>
             <button class="btn btn-primary btn-sm" onclick="downloadVocExcel()">📥 회의용 엑셀 다운로드</button>
             <button class="btn btn-outline btn-sm" id="voc-copy-btn" onclick="copyVocText()">슬랙용 요약 복사</button>
           </div>
         </div>
         <div id="voc-body"><div class="voc-empty">불러오는 중...</div></div>
+      </div>
+
+      <div class="voc-modal" id="voc-modal" hidden onclick="if(event.target===this)closeVocReview()">
+        <div class="voc-modal-box" role="dialog" aria-label="리뷰 원본">
+          <div class="voc-modal-head"><b>리뷰 원본</b><button class="voc-modal-x" onclick="closeVocReview()" aria-label="닫기">✕</button></div>
+          <div id="voc-modal-body"></div>
+        </div>
       </div>
 
       <div class="section-label" style="margin-bottom:12px">전체 리뷰 검색</div>
@@ -3011,12 +3056,17 @@ function _setNavBadge(id, n) {
   if (typeof updateTodoStrip === 'function') updateTodoStrip();
 }
 
-// ===== 📣 주간 고객의 소리 (리뷰 아카이브) =====
+// ===== 📣 고객의 소리 (리뷰 아카이브 · 주간/월간) =====
 const VOC_DOW = ['월','화','수','목','금','토','일'];
+let _vocMode = 'week';   // 'week' | 'month'
 function _vocYmd(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 function _vocAddDays(ymd, n){ const [y,m,d] = ymd.split('-').map(Number); const x = new Date(y, m-1, d); x.setDate(x.getDate()+n); return _vocYmd(x); }
 function _vocMonday(ymd){ const [y,m,d] = ymd.split('-').map(Number); const x = new Date(y, m-1, d); x.setDate(x.getDate() - ((x.getDay()+6)%7)); return _vocYmd(x); }
+function _vocMonthStart(ymd){ return ymd.slice(0,7) + '-01'; }
+function _vocMonthEnd(startYmd){ const [y,m] = startYmd.split('-').map(Number); return _vocYmd(new Date(y, m, 0)); }
+function _vocAddMonths(startYmd, n){ const [y,m] = startYmd.split('-').map(Number); return _vocYmd(new Date(y, m-1+n, 1)); }
 function _vocMd(ymd){ const p = ymd.split('-'); return Number(p[1])+'/'+Number(p[2]); }
+function _vocDowOf(ymd){ const [y,m,d] = ymd.split('-').map(Number); return VOC_DOW[(new Date(y, m-1, d).getDay()+6)%7]; }
 function _vocToday(){ return _vocYmd(new Date()); }
 function _vocIsIssue(r){ return r.sentiment === '부정' || !!r.issue_flag; }
 function _vocIsQuestion(r){ return /\?|궁금|문의|어떻게|되나요|될까요|인가요/.test(r.text || ''); }
@@ -3024,13 +3074,30 @@ function _vocCount(list, fn){ const m = {}; list.forEach(r => { (fn(r) || []).fo
 function _vocProduct(r){ return r.product_category || r.product_norm || r.product || '기타'; }
 function _vocCut(s, n){ s = String(s||'').replace(/\s+/g,' ').trim(); return s.length > n ? s.slice(0,n)+'…' : s; }
 
-function _vocStats(start){
-  const end = _vocAddDays(start, 6);
+function _vocRange(mode, start){
+  return mode === 'month' ? [start, _vocMonthEnd(start)] : [start, _vocAddDays(start, 6)];
+}
+function _vocPrevStart(mode, start, n){
+  return mode === 'month' ? _vocAddMonths(start, -(n||1)) : _vocAddDays(start, -7*(n||1));
+}
+function _vocLabel(mode, start){
+  if (mode === 'month') { const [y,m] = start.split('-'); return `${y}년 ${Number(m)}월`; }
+  return `${_vocMd(start)}(월) ~ ${_vocMd(_vocAddDays(start,6))}(일)`;
+}
+
+function _vocStats(start, end){
   const list = ALL_REVIEWS.filter(r => r.date >= start && r.date <= end);
   const pos = list.filter(r => r.sentiment === '긍정').length;
   const neg = list.filter(r => r.sentiment === '부정').length;
   const mix = list.filter(r => r.sentiment === '혼합').length;
   const issues = list.filter(_vocIsIssue).sort((a,b) => (b.date||'').localeCompare(a.date||''));
+  const byProduct = {};
+  list.forEach(r => {
+    const p = _vocProduct(r);
+    const o = byProduct[p] = byProduct[p] || { name: p, total: 0, pos: 0, mix: 0, neg: 0 };
+    o.total++;
+    if (r.sentiment === '긍정') o.pos++; else if (r.sentiment === '부정') o.neg++; else if (r.sentiment === '혼합') o.mix++;
+  });
   return {
     start, end, list, total: list.length, pos, neg, mix, issues,
     posPct: list.length ? Math.round(pos/list.length*100) : 0,
@@ -3039,69 +3106,109 @@ function _vocStats(start){
     keywords: _vocCount(list, r => r.keywords),
     issueKeywords: _vocCount(issues, r => r.keywords),
     channels: _vocCount(list, r => [r.channel || '기타']),
-    products: _vocCount(list, r => [_vocProduct(r)]),
+    products: Object.values(byProduct).sort((a,b) => b.total - a.total),
     questions: list.filter(_vocIsQuestion).sort((a,b) => (b.date||'').localeCompare(a.date||'')),
     praise: list.filter(r => r.sentiment === '긍정' && (r.text||'').length >= 40)
-      .sort((a,b) => (b.sentiment_score||0)-(a.sentiment_score||0) || (b.text||'').length-(a.text||'').length).slice(0,5),
+      .sort((a,b) => (b.sentiment_score||0)-(a.sentiment_score||0) || (b.text||'').length-(a.text||'').length)
+      .slice(0, 8),
   };
 }
 
-function _vocRising(start, cur){
-  // 지난 4주 주평균 대비 이번 주에 크게 늘어난 키워드
-  const prev = [1,2,3,4].map(i => _vocStats(_vocAddDays(start, -7*i)));
+function _vocRising(mode, start, cur){
+  // 이전 기간 평균(주간: 지난 4주, 월간: 지난 3개월) 대비 크게 늘어난 키워드
+  const n = mode === 'month' ? 3 : 4;
   const avg = {};
-  prev.forEach(p => p.keywords.forEach(([k,v]) => { avg[k] = (avg[k]||0) + v/4; }));
+  for (let i = 1; i <= n; i++) {
+    const s = _vocPrevStart(mode, start, i);
+    const [ps, pe] = _vocRange(mode, s);
+    _vocStats(ps, pe).keywords.forEach(([k,v]) => { avg[k] = (avg[k]||0) + v/n; });
+  }
   return cur.keywords
     .map(([k,v]) => ({k, v, a: avg[k]||0}))
     .filter(x => x.v >= 3 && x.v >= x.a*1.5 + 1)
     .sort((a,b) => (b.v-b.a)-(a.v-a.a)).slice(0,3);
 }
 
-function _vocInsights(cur, prev, rising){
+function _vocInsights(mode, cur, prev, rising){
+  const unit = mode === 'month' ? '전월' : '전주';
+  const avgLabel = mode === 'month' ? '월평균' : '주평균';
   const out = [];
-  if (!cur.total) { out.push({t:'이 주에는 수집된 리뷰가 없어요.'}); return out; }
+  if (!cur.total) { out.push({t:'이 기간에는 수집된 리뷰가 없어요.'}); return out; }
   const diff = cur.total - prev.total;
   const pct = prev.total ? Math.round(diff/prev.total*100) : null;
-  out.push({t:`리뷰 ${cur.total}건 수집 · 전주 대비 ${diff>=0?'+':''}${diff}건${pct!==null?` (${pct>=0?'+':''}${pct}%)`:''}`});
+  out.push({t:`리뷰 ${cur.total}건 수집 · ${unit} 대비 ${diff>=0?'+':''}${diff}건${pct!==null?` (${pct>=0?'+':''}${pct}%)`:''}`});
   const negDiff = cur.negPct - prev.negPct;
-  out.push({t:`긍정 ${cur.posPct}% · 부정 ${cur.negPct}%${prev.total?` (부정 비율 전주 대비 ${negDiff>=0?'+':''}${negDiff}%p)`:''}`, warn: negDiff >= 5});
+  out.push({t:`긍정 ${cur.posPct}% · 부정 ${cur.negPct}%${prev.total?` (부정 비율 ${unit} 대비 ${negDiff>=0?'+':''}${negDiff}%p)`:''}`, warn: negDiff >= 5});
+  if (cur.products.length) { const p = cur.products[0]; out.push({t:`리뷰가 가장 많은 제품: ${p.name} ${p.total}건 (${Math.round(p.total/cur.total*100)}%)`}); }
   if (cur.keywords.length) out.push({t:`가장 많이 나온 말: ${cur.keywords.slice(0,3).map(([k,v])=>`${k}(${v})`).join(', ')}`});
-  if (rising.length) out.push({t:`평소보다 크게 늘어난 말: ${rising.map(x=>`${x.k} (주평균 ${x.a.toFixed(1)}→${x.v})`).join(', ')}`, warn: true});
+  if (rising.length) out.push({t:`평소보다 크게 늘어난 말: ${rising.map(x=>`${x.k} (${avgLabel} ${x.a.toFixed(1)}→${x.v})`).join(', ')}`, warn: true});
   if (cur.issues.length) out.push({t:`확인 필요 리뷰 ${cur.issues.length}건${cur.issueKeywords.length?` — 주요 불만: ${cur.issueKeywords.slice(0,3).map(([k,v])=>`${k}(${v})`).join(', ')}`:''}`, warn: true});
   if (cur.questions.length) out.push({t:`질문이 담긴 리뷰 ${cur.questions.length}건 — 상세페이지·CS 안내 보완 포인트`});
   if (cur.repurchase) out.push({t:`재구매 언급 ${cur.repurchase}건`});
-  if (cur.products.length) out.push({t:`리뷰가 많은 제품: ${cur.products.slice(0,3).map(([k,v])=>`${k}(${v})`).join(', ')} · 채널: ${cur.channels.slice(0,3).map(([k,v])=>`${k} ${v}`).join(', ')}`});
+  if (cur.channels.length) out.push({t:`채널: ${cur.channels.slice(0,3).map(([k,v])=>`${k} ${v}건`).join(', ')}`});
   return out;
 }
 
-function _vocDays(cur){
-  return [0,1,2,3,4,5,6].map(i => {
-    const day = _vocAddDays(cur.start, i);
-    const list = cur.list.filter(r => r.date === day);
-    const issues = list.filter(_vocIsIssue);
-    return {
-      day, dow: VOC_DOW[i], total: list.length,
-      pos: list.filter(r => r.sentiment === '긍정').length,
-      mix: list.filter(r => r.sentiment === '혼합').length,
-      neg: list.filter(r => r.sentiment === '부정').length,
-      issues,
-      kw: _vocCount(list, r => r.keywords).slice(0,3).map(([k]) => k),
-    };
-  });
+function _vocRow(label, list){
+  const issues = list.filter(_vocIsIssue);
+  return {
+    label, total: list.length,
+    pos: list.filter(r => r.sentiment === '긍정').length,
+    mix: list.filter(r => r.sentiment === '혼합').length,
+    neg: list.filter(r => r.sentiment === '부정').length,
+    issues,
+    kw: _vocCount(list, r => r.keywords).slice(0,3).map(([k]) => k),
+  };
 }
 
-function _vocWeekOptions(){
-  const sel = document.getElementById('voc-week');
-  if (!sel || sel.options.length) return;
-  const thisMon = _vocMonday(_vocToday());
-  const opts = [];
-  for (let i = 0; i < 16; i++) {
-    const s = _vocAddDays(thisMon, -7*i);
-    const label = `${_vocMd(s)}(월) ~ ${_vocMd(_vocAddDays(s,6))}(일)` + (i === 0 ? ' · 이번 주(진행 중)' : i === 1 ? ' · 지난주' : '');
-    opts.push(`<option value="${s}">${label}</option>`);
+function _vocBreakdown(mode, cur){
+  if (mode === 'week') {
+    return [0,1,2,3,4,5,6].map(i => {
+      const day = _vocAddDays(cur.start, i);
+      return Object.assign(_vocRow(`${_vocMd(day)}(${VOC_DOW[i]})`, cur.list.filter(r => r.date === day)), { from: day, to: day });
+    });
   }
-  sel.innerHTML = opts.join('');
-  sel.value = _vocAddDays(thisMon, -7);  // 월요일 회의 기준: 지난주
+  // 월간: 월~일 기준 주차로 나누되 월 경계로 자름
+  const rows = [];
+  let s = cur.start, n = 1;
+  while (s <= cur.end) {
+    let e = _vocAddDays(_vocMonday(s), 6);
+    if (e > cur.end) e = cur.end;
+    const from = s, to = e;
+    rows.push(Object.assign(_vocRow(`${n}주차 (${_vocMd(from)}~${_vocMd(to)})`, cur.list.filter(r => r.date >= from && r.date <= to)), { from, to }));
+    s = _vocAddDays(e, 1); n++;
+  }
+  return rows;
+}
+
+function _vocBuildOptions(){
+  const sel = document.getElementById('voc-period');
+  if (!sel) return;
+  const opts = [];
+  if (_vocMode === 'month') {
+    const thisMonth = _vocMonthStart(_vocToday());
+    for (let i = 0; i < 12; i++) {
+      const s = _vocAddMonths(thisMonth, -i);
+      opts.push(`<option value="${s}">${_vocLabel('month', s)}${i === 0 ? ' · 이번 달(진행 중)' : i === 1 ? ' · 지난달' : ''}</option>`);
+    }
+    sel.innerHTML = opts.join('');
+    sel.value = _vocAddMonths(thisMonth, -1);
+  } else {
+    const thisMon = _vocMonday(_vocToday());
+    for (let i = 0; i < 16; i++) {
+      const s = _vocAddDays(thisMon, -7*i);
+      opts.push(`<option value="${s}">${_vocLabel('week', s)}${i === 0 ? ' · 이번 주(진행 중)' : i === 1 ? ' · 지난주' : ''}</option>`);
+    }
+    sel.innerHTML = opts.join('');
+    sel.value = _vocAddDays(thisMon, -7);  // 월요일 회의 기준: 지난주
+  }
+}
+
+function setVocMode(mode){
+  _vocMode = mode;
+  document.querySelectorAll('.voc-mode button').forEach(b => b.classList.toggle('on', b.dataset.mode === mode));
+  _vocBuildOptions();
+  renderVoc();
 }
 
 let _vocCurrent = null;
@@ -3109,22 +3216,35 @@ function renderVoc(){
   const body = document.getElementById('voc-body');
   if (!body) return;
   if (!Array.isArray(ALL_REVIEWS) || !ALL_REVIEWS.length) { body.innerHTML = '<div class="voc-empty">리뷰 데이터를 불러오는 중이에요.</div>'; return; }
-  _vocWeekOptions();
-  const start = document.getElementById('voc-week').value;
-  const cur = _vocStats(start);
-  const prev = _vocStats(_vocAddDays(start, -7));
-  const rising = _vocRising(start, cur);
-  const insights = _vocInsights(cur, prev, rising);
-  const days = _vocDays(cur);
-  _vocCurrent = { cur, prev, rising, insights, days };
+  const sel = document.getElementById('voc-period');
+  if (!sel.options.length) _vocBuildOptions();
+  const mode = _vocMode;
+  const start = sel.value;
+  const [cs, ce] = _vocRange(mode, start);
+  const prevStart = _vocPrevStart(mode, start, 1);
+  const [ps, pe] = _vocRange(mode, prevStart);
+  const cur = _vocStats(cs, ce);
+  const prev = _vocStats(ps, pe);
+  const rising = _vocRising(mode, start, cur);
+  const insights = _vocInsights(mode, cur, prev, rising);
+  const rows = _vocBreakdown(mode, cur);
+  _vocCurrent = { mode, cur, prev, rising, insights, rows, label: _vocLabel(mode, start) };
 
-  const delta = (a, b, unit, goodUp) => {
-    const d = a - b; if (!d) return `<div class="d">전주와 같음</div>`;
+  const unit = mode === 'month' ? '전월' : '전주';
+  const delta = (a, b, u, goodUp) => {
+    const d = a - b; if (!d) return `<div class="d">${unit}와 같음</div>`;
     const good = goodUp ? d > 0 : d < 0;
-    return `<div class="d ${good?'up':'down'}">전주 대비 ${d>0?'+':''}${d}${unit}</div>`;
+    return `<div class="d ${good?'up':'down'}">${unit} 대비 ${d>0?'+':''}${d}${u}</div>`;
   };
-  const rv = r => `<div class="voc-rv" onclick="showReviewDetail('${r.id}',true)"><div class="voc-rv-m">${r.date} · ${_cstEsc(r.channel||'')} · ${_cstEsc(_vocProduct(r))}</div><div class="voc-rv-t">${_cstEsc(_vocCut(r.text, 110))}</div></div>`;
+  const rv = r => `<div class="voc-rv" onclick="openVocReview('${r.id}')"><div class="voc-rv-m">${r.date} · ${_cstEsc(r.channel||'')} · ${_cstEsc(_vocProduct(r))}</div><div class="voc-rv-t">${_cstEsc(_vocCut(r.text, 110))}</div><div class="voc-rv-more">원본 보기 →</div></div>`;
   const col = (title, list, limit) => `<div class="voc-col"><h4>${title} <span>${list.length}건</span></h4>${list.length ? list.slice(0,limit).map(rv).join('') + (list.length>limit?`<div class="voc-empty">외 ${list.length-limit}건은 엑셀에 모두 담겨요</div>`:'') : '<div class="voc-empty">없음</div>'}</div>`;
+  const maxP = cur.products.length ? cur.products[0].total : 1;
+  const prodHtml = cur.products.length ? cur.products.slice(0, 8).map((p, i) => `
+    <div class="voc-prod" onclick="filterArchiveByProduct('${_cstEsc(p.name).replace(/'/g,"\\'")}')" title="이 제품 리뷰만 아래 목록에서 보기">
+      <div class="voc-prod-top"><span class="voc-prod-rank">${i+1}</span><span class="voc-prod-name">${_cstEsc(p.name)}</span><span class="voc-prod-n">${p.total}건 · ${Math.round(p.total/cur.total*100)}%</span></div>
+      <div class="voc-prod-bar"><span class="pos" style="width:${p.pos/maxP*100}%"></span><span class="mix" style="width:${p.mix/maxP*100}%"></span><span class="neg" style="width:${p.neg/maxP*100}%"></span></div>
+      <div class="voc-prod-sub">긍정 ${p.pos} · 혼합 ${p.mix} · 부정 ${p.neg}</div>
+    </div>`).join('') : '<div class="voc-empty">없음</div>';
 
   body.innerHTML = `
     <div class="voc-kpis">
@@ -3133,23 +3253,72 @@ function renderVoc(){
       <div class="voc-kpi"><div class="k">확인 필요(부정·이슈)</div><div class="v">${cur.issues.length}</div>${delta(cur.issues.length, prev.issues.length, '건', false)}</div>
       <div class="voc-kpi"><div class="k">재구매 언급</div><div class="v">${cur.repurchase}</div>${delta(cur.repurchase, prev.repurchase, '건', true)}</div>
     </div>
-    <div class="voc-sub">이번 주 인사이트</div>
-    <ul class="voc-insights">${insights.map(x => `<li class="${x.warn?'warn':''}">${_cstEsc(x.t)}</li>`).join('')}</ul>
-    <div class="voc-sub">요일별 흐름</div>
+    <div class="voc-grid2">
+      <div>
+        <div class="voc-sub">${mode === 'month' ? '이번 달' : '이번 주'} 인사이트</div>
+        <ul class="voc-insights">${insights.map(x => `<li class="${x.warn?'warn':''}">${_cstEsc(x.t)}</li>`).join('')}</ul>
+      </div>
+      <div>
+        <div class="voc-sub">제품별 리뷰 수 <span class="voc-legend"><i class="pos"></i>긍정 <i class="mix"></i>혼합 <i class="neg"></i>부정</span></div>
+        <div class="voc-prods">${prodHtml}</div>
+      </div>
+    </div>
+    <div class="voc-sub">${mode === 'month' ? '주차별 흐름' : '요일별 흐름'}</div>
     <div class="voc-table-wrap"><table class="voc-table">
-      <thead><tr><th>날짜</th><th>리뷰</th><th>긍정</th><th>혼합</th><th>부정</th><th>주요 키워드</th><th>확인 필요 리뷰</th></tr></thead>
-      <tbody>${days.map(d => `<tr class="${d.total?'':'empty'}">
-        <td>${_vocMd(d.day)}(${d.dow})</td><td class="num">${d.total}</td><td class="num">${d.pos}</td><td class="num">${d.mix}</td><td class="num">${d.neg}</td>
+      <thead><tr><th>${mode === 'month' ? '주차' : '날짜'}</th><th>리뷰</th><th>긍정</th><th>혼합</th><th>부정</th><th>주요 키워드</th><th>확인 필요 리뷰</th></tr></thead>
+      <tbody>${rows.map(d => `<tr class="${d.total?'':'empty'}">
+        <td>${d.label}</td><td class="num">${d.total}</td><td class="num">${d.pos}</td><td class="num">${d.mix}</td><td class="num">${d.neg}</td>
         <td>${_cstEsc(d.kw.join(', ') || '-')}</td>
-        <td>${d.issues.length ? d.issues.slice(0,2).map(r => `<div class="voc-issue-txt" onclick="showReviewDetail('${r.id}',true)">· ${_cstEsc(_vocCut(r.text, 45))}</div>`).join('') + (d.issues.length>2?`<div class="voc-status">외 ${d.issues.length-2}건</div>`:'') : '-'}</td>
+        <td>${d.issues.length ? d.issues.slice(0,2).map(r => `<div class="voc-issue-txt" onclick="openVocReview('${r.id}')">· ${_cstEsc(_vocCut(r.text, 45))}</div>`).join('') + (d.issues.length>2?`<div class="voc-status">외 ${d.issues.length-2}건</div>`:'') : '-'}</td>
       </tr>`).join('')}</tbody>
     </table></div>
-    <div class="voc-sub">눈여겨볼 리뷰</div>
+    <div class="voc-sub">눈여겨볼 리뷰 <span class="voc-status">누르면 원본이 열려요</span></div>
     <div class="voc-cols">
       ${col('⚠ 확인 필요 (부정·이슈)', cur.issues, 6)}
       ${col('❓ 질문이 담긴 리뷰', cur.questions, 5)}
       ${col('👍 마케팅 활용 후보', cur.praise, 5)}
     </div>`;
+}
+
+function openVocReview(id){
+  const r = ALL_REVIEWS.find(x => x.id === id);
+  if (!r) return;
+  const m = document.getElementById('voc-modal');
+  document.getElementById('voc-modal-body').innerHTML = `
+    <div class="voc-m-meta">${r.date} · ${_cstEsc(r.channel||'')} · ${_cstEsc(r.reviewer||'익명')}</div>
+    <div class="voc-m-product">${_cstEsc(r.product||_vocProduct(r))}</div>
+    <div class="voc-m-tags">${sentimentTag(r.sentiment)} <span class="tag" style="background:#f3f4f6;color:#374151">${_cstEsc(_vocProduct(r))}</span>${r.has_repurchase?' <span class="tag tag-repurchase">♻ 재구매 언급</span>':''}${r.issue_flag?' <span class="tag tag-issue">⚠ 이슈</span>':''}</div>
+    <div class="voc-m-text" id="voc-m-text">${_cstEsc(r.text||'(내용 없음)')}</div>
+    ${(r.keywords||[]).length ? `<div class="voc-m-kw">키워드: ${(r.keywords||[]).map(k => _cstEsc(k)).join(', ')}</div>` : ''}
+    ${r.memo ? `<div class="voc-m-kw">메모: ${_cstEsc(r.memo)}</div>` : ''}
+    <div class="voc-m-actions">
+      <button class="btn btn-primary btn-sm" id="voc-m-copy" onclick="copyVocReview('${r.id}')">원문 복사</button>
+      <button class="btn btn-outline btn-sm" onclick="closeVocReview();showReviewDetail('${r.id}',false);document.getElementById('detail-panel').scrollIntoView({behavior:'smooth',block:'center'})">아카이브 상세에서 보기·감정 수정</button>
+    </div>`;
+  m.hidden = false;
+}
+function closeVocReview(){ const m = document.getElementById('voc-modal'); if (m) m.hidden = true; }
+function copyVocReview(id){
+  const r = ALL_REVIEWS.find(x => x.id === id);
+  if (!r) return;
+  const text = r.text || '';
+  const btn = document.getElementById('voc-m-copy');
+  const done = () => { btn.textContent = '복사됨 ✓'; setTimeout(() => { btn.textContent = '원문 복사'; }, 1500); };
+  const fallback = () => { const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); done(); } catch(e) {} document.body.removeChild(ta); };
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done).catch(fallback); else fallback();
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeVocReview(); });
+
+function filterArchiveByProduct(name){
+  const sel = document.getElementById('filter-category');
+  if (!sel) return;
+  if (![...sel.options].some(o => o.value === name || o.text === name)) {
+    const o = document.createElement('option'); o.value = name; o.textContent = name; sel.appendChild(o);
+  }
+  sel.value = name;
+  if (typeof filterReviews === 'function') filterReviews();
+  const list = document.getElementById('search-input');
+  if (list) list.scrollIntoView({behavior:'smooth', block:'start'});
 }
 
 function _vocReviewRow(r){
@@ -3159,31 +3328,32 @@ function _vocReviewRow(r){
 function downloadVocExcel(){
   if (!_vocCurrent) renderVoc();
   if (!_vocCurrent || typeof XLSX === 'undefined') { alert('엑셀 라이브러리를 불러오지 못했어요. 새로고침 후 다시 시도해주세요.'); return; }
-  const { cur, prev, insights, days } = _vocCurrent;
-  const period = `${cur.start} ~ ${cur.end}`;
+  const { mode, cur, prev, insights, rows, label } = _vocCurrent;
+  const unit = mode === 'month' ? '전월' : '전주';
   const wb = XLSX.utils.book_new();
 
   const summary = [
-    ['EGA 주간 고객의 소리'], ['기간', period], ['만든 날', _vocToday()], [],
-    ['항목', '이번 주', '전주', '변화'],
+    [`EGA ${mode === 'month' ? '월간' : '주간'} 고객의 소리`], ['기간', `${label} (${cur.start} ~ ${cur.end})`], ['만든 날', _vocToday()], [],
+    ['항목', mode === 'month' ? '이번 달' : '이번 주', unit, '변화'],
     ['리뷰 수', cur.total, prev.total, cur.total - prev.total],
     ['긍정 비율(%)', cur.posPct, prev.posPct, cur.posPct - prev.posPct],
     ['부정 비율(%)', cur.negPct, prev.negPct, cur.negPct - prev.negPct],
     ['확인 필요(부정·이슈)', cur.issues.length, prev.issues.length, cur.issues.length - prev.issues.length],
     ['질문이 담긴 리뷰', cur.questions.length, prev.questions.length, cur.questions.length - prev.questions.length],
     ['재구매 언급', cur.repurchase, prev.repurchase, cur.repurchase - prev.repurchase],
-    [], ['이번 주 인사이트'], ...insights.map(x => ['• ' + x.t]),
+    [], ['인사이트'], ...insights.map(x => ['• ' + x.t]),
+    [], ['제품', '리뷰 수', '긍정', '혼합', '부정'], ...cur.products.map(p => [p.name, p.total, p.pos, p.mix, p.neg]),
     [], ['많이 나온 키워드', '건수'], ...cur.keywords.slice(0,10),
     [], ['불만·이슈 키워드', '건수'], ...cur.issueKeywords.slice(0,10),
   ];
   const ws1 = XLSX.utils.aoa_to_sheet(summary);
-  ws1['!cols'] = [{wch:60},{wch:12},{wch:12},{wch:10}];
+  ws1['!cols'] = [{wch:60},{wch:12},{wch:12},{wch:10},{wch:10}];
   XLSX.utils.book_append_sheet(wb, ws1, '요약');
 
-  const dayRows = days.map(d => ({ '날짜': d.day, '요일': d.dow, '리뷰 수': d.total, '긍정': d.pos, '혼합': d.mix, '부정': d.neg, '확인 필요': d.issues.length, '주요 키워드': d.kw.join(', '), '확인 필요 리뷰': d.issues.map(r => '· ' + _vocCut(r.text, 80)).join('\n') }));
-  const ws2 = XLSX.utils.json_to_sheet(dayRows);
-  ws2['!cols'] = [{wch:12},{wch:5},{wch:8},{wch:6},{wch:6},{wch:6},{wch:9},{wch:30},{wch:80}];
-  XLSX.utils.book_append_sheet(wb, ws2, '요일별');
+  const flow = rows.map(d => ({ [mode === 'month' ? '주차' : '날짜']: d.label, '리뷰 수': d.total, '긍정': d.pos, '혼합': d.mix, '부정': d.neg, '확인 필요': d.issues.length, '주요 키워드': d.kw.join(', '), '확인 필요 리뷰': d.issues.map(r => '· ' + _vocCut(r.text, 80)).join('\n') }));
+  const ws2 = XLSX.utils.json_to_sheet(flow);
+  ws2['!cols'] = [{wch:22},{wch:8},{wch:6},{wch:6},{wch:6},{wch:9},{wch:30},{wch:80}];
+  XLSX.utils.book_append_sheet(wb, ws2, mode === 'month' ? '주차별' : '요일별');
 
   const addList = (name, list) => {
     const ws = XLSX.utils.json_to_sheet(list.length ? list.map(_vocReviewRow) : [{'날짜':'해당 없음'}]);
@@ -3193,17 +3363,17 @@ function downloadVocExcel(){
   addList('확인 필요 리뷰', cur.issues);
   addList('질문 리뷰', cur.questions);
   addList('마케팅 후보', cur.praise);
-  addList('이번 주 전체', cur.list.slice().sort((a,b) => (a.date||'').localeCompare(b.date||'')));
+  addList('기간 전체', cur.list.slice().sort((a,b) => (a.date||'').localeCompare(b.date||'')));
 
-  XLSX.writeFile(wb, `EGA_고객의소리_${cur.start}_${cur.end}.xlsx`);
+  XLSX.writeFile(wb, `EGA_고객의소리_${mode === 'month' ? '월간' : '주간'}_${cur.start}_${cur.end}.xlsx`);
 }
 
 function copyVocText(){
   if (!_vocCurrent) renderVoc();
   if (!_vocCurrent) return;
-  const { cur, insights } = _vocCurrent;
+  const { mode, cur, insights, label } = _vocCurrent;
   const lines = [
-    `📣 EGA 주간 고객의 소리 (${_vocMd(cur.start)}~${_vocMd(cur.end)})`,
+    `📣 EGA ${mode === 'month' ? '월간' : '주간'} 고객의 소리 (${label})`,
     ...insights.map(x => '• ' + x.t),
   ];
   if (cur.issues.length) {
@@ -3230,7 +3400,8 @@ function updateTodoStrip(){
   if (tr && rep) tr.textContent = rep.textContent || '0';
   if (tq && qa) tq.textContent = qa.textContent || '0';
   if (tv && Array.isArray(ALL_REVIEWS) && ALL_REVIEWS.length) {
-    const last = _vocStats(_vocAddDays(_vocMonday(_vocToday()), -7));
+    const s = _vocAddDays(_vocMonday(_vocToday()), -7);
+    const last = _vocStats(s, _vocAddDays(s, 6));
     tv.innerHTML = `${last.total}건<small>확인 필요 ${last.issues.length}건</small>`;
   }
 }
