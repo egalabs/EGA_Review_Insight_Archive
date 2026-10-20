@@ -169,6 +169,12 @@
   .voc-m-kw{font-size:12px;color:var(--text-secondary);margin-top:10px}
   .voc-m-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
   .voc-status{font-size:12px;color:var(--text-muted)}
+  .date-range{display:inline-flex;align-items:center;gap:4px;color:var(--text-muted);font-size:12px}
+  .date-range input{min-width:0;width:132px}
+  .search-summary{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px solid var(--border-light);font-size:13px;color:var(--text-primary)}
+  .search-summary b{font-size:15px;color:var(--blue)}
+  .search-summary .term{display:inline-block;margin-left:8px;padding:1px 8px;border-radius:999px;background:#fff6c2;color:#7a5b00;font-size:12px;font-weight:700}
+  mark.hl{background:#fff1a8;color:inherit;padding:0 1px;border-radius:2px}
 
   /* Page header */
   .page-header{margin-bottom:28px}
@@ -853,7 +859,7 @@ window.logoutEGA = logoutEGA;
         </div>
         <button class="logout-btn" onclick="logoutEGA()" title="로그아웃">로그아웃</button>
       </div>
-      <div id="build-stamp">BUILD 250806-T · 올영(매장) 답변관리 제외</div>
+      <div id="build-stamp">BUILD 250806-U · 올영(매장) 답변관리 제외</div>
     </div>
   </aside>
 
@@ -1137,7 +1143,7 @@ window.logoutEGA = logoutEGA;
           </div>
           <button class="btn btn-outline btn-sm" onclick="exportCSV()">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-            전체 CSV 내보내기
+            검색 결과 CSV
           </button>
         </div>
       </div>
@@ -1173,8 +1179,12 @@ window.logoutEGA = logoutEGA;
         <div class="filter-bar" style="margin-bottom:0;padding:0">
           <div class="search-wrap">
             <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg>
-            <input type="text" class="search-input" id="search-input" placeholder="리뷰 내용, 제품명, 키워드 검색..." oninput="filterReviews()">
+            <input type="text" class="search-input" id="search-input" placeholder="키워드 여러 개는 쉼표로 (예: 보습, 끈적임)" oninput="filterReviews()">
           </div>
+          <select class="filter-select" id="search-mode" onchange="filterReviews()" title="여러 키워드를 넣었을 때 조건">
+            <option value="any">하나라도 포함</option>
+            <option value="all">모두 포함</option>
+          </select>
           <select class="filter-select" id="filter-channel" onchange="filterReviews()">
             <option value="">전체 채널</option>
             <option>스마트스토어</option>
@@ -1211,7 +1221,16 @@ window.logoutEGA = logoutEGA;
             <option value="issue">이슈 리뷰</option>
             <option value="negative">부정 리뷰만</option>
           </select>
+          <span class="date-range" title="날짜를 넣으면 위 기간 선택보다 우선해요">
+            <input type="date" class="filter-select" id="filter-from" onchange="filterReviews()" aria-label="시작일">
+            <span>~</span>
+            <input type="date" class="filter-select" id="filter-to" onchange="filterReviews()" aria-label="종료일">
+          </span>
           <button class="btn btn-outline btn-sm" onclick="clearFilters()">초기화</button>
+        </div>
+        <div class="search-summary" id="search-summary">
+          <div id="search-summary-text"></div>
+          <button class="btn btn-primary btn-sm" onclick="downloadSearchExcel()">📥 검색 결과 엑셀 다운로드</button>
         </div>
       </div>
 
@@ -6088,36 +6107,146 @@ const PAGE_SIZE = 20;
 let selectedReviewId = null;
 
 function initArchive() {
+  _fillArchiveOptions();
   filterReviews();
+}
+
+// 채널·제품 선택지를 실제 데이터에서 채움 (선크림처럼 목록에 없던 제품도 고를 수 있게)
+function _fillArchiveOptions() {
+  const fill = (id, allLabel, values) => {
+    const sel = document.getElementById(id);
+    if (!sel) return;
+    const keep = sel.value;
+    sel.innerHTML = `<option value="">${allLabel}</option>` + values.map(v => `<option value="${_cstEsc(v)}">${_cstEsc(v)}</option>`).join('');
+    sel.value = values.includes(keep) ? keep : '';
+  };
+  const byCount = key => Object.entries(ALL_REVIEWS.reduce((m, r) => { const v = r[key]; if (v) m[v] = (m[v]||0) + 1; return m; }, {}))
+    .sort((a, b) => b[1] - a[1]).map(([k]) => k);
+  fill('filter-channel', '전체 채널', byCount('channel'));
+  fill('filter-category', '전체 카테고리', byCount('product_category'));
 }
 
 function clearFilters() {
   document.getElementById('search-input').value = '';
+  document.getElementById('search-mode').value = 'any';
   document.getElementById('filter-channel').value = '';
   document.getElementById('filter-sentiment').value = '';
   document.getElementById('filter-category').value = '';
   document.getElementById('filter-period').value = '';
   document.getElementById('filter-special').value = '';
+  document.getElementById('filter-from').value = '';
+  document.getElementById('filter-to').value = '';
   filterReviews();
 }
 
+// ── 키워드 발췌 검색 ──
+let _searchTermsCur = [];
+let _searchHits = new Map();   // review id → 걸린 검색어 목록
+function _searchTerms() {
+  return [...new Set((document.getElementById('search-input').value || '')
+    .split(/[,，]/).map(s => s.trim().toLowerCase()).filter(Boolean))];
+}
+// 리뷰 원문·상품명에서 찾고, 자동 키워드는 정확히 같은 경우만 인정 (안 보이는 메모 때문에 걸리는 일 방지)
+function _reviewHay(r) {
+  return [r.text || '', r.product || '', r.product_norm || ''].join('\n').toLowerCase();
+}
+function _reviewHasTerm(r, hay, t) {
+  return hay.includes(t) || (r.keywords || []).some(k => String(k).toLowerCase() === t);
+}
+function _reEsc(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+// 키워드가 나온 부분 주변을 잘라 보여주고 형광펜 표시
+function _searchSnippet(text, terms, len) {
+  text = String(text || '');
+  if (!text) return '(내용 없음)';
+  let start = 0;
+  if (terms.length) {
+    const lower = text.toLowerCase();
+    const idx = terms.map(t => lower.indexOf(t)).filter(i => i >= 0);
+    if (idx.length) start = Math.max(0, Math.min(...idx) - 40);
+  }
+  let piece = text.slice(start, start + len);
+  let html = (start > 0 ? '…' : '') + _cstEsc(piece) + (start + len < text.length ? '…' : '');
+  if (terms.length) {
+    const re = new RegExp('(' + terms.map(t => _reEsc(_cstEsc(t))).join('|') + ')', 'gi');
+    html = html.replace(re, '<mark class="hl">$1</mark>');
+  }
+  return html;
+}
+
+function _renderSearchSummary(res) {
+  const el = document.getElementById('search-summary-text');
+  if (!el) return;
+  const terms = _searchTermsCur;
+  let html = `<b>${res.length.toLocaleString()}</b>건 ${terms.length ? '발췌됨' : '(현재 조건)'}`;
+  if (terms.length) {
+    const counts = terms.map(t => [t, res.filter(r => (_searchHits.get(r.id) || []).includes(t)).length]);
+    html += counts.map(([t, n]) => `<span class="term">${_cstEsc(t)} ${n}</span>`).join('');
+  }
+  el.innerHTML = html;
+}
+
+function downloadSearchExcel() {
+  if (typeof XLSX === 'undefined') { alert('엑셀 라이브러리를 불러오지 못했어요. 새로고침 후 다시 시도해주세요.'); return; }
+  const terms = _searchTermsCur;
+  const val = id => { const e = document.getElementById(id); return e ? e.value : ''; };
+  const mode = val('search-mode') === 'all' ? '모두 포함' : '하나라도 포함';
+  const periodSel = document.getElementById('filter-period');
+  const period = val('filter-from') || val('filter-to')
+    ? `${val('filter-from') || '처음'} ~ ${val('filter-to') || '최근'}`
+    : (periodSel && periodSel.value ? periodSel.options[periodSel.selectedIndex].text : '전체 기간');
+  const wb = XLSX.utils.book_new();
+  const summary = [
+    ['EGA 리뷰 키워드 발췌'], ['만든 날', new Date().toISOString().slice(0,10)], [],
+    ['검색어', terms.join(', ') || '(없음)'], ['조건', terms.length > 1 ? mode : '-'], ['기간', period],
+    ['채널', val('filter-channel') || '전체'], ['감정', val('filter-sentiment') || '전체'], ['제품', val('filter-category') || '전체'],
+    ['발췌 건수', filteredReviews.length], [],
+    ['검색어', '건수'],
+    ...terms.map(t => [t, filteredReviews.filter(r => (_searchHits.get(r.id) || []).includes(t)).length]),
+  ];
+  const ws1 = XLSX.utils.aoa_to_sheet(summary);
+  ws1['!cols'] = [{wch:14},{wch:50}];
+  XLSX.utils.book_append_sheet(wb, ws1, '요약');
+  const rows = filteredReviews.map(r => ({
+    '날짜': r.date, '채널': r.channel || '', '제품': r.product_category || '', '상품명': r.product || '',
+    '감정': r.sentiment || '', '걸린 검색어': (_searchHits.get(r.id) || []).join(', '),
+    '리뷰 원문': r.text || '', '자동 키워드': (r.keywords || []).join(', '),
+    '재구매 언급': r.has_repurchase ? 'Y' : '', '이슈': r.issue_flag ? 'Y' : '',
+  }));
+  const ws2 = XLSX.utils.json_to_sheet(rows.length ? rows : [{ '날짜': '해당 없음' }]);
+  ws2['!cols'] = [{wch:12},{wch:12},{wch:16},{wch:30},{wch:6},{wch:16},{wch:90},{wch:28},{wch:9},{wch:6}];
+  ws2['!autofilter'] = { ref: 'A1:J' + Math.max(2, rows.length + 1) };
+  XLSX.utils.book_append_sheet(wb, ws2, '발췌 리뷰');
+  const tag = (terms.join('_') || '전체').replace(/[\\/:*?"<>|\s]+/g, '').slice(0, 30);
+  XLSX.writeFile(wb, `EGA_리뷰발췌_${tag}_${new Date().toISOString().slice(0,10)}.xlsx`);
+}
+
 function filterReviews() {
-  const q = document.getElementById('search-input').value.toLowerCase();
+  const terms = _searchTerms();
+  const mode = (document.getElementById('search-mode') || {}).value || 'any';
   const ch = document.getElementById('filter-channel').value;
   const sent = document.getElementById('filter-sentiment').value;
   const cat = document.getElementById('filter-category').value;
   const period = document.getElementById('filter-period').value;
   const special = document.getElementById('filter-special').value;
+  const from = (document.getElementById('filter-from') || {}).value || '';
+  const to = (document.getElementById('filter-to') || {}).value || '';
   const sortVal = document.getElementById('sort-select').value;
+  const hits = new Map();
 
   let res = ALL_REVIEWS.filter(r => {
-    if(q && !r.text.toLowerCase().includes(q) && !r.product.toLowerCase().includes(q) &&
-       !r.product_norm.toLowerCase().includes(q) && !r.keywords.some(k=>k.toLowerCase().includes(q)) &&
-       !r.memo.toLowerCase().includes(q)) return false;
+    if (terms.length) {
+      const hay = _reviewHay(r);
+      const found = terms.filter(t => _reviewHasTerm(r, hay, t));
+      if (mode === 'all' ? found.length < terms.length : !found.length) return false;
+      hits.set(r.id, found);
+    }
     if(ch && r.channel !== ch) return false;
     if(sent && r.sentiment !== sent) return false;
     if(cat && r.product_category !== cat) return false;
-    if(period) {
+    if (from || to) {
+      if (from && r.date < from) return false;
+      if (to && r.date > to) return false;
+    } else if(period) {
       const days = parseInt(period);
       const cutoff = new Date(); cutoff.setDate(cutoff.getDate()-days);
       if(new Date(r.date) < cutoff) return false;
@@ -6135,8 +6264,11 @@ function filterReviews() {
   else if(sortVal === 'score-asc') res.sort((a,b)=>a.sentiment_score-b.sentiment_score);
 
   filteredReviews = res;
+  _searchTermsCur = terms;
+  _searchHits = hits;
   currentPage = 1;
   document.getElementById('filtered-count').textContent = res.length.toLocaleString();
+  _renderSearchSummary(res);
   renderReviewList();
   renderPagination();
 }
@@ -6150,7 +6282,7 @@ function renderReviewList() {
     return;
   }
   el.innerHTML = page.map(r => {
-    const preview = (r.text||'').slice(0,100)+(r.text&&r.text.length>100?'...':'');
+    const preview = _searchSnippet(r.text, _searchTermsCur, 110);
     const productShort = r.product_norm || r.product.slice(0,30);
     const kwTags = r.keywords.slice(0,3).map(k=>`<span class="tag tag-keyword" style="font-size:10px;padding:2px 7px">${k}</span>`).join('');
     const issueBadge = r.issue_flag ? '<span class="tag tag-issue" style="font-size:10px">⚠ 이슈</span>' : '';
@@ -6166,7 +6298,7 @@ function renderReviewList() {
         </div>
         <div>${sentimentTag(r.sentiment)}</div>
       </div>
-      <div class="review-card-text">${preview||'(내용 없음)'}</div>
+      <div class="review-card-text">${preview}</div>
       <div class="review-card-footer">
         ${kwTags}${issueBadge}${repurchaseBadge}
         ${r.memo ? '<span class="tag tag-grey" style="font-size:10px">📝 메모</span>' : ''}
