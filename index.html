@@ -557,6 +557,25 @@
   .cst-check-item{display:flex;gap:8px;align-items:flex-start;font-size:12px;color:var(--text-primary);padding:6px 0;border-bottom:1px solid var(--border-light)}
   .cst-check-item:last-child{border-bottom:none}
   .cst-check-item input{margin-top:2px}
+  .cst-build-row{display:flex;gap:12px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border-light)}
+  .cst-build-label{width:96px;flex-shrink:0;font-size:12px;font-weight:700;color:var(--text-secondary);padding-top:5px}
+  .cst-build-row > :last-child{flex:1;min-width:0}
+  .cst-chips{display:flex;flex-wrap:wrap;gap:6px}
+  .cst-chip{appearance:none;border:1px solid var(--border);background:var(--white);color:var(--text-primary);font:inherit;font-size:12px;padding:5px 10px;border-radius:999px;cursor:pointer;text-align:left;line-height:1.4;max-width:100%}
+  .cst-chip:hover{border-color:var(--blue)}
+  .cst-chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
+  .cst-chip.suggest:not(.on){border-color:#f5c518;background:#fffbe6}
+  .cst-chip .n{font-size:10px;font-weight:800;margin-right:4px;opacity:.8}
+  .cst-core-group{margin-bottom:8px}
+  .cst-core-group:last-child{margin-bottom:0}
+  .cst-core-title{font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:4px}
+  .cst-chk{display:flex;gap:6px;align-items:center;font-size:12.5px;color:var(--text-primary);padding-top:4px;cursor:pointer}
+  #cst-b-vars:empty{display:none}
+  #cst-b-vars{margin-top:12px}
+  #cst-b-preview{margin-top:10px;min-height:60px}
+  .cst-find-card{border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;margin-top:12px}
+  .cst-find-card.best{border-color:var(--blue);box-shadow:0 0 0 1px var(--blue-light)}
+  .cst-find-why{font-size:11.5px;color:var(--text-muted);margin:-4px 0 8px}
   .cst-ai-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
   .cst-ai-label{font-size:12px;color:var(--text-muted);font-weight:600}
   .cst-ai-select{border:1px solid var(--border);border-radius:7px;padding:6px 10px;font-size:12.5px;font-family:inherit;background:var(--white);color:var(--text-primary)}
@@ -859,7 +878,7 @@ window.logoutEGA = logoutEGA;
         </div>
         <button class="logout-btn" onclick="logoutEGA()" title="로그아웃">로그아웃</button>
       </div>
-      <div id="build-stamp">BUILD 250806-U · 올영(매장) 답변관리 제외</div>
+      <div id="build-stamp">BUILD 250806-V · 올영(매장) 답변관리 제외</div>
     </div>
   </aside>
 
@@ -2625,30 +2644,39 @@ window.logoutEGA = logoutEGA;
 
       <div class="card mb-16" id="cst-basics" style="padding:14px 18px"></div>
 
-      <div class="card mb-16" id="cst-ai">
-        <div class="card-title">✨ AI 답변 생성 <span class="card-subtitle">상황만 적으면 아래 템플릿 문구를 바탕으로 답변 초안을 만들어요</span></div>
-        <div class="cst-ai-row">
-          <label class="cst-ai-label" for="cst-ai-channel">채널</label>
-          <select id="cst-ai-channel" class="cst-ai-select">
-            <option value="board">카페24 게시판·문의 답변</option>
-            <option value="phone">전화 후 문자</option>
-            <option value="etc">기타 (메신저·메일 등)</option>
-          </select>
-        </div>
-        <textarea id="cst-ai-situation" class="cst-ai-input" rows="4" maxlength="3000" placeholder="상황을 적어주세요.&#10;예) 고객이 전화로 통관번호를 잘못 알려줘서 맞는 번호로 수정함. 수정된 번호로 배송 이어진다고 문자로 안내 필요"></textarea>
-        <input id="cst-ai-extra" class="cst-ai-extra" type="text" maxlength="500" placeholder="추가 요청 (선택) 예) 더 짧게, 사과 표현 강조">
+      <div class="card mb-16" id="cst-find">
+        <div class="card-title">🔎 상황으로 답변 찾기 <span class="card-subtitle">상황을 적으면 맞는 템플릿을 골라주고, 택배사·운송장·날짜·제품명은 빈칸에 자동으로 넣어요</span></div>
+        <textarea id="cst-sit" class="cst-ai-input" rows="3" maxlength="2000" placeholder="상황을 간단히 적어주세요.&#10;예) 고객이 통관번호를 잘못 적어서 수정함. 수정 안내 문자 필요 / 10월 24일 CJ대한통운 123456789012 발송"></textarea>
         <div class="cst-ai-actions">
-          <button class="cst-copy-btn" id="cst-ai-btn" onclick="generateCsReply()">답변 생성</button>
-          <span id="cst-ai-status" class="cst-ai-status"></span>
+          <button class="cst-copy-btn" onclick="findCsTemplates()">템플릿 찾기</button>
+          <span class="cst-ai-status" id="cst-find-status"></span>
         </div>
-        <div id="cst-ai-result-wrap" hidden>
-          <textarea id="cst-ai-result" class="cst-ai-input cst-ai-result" rows="12"></textarea>
-          <div class="cst-ai-actions">
-            <button class="cst-copy-btn" id="cst-ai-copy" onclick="copyCsAiResult()">복사하기</button>
-            <button class="cst-ai-ghost" onclick="generateCsReply()">다시 생성</button>
-            <span id="cst-ai-warn" class="cst-ai-warn"></span>
-          </div>
-          <div class="cst-note" style="margin-top:8px">⚠ AI 초안이에요. {{ }} 빈칸과 택배사·운송장·날짜 같은 사실은 확인 후 채워서 보내세요.</div>
+        <div id="cst-find-results"></div>
+      </div>
+
+      <div class="card mb-16" id="cst-build">
+        <div class="card-title">🧩 블록으로 답변 만들기 <span class="card-subtitle">딱 맞는 템플릿이 없을 때, 검증된 문장을 골라 조립해요 (⭐ = 위 상황과 관련 있는 블록)</span></div>
+        <div class="cst-build-row">
+          <div class="cst-build-label">시작</div>
+          <label class="cst-chk"><input type="checkbox" id="cst-b-open" checked onchange="renderCsBuild()"> 기본 인사 (안녕하세요, 고객님. 리버스 에이징 브랜드 EGA입니다😊)</label>
+        </div>
+        <div class="cst-build-row"><div class="cst-build-label">확인·양해·사과</div><div class="cst-chips" id="cst-b-ack"></div></div>
+        <div class="cst-build-row"><div class="cst-build-label">핵심 안내</div><div id="cst-b-core"></div></div>
+        <div class="cst-build-row">
+          <div class="cst-build-label">직접 입력</div>
+          <textarea id="cst-b-free" class="cst-ai-input" rows="2" placeholder="블록에 없는 내용은 여기 적으면 핵심 안내 다음에 들어가요" oninput="renderCsBuild()"></textarea>
+        </div>
+        <div class="cst-build-row"><div class="cst-build-label">요청</div><div class="cst-chips" id="cst-b-req"></div></div>
+        <div class="cst-build-row">
+          <div class="cst-build-label">마무리</div>
+          <label class="cst-chk"><input type="checkbox" id="cst-b-close" checked onchange="renderCsBuild()"> 기본 마무리 (추가로 궁금하신 점이… EGA 드림💙)</label>
+        </div>
+        <div class="cst-vars" id="cst-b-vars"></div>
+        <div class="cst-body" id="cst-b-preview"></div>
+        <div class="cst-ai-actions">
+          <button class="cst-copy-btn" id="cst-b-copy" onclick="copyCsBuild()">복사하기</button>
+          <button class="cst-ai-ghost" onclick="saveCsBuildAsTemplate()">내 템플릿으로 저장</button>
+          <button class="cst-ai-ghost" onclick="resetCsBuild()">처음부터</button>
         </div>
       </div>
 
@@ -3494,6 +3522,8 @@ async function initCsTemplates(){
   _cstRenderPhraseBank();
   _cstRenderChecklist();
   renderCsTemplates();
+  _cstRenderBuildChips();
+  renderCsBuild();
 }
 
 function _cstRenderBasics(){
@@ -3721,55 +3751,240 @@ function cstImport(input){
   reader.readAsText(file);
 }
 
-async function generateCsReply(){
-  const situation = document.getElementById('cst-ai-situation').value.trim();
-  const channel = document.getElementById('cst-ai-channel').value;
-  const extra = document.getElementById('cst-ai-extra').value.trim();
-  const btn = document.getElementById('cst-ai-btn');
-  const status = document.getElementById('cst-ai-status');
-  const wrap = document.getElementById('cst-ai-result-wrap');
-  const result = document.getElementById('cst-ai-result');
-  status.className = 'cst-ai-status';
-  if(!situation){ status.textContent = '상황을 먼저 적어주세요.'; status.classList.add('error'); return; }
-  btn.disabled = true;
-  status.textContent = '생성 중… (서버가 잠자는 중이면 최대 1분 걸려요)';
-  try{
-    // 회사 서버(egalabs.co.kr)에서 열었으면 같은 서버(로그인 세션)로, 아니면 onrender 서버로 요청
-    const sameOrigin = !!window.__EGA_USER__;
-    let base = location.pathname;
-    if(!base.endsWith('/')) base = /\.[a-z0-9]+$/i.test(base) ? base.replace(/[^/]*$/, '') : base + '/';
-    const url = sameOrigin ? base + 'api/generate-cs-reply' : REPLY_SERVER + '/api/generate-cs-reply';
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      credentials: sameOrigin ? 'same-origin' : 'omit',
-      body: JSON.stringify({ situation, channel, extra })
+// ===== 🔎 상황으로 찾기 · 🧩 블록 조립 (AI 없이, 비용 0원·외부 전송 없음) =====
+const CST_SYNONYMS = [
+  [/통관\s*번호|통관\s*부호|개인\s*통관/, '개인통관고유부호 통관번호'],
+  [/송장/, '운송장'],
+  [/안\s*왔|안\s*와|못\s*받|미수령|분실|없어졌/, '미수령 배송완료'],
+  [/늦|지연|언제\s*(와|오|도착)|안\s*옴/, '배송 지연 예상도착일'],
+  [/환불|취소/, '취소 환불'],
+  [/반품|교환|회수|수거/, '반품 수거'],
+  [/잘못\s*(왔|온|배송)|오배송|다른\s*제품/, '오배송 재출고'],
+  [/품절|재고|재입고/, '품절 대체'],
+  [/먹|복용|섭취|공복|몇\s*포/, '섭취 복용'],
+  [/보관|냉장/, '보관'],
+  [/임신|임산부|수유/, '임산부'],
+  [/부재|전화\s*(안|못)|통화\s*(안|못)/, '부재중 통화'],
+  [/사은품|증정/, '사은품'],
+  [/이벤트|당첨|경품/, '이벤트 당첨 경품'],
+  [/해외|미국/, '해외배송 통관'],
+  [/발송|출고|보냈|보내드|택배/, '배송 운송장 택배사'],
+];
+const CST_COURIERS = ['CJ대한통운', '대한통운', '우체국', '롯데', '한진', '로젠', '쿠팡', '경동', '대신', 'EMS', 'DHL', 'FedEx', 'UPS', 'CJ'];
+const CST_PRODUCTS = [
+  [/에센셜/, '에센셜 핸드크림'],
+  [/어드밴스드/, '어드밴스드 핸드크림'],
+  [/인앤아웃\s*세트|핸드크림\s*세트/, '핸드크림 인앤아웃 세트'],
+  [/선크림|선프로텍터|uv\s*in/i, 'UV IN&OUT Protector'],
+  [/마스크팩|지우개/, 'NMN 지우개 마스크팩'],
+  [/앰플|uv\s*healer/i, 'NMN UV Healer'],
+  [/5일|체험팩|리버스\s*(루틴|키트)/, '5일 리버스 루틴 키트'],
+  [/nmn|데일리\s*루틴|스킨부스터/i, '에가 NMN 데일리루틴'],
+];
+
+function _cstExpand(s){ let out = s; CST_SYNONYMS.forEach(([re, add]) => { if (re.test(s)) out += ' ' + add; }); return out; }
+function _cstBigrams(s){
+  const t = String(s || '').replace(/\{\{[^}]*\}\}/g, '').replace(/[\s{}\[\]()·,.!?~\-:;'"“”‘’\/]/g, '');
+  const out = new Set();
+  for (let i = 0; i < t.length - 1; i++) out.add(t.slice(i, i + 2));
+  return out;
+}
+// 제목에 겹치는 말을 크게, 본문은 작게, 흔한 말일수록 낮게 쳐서 순위를 매김
+function _cstRank(items, getTitle, getText, query){
+  const q = _cstBigrams(_cstExpand(query));
+  const docs = items.map(it => ({ it, t: _cstBigrams(getTitle(it)), b: _cstBigrams(getText(it)) }));
+  const df = {};
+  docs.forEach(d => new Set([...d.t, ...d.b]).forEach(g => { df[g] = (df[g] || 0) + 1; }));
+  const N = docs.length || 1;
+  return docs.map(d => {
+    let score = 0;
+    q.forEach(g => {
+      if (!df[g]) return;
+      const idf = Math.log(N / df[g]) + 0.1;
+      if (d.t.has(g)) score += idf * 3; else if (d.b.has(g)) score += idf;
     });
-    let data = null;
-    try{ data = await res.json(); }catch(e){}
-    if(!res.ok || !data || !data.ok){
-      const msg = res.status === 401
-        ? '로그인이 만료됐어요. 새로고침 후 다시 로그인해주세요.'
-        : res.status === 404
-          ? (sameOrigin ? '서버에 아직 반영 전이에요. 2~5분 뒤 다시 시도해주세요.' : '회사 대시보드(egalabs.co.kr)에 로그인한 상태에서 사용해주세요.')
-          : ((data && data.message) || ('생성 실패 (' + res.status + ')'));
-      throw new Error(msg);
-    }
-    result.value = data.reply.trim();
-    wrap.hidden = false;
-    const left = (result.value.match(/\{\{[^}]+\}\}/g) || []);
-    document.getElementById('cst-ai-warn').textContent = left.length ? ('채워야 할 빈칸 ' + left.length + '개: ' + [...new Set(left)].join(' ')) : '';
-    status.textContent = '완료';
-  }catch(e){
-    status.textContent = '오류: ' + (e.message || e) + (e.name === 'TypeError' ? ' (서버 연결 실패 — 잠시 후 다시 시도)' : '');
-    status.classList.add('error');
-  }finally{
-    btn.disabled = false;
-  }
+    return { it: d.it, score };
+  }).sort((a, b) => b.score - a.score);
 }
 
-function copyCsAiResult(){
-  copyTextWithFeedback(document.getElementById('cst-ai-result').value, document.getElementById('cst-ai-copy'));
+function _cstParseSituation(s){
+  const out = {};
+  const low = s.toLowerCase();
+  const c = CST_COURIERS.find(x => low.includes(x.toLowerCase()));
+  if (c) out.courier = (c === 'CJ' || c === '대한통운') ? 'CJ대한통운' : c;
+  const tr = s.replace(/(\d)-(?=\d)/g, '$1').match(/(?:^|\D)(\d{10,14})(?!\d)/);
+  if (tr) out.tracking = tr[1];
+  const dm = s.match(/(\d{1,2})\s*(?:\/|\.|월)\s*(\d{1,2})\s*일?/);
+  if (dm && +dm[1] >= 1 && +dm[1] <= 12 && +dm[2] >= 1 && +dm[2] <= 31) out.date = `${+dm[1]}/${+dm[2]}`;
+  else if (/모레/.test(s)) out.date = '모레';
+  else if (/내일/.test(s)) out.date = '내일';
+  else if (/오늘/.test(s)) out.date = '오늘';
+  const p = CST_PRODUCTS.find(([re]) => re.test(s));
+  if (p) out.product = p[1];
+  return out;
+}
+// 상황에서 찾은 값(택배사·운송장 등)을 채울 빈칸이 있는 템플릿/블록을 우선
+function _cstVarBoost(text, parsed){
+  const vars = _cstExtractVars(String(text || ''));
+  return vars.reduce((s, v) => s + (_cstAutoVal(v, parsed) ? 4 : 0), 0);
+}
+function _cstAutoVal(v, parsed){
+  if (/택배사/.test(v)) return parsed.courier;
+  if (/운송장|송장번호/.test(v)) return parsed.tracking;
+  if (/일시|일자|도착일|예정일|예상일|시점|마감|날짜/.test(v)) return parsed.date;
+  if (/제품명|본품명|정상상품|상품명/.test(v)) return parsed.product;
+  return undefined;
+}
+
+let _cstParsed = {};
+let _cstSuggest = new Set();
+
+function findCsTemplates(){
+  const s = document.getElementById('cst-sit').value.trim();
+  const status = document.getElementById('cst-find-status');
+  const out = document.getElementById('cst-find-results');
+  status.className = 'cst-ai-status';
+  if (!_cstData) return;
+  if (!s) { status.textContent = '상황을 먼저 적어주세요.'; status.classList.add('error'); out.innerHTML = ''; return; }
+  _cstParsed = _cstParseSituation(s);
+
+  const isEvent = /이벤트|당첨|경품/.test(s);
+  const ranked = _cstRank(_cstAll(), t => t.title, t => t.text, s)
+    .map(x => {
+      let score = x.score + _cstVarBoost(x.it.text, _cstParsed);
+      if (x.it.category === 'event' && !isEvent) score *= 0.4;  // 이벤트 얘기가 없으면 경품 템플릿은 뒤로
+      return { it: x.it, score };
+    })
+    .sort((a, b) => b.score - a.score)
+    .filter(x => x.score >= 2).slice(0, 3);
+  ranked.forEach(({ it }) => {
+    const vals = _cstVarValues[it.id] = _cstVarValues[it.id] || {};
+    (it.vars || []).forEach(v => { const a = _cstAutoVal(v, _cstParsed); if (a && !vals[v]) vals[v] = a; });
+  });
+
+  // 블록 추천(⭐)도 같은 상황으로 갱신
+  const blocks = _cstData.blocks || [];
+  _cstSuggest = new Set(_cstRank(blocks, b => b.label, b => b.text, s)
+    .map(x => ({ it: x.it, score: x.score + _cstVarBoost(x.it.text, _cstParsed) }))
+    .sort((a, b) => b.score - a.score)
+    .filter(x => x.score >= 2).slice(0, 4).map(x => x.it.id));
+  _cstRenderBuildChips();
+  renderCsBuild();
+
+  const found = Object.entries({ 택배사: _cstParsed.courier, 운송장: _cstParsed.tracking, 날짜: _cstParsed.date, 제품: _cstParsed.product })
+    .filter(([, v]) => v).map(([k, v]) => `${k} ${v}`);
+  status.textContent = (ranked.length ? `맞는 템플릿 ${ranked.length}개` : '딱 맞는 템플릿이 없어요. 아래 블록으로 만들어 보세요.') + (found.length ? ` · 자동으로 넣은 값: ${found.join(', ')}` : '');
+
+  const catLabel = id => (_cstData.categories.find(c => c.id === id) || {}).label || id;
+  out.innerHTML = ranked.map(({ it: t }, i) => `
+    <div class="cst-find-card ${i === 0 ? 'best' : ''}">
+      <div class="cst-card-head">
+        <div class="cst-card-title"><span class="cst-card-cat">${_cstEsc(catLabel(t.category))}</span>${i === 0 ? '⭐ ' : ''}${_cstEsc(t.title)}${t._custom ? '<span class="cst-badge mine">내 템플릿</span>' : ''}</div>
+        <div class="cst-card-actions"><button class="cst-copy-btn" data-fcopy="${_cstEsc(t.id)}">복사하기</button></div>
+      </div>
+      ${(t.vars && t.vars.length) ? `<div class="cst-vars">${t.vars.map(v => `
+        <div class="cst-var">${_cstEsc(v)} <input type="text" data-fid="${_cstEsc(t.id)}" data-var="${_cstEsc(v)}" placeholder="${_cstEsc(v)}" value="${_cstEsc((_cstVarValues[t.id] || {})[v] || '')}"></div>`).join('')}</div>` : ''}
+      <div class="cst-body" id="cst-fbody-${_cstEsc(t.id)}">${_cstEsc(_cstResolveText(t))}</div>
+      ${t.note ? `<div class="cst-note">⚠ ${_cstEsc(t.note)}</div>` : ''}
+    </div>`).join('');
+
+  out.querySelectorAll('input[data-fid]').forEach(inp => {
+    inp.oninput = () => {
+      const id = inp.dataset.fid;
+      (_cstVarValues[id] = _cstVarValues[id] || {})[inp.dataset.var] = inp.value;
+      document.getElementById('cst-fbody-' + id).textContent = _cstResolveText(_cstFind(id));
+    };
+  });
+  out.querySelectorAll('[data-fcopy]').forEach(btn => {
+    btn.onclick = () => copyTextWithFeedback(_cstResolveText(_cstFind(btn.dataset.fcopy)), btn);
+  });
+  renderCsTemplates();  // 아래 전체 목록의 같은 템플릿에도 채운 값이 보이게
+}
+
+// ── 블록 조립 ──
+let _cstBuild = { ack: [], core: [], req: [], vals: {} };
+
+function _cstRenderBuildChips(){
+  if (!_cstData) return;
+  const pb = _cstData.phraseBank || {};
+  const chip = (kind, key, label, on, extra) =>
+    `<button class="cst-chip ${on ? 'on' : ''} ${extra || ''}" data-kind="${kind}" data-key="${_cstEsc(key)}">${label}</button>`;
+  const ackList = [...(pb['확인'] || []), ...(pb['양해'] || []), ...(pb['사과'] || [])];
+  document.getElementById('cst-b-ack').innerHTML = ackList.map(p => chip('ack', p, _cstEsc(p), _cstBuild.ack.includes(p))).join('');
+  document.getElementById('cst-b-req').innerHTML = (pb['요청'] || []).map(p => chip('req', p, _cstEsc(p), _cstBuild.req.includes(p))).join('');
+  const groups = {};
+  (_cstData.blocks || []).forEach(b => { (groups[b.group] = groups[b.group] || []).push(b); });
+  document.getElementById('cst-b-core').innerHTML = Object.entries(groups).map(([g, list]) => `
+    <div class="cst-core-group"><div class="cst-core-title">${_cstEsc(g)}</div><div class="cst-chips">${list.map(b => {
+      const n = _cstBuild.core.indexOf(b.id);
+      return chip('core', b.id, `${n >= 0 ? `<span class="n">${n + 1}</span>` : ''}${_cstSuggest.has(b.id) ? '⭐ ' : ''}${_cstEsc(b.label)}`, n >= 0, _cstSuggest.has(b.id) ? 'suggest' : '');
+    }).join('')}</div></div>`).join('');
+  document.querySelectorAll('#cst-build .cst-chip').forEach(btn => {
+    btn.onclick = () => {
+      const arr = _cstBuild[btn.dataset.kind];
+      const i = arr.indexOf(btn.dataset.key);
+      if (i >= 0) arr.splice(i, 1); else arr.push(btn.dataset.key);
+      _cstRenderBuildChips();
+      renderCsBuild();
+    };
+  });
+}
+
+function _cstBuildRaw(){
+  const b = _cstData.basics;
+  const blocks = _cstData.blocks || [];
+  const core = _cstBuild.core.map(id => (blocks.find(x => x.id === id) || {}).text).filter(Boolean);
+  const free = document.getElementById('cst-b-free').value.trim();
+  const body = [_cstBuild.ack.join('\n'), ...core, free, _cstBuild.req.join('\n')].filter(Boolean).join('\n\n');
+  return [
+    document.getElementById('cst-b-open').checked ? b.defaultOpening : '',
+    body,
+    document.getElementById('cst-b-close').checked ? b.defaultClosing : '',
+  ].filter(Boolean).join('\n\n');
+}
+function _cstBuildResolved(raw){
+  let text = raw;
+  _cstExtractVars(raw).forEach(v => {
+    const val = (_cstBuild.vals[v] || '').trim();
+    text = text.split('{{' + v + '}}').join(val || '{{' + v + '}}');
+  });
+  return text;
+}
+
+function renderCsBuild(){
+  if (!_cstData) return;
+  const raw = _cstBuildRaw();
+  const vars = _cstExtractVars(raw);
+  vars.forEach(v => { if (_cstBuild.vals[v] == null) { const a = _cstAutoVal(v, _cstParsed); if (a) _cstBuild.vals[v] = a; } });
+  const varsEl = document.getElementById('cst-b-vars');
+  const focused = document.activeElement && document.activeElement.dataset ? document.activeElement.dataset.bvar : null;
+  varsEl.innerHTML = vars.map(v => `<div class="cst-var">${_cstEsc(v)} <input type="text" data-bvar="${_cstEsc(v)}" placeholder="${_cstEsc(v)}" value="${_cstEsc(_cstBuild.vals[v] || '')}"></div>`).join('');
+  varsEl.querySelectorAll('input[data-bvar]').forEach(inp => {
+    inp.oninput = () => {
+      _cstBuild.vals[inp.dataset.bvar] = inp.value;
+      document.getElementById('cst-b-preview').textContent = _cstBuildResolved(_cstBuildRaw());
+    };
+    if (focused && inp.dataset.bvar === focused) inp.focus();
+  });
+  const onlyFrame = !_cstBuild.ack.length && !_cstBuild.core.length && !_cstBuild.req.length && !document.getElementById('cst-b-free').value.trim();
+  document.getElementById('cst-b-preview').textContent = onlyFrame ? '위에서 블록을 고르면 여기에 답변이 만들어져요.' : _cstBuildResolved(raw);
+}
+
+function copyCsBuild(){
+  copyTextWithFeedback(_cstBuildResolved(_cstBuildRaw()), document.getElementById('cst-b-copy'));
+}
+function saveCsBuildAsTemplate(){
+  const raw = _cstBuildRaw();
+  cstOpenEditor(null);
+  document.getElementById('cst-ed-text').value = raw;  // 빈칸({{ }})은 그대로 두고 템플릿으로 저장
+}
+function resetCsBuild(){
+  _cstBuild = { ack: [], core: [], req: [], vals: {} };
+  document.getElementById('cst-b-free').value = '';
+  document.getElementById('cst-b-open').checked = true;
+  document.getElementById('cst-b-close').checked = true;
+  _cstRenderBuildChips();
+  renderCsBuild();
 }
 
 function _cstRenderPhraseBank(){
