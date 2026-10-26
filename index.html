@@ -861,7 +861,7 @@ window.logoutEGA = logoutEGA;
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M19.07 19.07l-1.41-1.41M4.93 19.07l1.41-1.41M20 12h1M3 12H2M12 20v1M12 3V2"></path></svg>
           데이터 관리
         </a>
-        <a class="nav-item" onclick="showPage('promptConfig')">
+        <a class="nav-item" onclick="showPage('promptConfig')" style="display:none">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a7 7 0 0 1 7 7c0 2.5-1.4 4-2.5 5.2-.7.8-1.5 1.6-1.5 2.8H9c0-1.2-.8-2-1.5-2.8C6.4 13 5 11.5 5 9a7 7 0 0 1 7-7z"></path><path d="M9 21h6M10 18h4"></path></svg>
           프롬프트 관리
         </a>
@@ -878,7 +878,7 @@ window.logoutEGA = logoutEGA;
         </div>
         <button class="logout-btn" onclick="logoutEGA()" title="로그아웃">로그아웃</button>
       </div>
-      <div id="build-stamp">BUILD 251026-A · 1단계 정리(Weekly·숨은 아카이브 삭제)</div>
+      <div id="build-stamp">BUILD 251026-B · 자동 답변(템플릿) · 게시 서버 자동 선택</div>
     </div>
   </aside>
 
@@ -2031,7 +2031,7 @@ window.logoutEGA = logoutEGA;
         <div class="page-header-row">
           <div>
             <div class="page-title">답변 관리</div>
-            <div class="page-subtitle">AI 자동 생성 답변 확인 · 수정 · 크리마 게시 (올리브영 제외)</div>
+            <div class="page-subtitle">자동 답변 채우기(템플릿 조합 · AI 비용 0원) → 확인 · 수정 → 크리마 게시 (올리브영 제외)</div>
           </div>
           <div style="display:flex;gap:10px;align-items:center">
             <div class="server-status" id="server-status">
@@ -2050,9 +2050,9 @@ window.logoutEGA = logoutEGA;
           <div class="reply-stat-lbl">전체 답변 대상</div>
           <div style="font-size:10px;color:#9ca3af;margin-top:2px">올영 제외 전체</div>
         </div>
-        <div class="reply-stat-card clickable" title="AI로 답변은 생성했으나 아직 게시 안 한 리뷰" onclick="setReplyFilter('ai_generated')">
+        <div class="reply-stat-card clickable" title="답변은 채웠으나 아직 게시 안 한 리뷰" onclick="setReplyFilter('ai_generated')">
           <div class="reply-stat-val" style="color:var(--mixed)" id="rstat-generated">0</div>
-          <div class="reply-stat-lbl">AI 답변 생성됨</div>
+          <div class="reply-stat-lbl">답변 작성됨</div>
           <div style="font-size:10px;color:#9ca3af;margin-top:2px">클릭하여 보기</div>
         </div>
         <div class="reply-stat-card clickable" title="실제 게시 완료된 답변" onclick="setReplyFilter('posted')">
@@ -2070,12 +2070,12 @@ window.logoutEGA = logoutEGA;
       <!-- Bulk Actions Bar -->
       <div class="bulk-bar" id="bulk-bar" style="display:none">
         <div class="bulk-info">
-          <strong id="bulk-count">0</strong>건 선택됨 · AI 생성은 전체, 게시는 답변 생성된 것만
+          <strong id="bulk-count">0</strong>건 선택됨 · 부정 리뷰는 일괄 채우기에서 빠져요
         </div>
         <div class="bulk-actions">
           <button onclick="clearBulkSelection()" style="background:transparent;border:1px solid rgba(255,255,255,.6);color:#fff;border-radius:6px;padding:6px 14px;font-size:12px;font-weight:500;cursor:pointer">선택 해제</button>
-          <button class="btn-bulk-post" style="background:#3b6cf0;color:#fff" onclick="bulkGenerateSelected()">✨ 선택 AI 생성</button>
-          <button class="btn-bulk-post" style="background:#6366f1;color:#fff" onclick="bulkRegenerateSelected()">🔄 선택 재생성</button>
+          <button class="btn-bulk-post" style="background:#3b6cf0;color:#fff" onclick="bulkGenerateSelected()">✨ 선택 자동 답변</button>
+          <button class="btn-bulk-post" style="background:#6366f1;color:#fff" onclick="bulkRegenerateSelected()">🔄 선택 다른 표현으로</button>
           <button class="btn-bulk-post" onclick="postBulkReplies()">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"></path><path d="M22 2l-7 20-4-9-9-4 20-7z"></path></svg>
             선택 일괄 게시
@@ -2086,16 +2086,15 @@ window.logoutEGA = logoutEGA;
       <!-- Filters -->
       <div class="reply-filter-bar">
         <button class="reply-filter-btn active" onclick="setReplyFilter('all',this)">전체</button>
-        <button class="reply-filter-btn" onclick="setReplyFilter('ai_generated',this)">AI 답변 생성됨</button>
+        <button class="reply-filter-btn" onclick="setReplyFilter('ai_generated',this)">답변 작성됨</button>
         <button class="reply-filter-btn" onclick="setReplyFilter('posted',this)">게시 완료</button>
         <button class="reply-filter-btn" onclick="setReplyFilter('none',this)">미답변</button>
         <label style="display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;cursor:pointer;padding:6px 12px;border:1px solid var(--border);border-radius:20px" title="현재 페이지의 미게시 리뷰 전체 선택"><input type="checkbox" id="reply-select-all" onchange="toggleSelectAllReplies(this)" style="cursor:pointer;width:15px;height:15px">전체 선택</label>
-        <button class="btn btn-primary btn-sm" onclick="bulkGenerateSelected()">✨ 선택 항목 AI 생성</button>
-        <button class="btn btn-outline btn-sm" onclick="bulkRegenerateSelected()" title="이미 답변 있는 선택 항목을 새 프롬프트로 덮어쓰기">🔄 선택 항목 AI 재생성</button>
-        <button class="btn btn-outline btn-sm" onclick="generateCurrentReplyPage()">🤖 현재 목록 전체 생성</button>
+        <button class="btn btn-primary btn-sm" onclick="bulkGenerateSelected()">✨ 선택 항목 자동 답변</button>
+        <button class="btn btn-outline btn-sm" onclick="bulkRegenerateSelected()" title="이미 답변 있는 선택 항목을 다른 표현으로 다시 채우기">🔄 선택 항목 다른 표현으로</button>
+        <button class="btn btn-outline btn-sm" onclick="generateCurrentReplyPage()">✨ 현재 목록 전체 채우기</button>
         <button class="btn btn-outline btn-sm" onclick="exportSavedReplies()">💾 답변 백업</button>
         <button class="btn btn-outline btn-sm" onclick="document.getElementById('reply-import-file').click()">📥 백업 불러오기</button>
-        <button class="btn btn-outline btn-sm" onclick="resetOpenAIKey()">API 키 재설정</button>
         <input type="file" id="reply-import-file" accept=".json" style="display:none" onchange="importSavedReplies(this)">
         <div style="flex:1"></div>
         <div class="search-wrap" style="max-width:260px">
@@ -5978,14 +5977,20 @@ async function checkServerStatus() {
   const dot = document.getElementById('server-dot');
   const text = document.getElementById('server-status-text');
   if (dot) dot.className = 'server-dot offline';
-  if (text) text.textContent = '서버 깨우는 중...';
+  if (text) text.textContent = '게시 서버 확인 중...';
+  if (await resolvePostServer()) {
+    serverOnline = true;
+    if (dot) dot.className = 'server-dot online';
+    if (text) text.textContent = '게시 서버: 회사 서버 (로그인 보호)';
+    return;
+  }
   try {
     // Render 무료티어 cold start 대비 60s
     const res = await fetch(REPLY_SERVER + '/health', { signal: AbortSignal.timeout(60000) });
     if (res.ok) {
       serverOnline = true;
       if (dot) dot.className = 'server-dot online';
-      if (text) text.textContent = '서버 연결됨';
+      if (text) text.textContent = '게시 서버: 임시 외부 서버(onrender)';
     } else throw new Error();
   } catch {
     serverOnline = false;
@@ -6047,7 +6052,6 @@ document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeCent
 
 // ── AI 답변 저장/백업 관리 ──
 const EGA_REPLY_STORAGE_KEY = 'ega_reply_archive_v2';
-const EGA_OPENAI_KEY_STORAGE_KEY = 'ega_openai_api_key_v1';
 
 function getSavedReplyMap() {
   try { return JSON.parse(localStorage.getItem(EGA_REPLY_STORAGE_KEY) || '{}'); }
@@ -6108,106 +6112,288 @@ function importSavedReplies(input) {
   };
   reader.readAsText(file);
 }
-function getOpenAIKey() {
-  let key = localStorage.getItem(EGA_OPENAI_KEY_STORAGE_KEY) || '';
-  if (!key) {
-    key = prompt('OpenAI API 키를 입력해주세요. 이 키는 현재 브라우저 localStorage에만 저장됩니다.');
-    if (key) localStorage.setItem(EGA_OPENAI_KEY_STORAGE_KEY, key.trim());
-  }
-  return key;
-}
-function resetOpenAIKey() { localStorage.removeItem(EGA_OPENAI_KEY_STORAGE_KEY); showToast('API 키 저장값을 초기화했습니다. 다음 생성 시 다시 입력합니다.', 'success'); }
-function buildEGAReplyPrompt(review) {
-  const product = review.product || review.product_norm || review.product_category || '제품명 없음';
-  const concern = (review.keywords || []).join(', ');
-  return [
-    '너는 리버스 에이징 브랜드 EGA의 고객 컨설턴트다.',
-    '고객 리뷰에 대해 진정성 있게 공감하고, 브랜드 신뢰를 높이며, 재구매 및 루틴 형성을 유도하는 답변을 작성해야 한다.',
-    '', '[입력값]',
-    '리뷰 내용: ' + (review.text || ''),
-    '구매 제품: ' + product,
-    '피부 고민/키워드: ' + (concern || '없음'),
-    '채널: ' + (review.channel || ''),
-    '감정: ' + (review.sentiment || ''),
-    '', '[출력 목표]',
-    '- 고객의 경험에 깊이 공감한다',
-    '- 제품의 장점과 사용감을 자연스럽게 연결한다',
-    '- 고객이 해당 제품을 루틴으로 사용할 수 있도록 유도한다',
-    '- 필요 시 추가 제품을 자연스럽게 제안한다',
-    '- 브랜드의 ‘리버스 루틴’ 방향성을 부담 없이 녹인다',
-    '', '[필수 규칙]',
-    '- 첫 문장은 반드시 “안녕하세요, 리버스 에이징 브랜드 EGA입니다”로 시작한다.',
-    '- 전체 답변은 최소 3문단 이상으로 구성한다.',
-    '- 1문단: 고객 경험에 대한 공감 + 감사',
-    '- 2문단: 제품 경험 및 효과 설명',
-    '- 3문단: 사용 방법 / 루틴 / 추가 제품 제안',
-    '- 문단은 줄바꿈으로 명확히 구분한다.',
-    '- 말투는 밝고 정성스럽지만 과하지 않게, 실제 상담하듯 자연스럽게 작성한다.',
-    '- 고객이 사용한 표현을 그대로 활용해 공감도를 높인다.',
-    '- 마지막 문장은 반드시 “소중한 리뷰를 남겨주셔서 감사합니다💙”로 끝낸다.',
-    '', '[제품별 작성 기준]',
-    '1) 핸드크림 공통: 손티에이징 관리 개념을 상황에 따라 활용한다.',
-    '2) 에센셜 핸드크림: 실내에서 수시로 사용하기 좋은 제품. 빠른 흡수, 끈적임 적음, 보습 중심 케어. 에센셜만 사용한 고객에게는 외출 시 어드밴스드 사용을 자연스럽게 제안할 수 있다.',
-    '3) 어드밴스드 핸드크림: 외출 시 사용하는 제품. 자외선 차단 기능과 광노화 예방 관점으로 설명한다. 반드시 “자외선 차단”이라고 쓰고 “자차”라는 표현은 쓰지 않는다. 어드밴스드만 사용한 고객에게는 실내에서 에센셜 사용을 자연스럽게 제안할 수 있다.',
-    '4) NMN 스킨부스터: NMN 성분 설명을 최소 2문장 이상 포함한다. NMN은 피부 컨디션의 기반을 채워주는 성분이라는 흐름으로 설명한다. 피부 에너지, 피부 컨디션, 회복 흐름과 연결한다. 아침 루틴, 공복 섭취 등 “매일 꾸준히 쌓아가는 케어”로 자연스럽게 연결한다.',
-    '5) NMN 겔 마스크팩: 피부 노화의 주요 원인 중 하나는 자외선이며 이는 광노화로 이어진다는 점을 자연스럽게 설명한다. 자외선으로 인해 쌓인 피부 데미지를 케어하는 After Sun / After Care 제품으로 설명한다. 얼굴뿐 아니라 목까지 함께 케어 가능한 점을 강조한다. NMN이 피부 컨디션 회복 흐름을 돕는다는 내용을 1~2문장 포함한다. 야외활동 후, 저녁 루틴, 노출된 날 집중 관리 루틴으로 제안한다.',
-    '', '[상황별 대응]',
-    '- 긍정 리뷰: 만족 포인트를 강조하고 꾸준한 루틴으로 연결한다.',
-    '- 아쉬움 리뷰: 먼저 충분히 공감한 뒤 사용 방법, 사용 빈도, 루틴 또는 다른 제품으로 해결 방향을 제안한다.',
-    '- 보습이 부족하다는 경우: 사용 빈도 또는 에센셜 제품을 제안한다.',
-    '- 효과가 약하다는 경우: 꾸준한 사용 루틴을 강조한다.',
-    '- 기능 질문형 리뷰: 단정적으로 답하지 않고 이해를 돕는 수준에서 설명한다.',
-    '', '[금지 사항]',
-    '- 근거 없는 성분 설명 금지', '- 의학적 또는 치료 효과로 오해될 수 있는 표현 금지', '- 과장된 효과 표현 금지', '- 동일한 문장 반복 금지', '- 고객 리뷰와 무관한 일반적인 답변 금지',
-    '', '[출력 형식]',
-    '안녕하세요, 리버스 에이징 브랜드 EGA입니다', '', '(고객 경험 공감 및 감사 문단)', '', '(제품 효과 및 특징 설명 문단)', '', '(사용 방법 / 루틴 / 추가 제품 제안 문단)', '', '소중한 리뷰를 남겨주셔서 감사합니다💙'
-  ].join('\n');
-}
-async function callOpenAIReply(review) {
-  const prompt = buildEGAReplyPrompt(review);
+// ── 자동 답변 (템플릿 조합 · AI 없음 · 비용 0원 · 외부 전송 없음) ──
+// 리뷰의 제품·감정·키워드를 보고 문장 묶음에서 골라 3문단 답변을 만든다.
+// 제품 설명은 기존 AI 프롬프트(prompt_config.json)의 제품 기준을 그대로 옮겨 왔다.
+const RT_OPEN = '안녕하세요, 리버스 에이징 브랜드 EGA입니다';
+const RT_CLOSE = '소중한 리뷰를 남겨주셔서 감사합니다💙';
 
-  // 1순위: Render 서버 (API 키가 브라우저에 노출되지 않음). cold start 대비 2회 시도.
-  for (let attempt = 1; attempt <= 2; attempt++) {
-    try {
-      if (attempt === 1 && !serverOnline) {
-        showToast('서버 깨우는 중... (~30초)', 'success');
+const RT_PRODUCTS = {
+  essential: {
+    name: '에센셜 핸드크림',
+    facts: [
+      '에센셜 리제너레이터 핸드크림은 NMN을 담은 손티에이징 핸드크림으로, 단순 보습을 넘어 손 피부 컨디션 회복에 초점을 맞춘 제품이에요.',
+      '나이아신아마이드와 아데노신이 함께 들어 있어 손등 톤과 탄력까지 함께 케어할 수 있도록 설계했어요.',
+      '4주 사용 임상에서 손 피부 보습 17.3%, 탄력 13.3% 개선이 확인된 제품이라 꾸준히 쓰실수록 차이를 느끼실 수 있을 거예요.'
+    ],
+    moist: '시어버터가 촉촉하게 보습막을 채워주면서도 꾸덕하지 않아, 잦은 손 씻기로 건조해지기 쉬운 실내에서 수시로 덧바르기 좋아요.',
+    absorb: '촉촉하지만 끈적임 없이 스며드는 제형이라 바르고 바로 일상으로 돌아가실 수 있어요.',
+    scent: '향이 강하지 않아 사무실이나 가족과 함께하는 공간에서도 부담 없이 쓰실 수 있어요.',
+    usage: [
+      '손을 씻은 뒤나 건조함이 느껴질 때마다 수시로 덧발라 주시면 손 피부 컨디션을 꾸준히 지키실 수 있어요.',
+      '잠들기 전 조금 넉넉히 발라주시면 밤사이 손 피부를 채워주는 루틴으로도 좋아요.'
+    ],
+    tip: '손을 씻은 직후 물기가 살짝 남아 있을 때 소량씩 나눠 발라주시면 한결 편안하게 스며드는 걸 느끼실 수 있어요.'
+  },
+  advanced: {
+    name: '어드밴스드 핸드크림',
+    facts: [
+      '어드밴스드 리제너레이터 핸드크림은 에센셜의 손 역노화 성분(NMN·나이아신아마이드·아데노신)은 그대로 담고, SPF20으로 자외선 차단 기능을 더한 야외용 손티에이징 핸드크림이에요.',
+      '운전이나 산책처럼 손등이 자외선에 그대로 노출되는 순간은 손 노화를 앞당기기 쉬워서, 외출하실 때 함께해 주시면 좋아요.'
+    ],
+    moist: '자외선 차단 기능이 있으면서도 손을 촉촉하게 감싸주어, 외출 중에도 건조함 걱정을 덜어드려요.',
+    absorb: '가볍게 발리고 빠르게 스며들어 운전이나 외출 중에도 손이 미끄럽지 않게 사용하실 수 있어요.',
+    usage: ['외출 전에 손등까지 꼼꼼히 발라주시고, 야외에 오래 계신 날에는 중간중간 덧발라 주시면 더 좋아요.'],
+    tip: '외출 전 손등까지 넉넉히 펴 바르고, 야외에 오래 계실 때는 2~3시간마다 덧발라 주시면 더 만족스럽게 사용하실 수 있어요.'
+  },
+  inoutSet: {
+    name: '핸드크림 인앤아웃 세트',
+    facts: [
+      '핸드크림 인앤아웃 세트는 하루 동안 손이 마주하는 두 환경, 실내와 야외를 나눠 케어하도록 구성한 세트예요.',
+      '실내에서는 보습과 손 컨디션 유지에 집중한 에센셜을, 외출할 때는 SPF20 자외선 차단 기능을 더한 어드밴스드를 사용하시면 손 안팎을 함께 챙기실 수 있어요.'
+    ],
+    usage: ['책상이나 파우치에는 에센셜을, 가방이나 차 안에는 어드밴스드를 두고 장소에 맞게 꺼내 쓰시는 방법을 추천드려요.'],
+    tip: '실내에서는 에센셜, 외출할 때는 어드밴스드로 장소에 맞게 나눠 사용해 보시면 차이를 더 잘 느끼실 수 있어요.'
+  },
+  skinbooster: {
+    name: 'NMN 스킨부스터',
+    facts: [
+      'NMN 스킨부스터는 순도 99.9% NMN 250mg에 히알루론산·콜라겐·엘라스틴을 담은 Dermial을 더한 먹는 이너뷰티 루틴이에요.',
+      'NMN은 컨디션과 피부 활력의 기반을 채워주는 성분이라, 하루하루 쌓아가는 꾸준함이 가장 중요해요.',
+      '복숭아맛 스틱 형태라 물 없이도 간편하게 챙기실 수 있어요.'
+    ],
+    usage: ['매일 일정한 시간, 특히 아침 식전 공복에 1포씩 드시면 루틴으로 자리 잡기 좋아요.'],
+    tip: '이너뷰티는 하루아침보다 꾸준히 쌓일 때 차이가 느껴지는 케어라, 매일 같은 시간에 드시면서 조금 더 여유를 갖고 지켜봐 주세요.'
+  },
+  maskpack: {
+    name: 'NMN 지우개 마스크팩',
+    facts: [
+      'NMN 지우개 마스크팩은 자외선을 쐰 날 바로 붙이는 애프터 선(After Sun) 겔 마스크팩이에요.',
+      'NMN 1,000ppm이 피부 컨디션 회복 흐름을 돕고, 세피라 프로텍트(CefiraProtect CLR™)가 자외선 등 환경 스트레스로 지친 피부를 보호해 주는 두 축으로 설계했어요.',
+      '얼굴뿐 아니라 목까지 함께 케어할 수 있어, 놓치기 쉬운 목 피부까지 챙기실 수 있어요.'
+    ],
+    moist: '겔 시트가 피부에 밀착되어 수분을 채워주고, 달아오른 피부를 시원하게 진정시켜 줘요.',
+    cooling: '붙이는 순간 느껴지는 시원함은 달아오른 피부를 진정시키는 쿨링 케어라, 야외활동 후에 특히 만족스러우실 거예요.',
+    usage: [
+      '스킨케어 후 얼굴과 목에 밀착시켜 시트가 완전히 투명해질 때까지 붙여 두세요. 투명해지는 건 유효 성분이 충분히 흡수됐다는 신호로, 피부 타입에 따라 보통 40분~1시간 정도 걸려요.',
+      '야외활동을 한 날이나 저녁 루틴에 붙여 주시고, 때에 따라 수면팩처럼 활용하셔도 좋아요.'
+    ],
+    tip: '스킨케어 후 얼굴과 목에 밀착시켜 시트가 투명해질 때까지(보통 40분~1시간) 붙여 두시면 성분이 충분히 흡수돼요.'
+  },
+  ampoule: {
+    name: 'NMN UV Healer 앰플',
+    facts: [
+      'NMN UV Healer는 NMN 5% 고함량에 나이아신아마이드와 아데노신을 담은 UV 케어 앰플이에요.',
+      '자외선을 받은 뒤 집중 회복이 필요한 부위에 사용하시기 좋도록 5ml 바이알로 구성했어요.'
+    ],
+    usage: ['자외선에 많이 노출된 날 저녁 스킨케어 단계에서 집중 케어가 필요한 부위에 사용해 주세요.'],
+    tip: '자외선에 노출된 날 저녁, 집중 케어가 필요한 부위에 나눠 사용해 보시길 권해드려요.'
+  },
+  suncream: {
+    name: 'UV IN&OUT 선크림',
+    facts: [
+      'EGA UV IN&OUT Protector는 자외선은 막고(OUT), NMN으로 피부 안쪽 회복을 돕는(IN) 데일리 선크림이에요.',
+      '백탁 없이 로션처럼 가볍게 발리고 끈적임이 적어, 메이크업 전에 사용하셔도 부담이 없어요.'
+    ],
+    absorb: '백탁이나 끈적임 없이 로션처럼 발려서 화장 전에도 답답하지 않게 사용하실 수 있어요.',
+    cooling: '바를 때 느껴지는 살짝 화하고 시원한 느낌은 피부 자극이 아니라, 제품에 담긴 디퍼프(de-puff) 에이전트가 피부 표면의 붓기를 가라앉히며 생기는 정상적인 느낌이에요. 붓기가 빠지면서 피부결이 정돈되는 과정이니 안심하고 사용하셔도 됩니다.',
+    usage: ['아침 스킨케어의 마지막 단계에서 외출 약 20분 전에 충분한 양을 꼼꼼히 펴 발라 주시고, 야외활동이 긴 날에는 2~3시간마다 덧발라 주세요.'],
+    tip: '아침 스킨케어의 가장 마지막 단계, 외출 약 20분 전에 충분한 양을 펴 발라 주시면 더 편안하게 사용하실 수 있어요.'
+  },
+  routineSet: {
+    name: '리버스 루틴',
+    facts: [
+      '리버스 루틴은 먹는 NMN(IN)과 바르는 케어(OUT)를 하나로 묶어, 몸 안에서 시작해 피부에서 완성되는 EGA의 토탈케어 루틴이에요.',
+      '아침에는 NMN 1포, 낮에는 핸드크림을 수시로, 저녁에는 겔 마스크팩으로 주 2회 집중 케어하는 흐름으로 구성했어요.'
+    ],
+    usage: ['AM 먹는 NMN 1포 → DAILY 핸드크림 수시로 → PM 겔 마스크팩(주 2회) 순서로 하루 루틴을 이어가 보세요.'],
+    tip: '아침 NMN 1포, 낮 동안 핸드크림, 저녁 마스크팩 순서로 루틴을 이어가시면 IN과 OUT이 함께 작동하는 흐름을 느끼실 수 있어요.'
+  },
+  general: {
+    name: 'EGA 제품',
+    facts: ['EGA는 NMN을 중심으로 피부와 컨디션의 시간을 되돌리는 리버스 에이징 케어를 연구하고 있어요.'],
+    usage: ['매일 꾸준히 이어가실 때 가장 좋은 변화를 느끼실 수 있도록, 생활 속 루틴으로 함께해 주세요.'],
+    tip: '매일 같은 시간에 꾸준히 사용해 주시면 더 만족스러운 변화를 느끼실 수 있어요.'
+  }
+};
+
+const RT_KEY_TESTS = [
+  ['inoutSet', /핸드크림\s*인앤아웃|인앤아웃\s*세트/i],
+  ['suncream', /Protector|UV\s*IN.?&.?OUT|UV\s*인앤아웃|선크림|썬크림/i],
+  ['ampoule', /UV\s*Healer|UV힐러|앰플/i],
+  ['routineSet', /리버스|루틴\s*완성팩|종합\s*패키지|프로그램/i],
+  ['maskpack', /마스크팩|지우개|겔\s*마스크|Face\s*&?\s*Neck|넥팩/i],
+  ['skinbooster', /스킨\s*부스터|Daily\s*Routine|Daily\s*Regenerator|NMN\s*(영양제|분말)|엔엠엔|이너뷰티/i],
+  ['advanced', /어드밴스드|SPF|UV\s*차단/i],
+  ['essential', /에센셜|핸드크림|손티에이징/i],
+];
+function _rtProductKey(r) {
+  const p = String(r.product || '') + ' ' + String(r.product_norm || '') + ' ' + String(r.product_category || '');
+  const hits = RT_KEY_TESTS.filter(([, re]) => re.test(p)).map(([k]) => k);
+  if (!hits.length) return /NMN/i.test(p) ? 'skinbooster' : 'general';
+  // "5일팩 x 선크림"처럼 여러 제품을 묶은 상품은 리뷰 내용으로 어떤 제품 이야기인지 고른다
+  const isCombo = /\s[xX×]\s|\s&\s|\+/.test(String(r.product || '')) && new Set(hits.filter(k => k !== 'essential' || !hits.includes('advanced'))).size > 1;
+  if (isCombo) {
+    const t = String(r.text || '');
+    if (hits.includes('skinbooster') && /먹|복용|마시|스틱|공복|맛/.test(t)) return 'skinbooster';
+    if (hits.includes('maskpack') && /팩|붙|시트|마스크/.test(t)) return 'maskpack';
+    if (hits.includes('suncream') && /선크림|썬크림|백탁|톤업/.test(t)) return 'suncream';
+    const hand = hits.find(k => k === 'inoutSet' || k === 'advanced' || k === 'essential');
+    if (hand && /손|핸드/.test(t)) return hand;
+  }
+  return hits[0];
+}
+
+const RT_SIGNALS = {
+  repurchase: /재구매|재주문|(또|다시)\s*(샀|사|구매|주문)|두\s*번째|세\s*번째|\d+\s*번째|계속\s*(쓰|사용|먹|구매)|쟁여/,
+  gift: /선물|부모님|엄마|어머니|아빠|아버지|친구|지인|동료/,
+  moist: /촉촉|보습|건조|건성|갈라|트는|트지/,
+  absorb: /흡수|끈적|산뜻|가볍|가벼|발림|겉돌/,
+  scent: /향/,
+  cooling: /화하|화한|시원|쿨링|따끔|플럼핑/,
+  wait: /아직|모르겠|지켜|더\s*써|더\s*먹|꾸준히/,
+  delivery: /배송|도착/,
+  design: /포장|디자인|케이스|용기|휴대/
+};
+const RT_PRAISE = /좋아|좋네|좋고|좋은|좋습|최고|만족|추천|대박|훌륭|마음에|맘에|완벽/;
+
+function _rtHash(s) { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0; return h; }
+
+// 고객이 쓴 표현 한 구절을 그대로 인용 (짧은 구절만)
+function _rtQuote(text, sig) {
+  const clauses = String(text || '').replace(/[<>"]/g, '').split(/[.!?\n~♡♥^]+|ㅎㅎ+|ㅋㅋ+|ㅠㅠ+/).map(s => s.replace(/[ㄱ-ㅎㅏ-ㅣ]+/g, ' ').replace(/\s+/g, ' ').trim()).filter(s => s.length >= 6 && s.length <= 32);
+  // 칭찬이 담긴 구절만 인용 (불만·의문이 섞인 구절은 제외)
+  const bad = /아쉽|아쉬|모르겠|불편|별로|않|안\s*좋|실망|그닥|글쎄|\?/;
+  const prefer = [/촉촉|보습력|산뜻|흡수가?\s*(잘|빨|빠)|시원|순하/, RT_PRAISE];
+  for (const re of prefer) { const c = clauses.find(x => re.test(x) && !bad.test(x)); if (c) return c; }
+  return '';
+}
+
+function _rtSeason() {
+  const m = new Date(Date.now() + 9 * 3600 * 1000).getUTCMonth() + 1;
+  if (m >= 5 && m <= 8) return { key: 'summer', phrase: '자외선이 강한 요즘' };
+  if (m >= 3 && m <= 4) return { key: 'spring', phrase: '햇살이 부쩍 강해지는 요즘' };
+  if (m >= 9 && m <= 11) return { key: 'fall', phrase: '아침저녁으로 건조해지는 환절기' };
+  return { key: 'winter', phrase: '찬 바람에 피부가 쉽게 건조해지는 요즘' };
+}
+
+// 연관 제품 1개 추천 (기존 AI 크로스셀 규칙과 동일: 핸드크림끼리 교차, 그 외는 계절 기준)
+function _rtCrossSell(key) {
+  const s = _rtSeason();
+  const sunny = s.key === 'summer' || s.key === 'spring';
+  const target = key === 'essential' ? 'advanced'
+    : key === 'advanced' ? 'essential'
+    : key === 'inoutSet' ? 'suncream'
+    : key === 'suncream' ? 'maskpack'
+    : key === 'routineSet' ? 'suncream'
+    : sunny ? 'suncream' : 'essential';
+  const lines = {
+    advanced: '외출이 잦으신 날에는 SPF20 자외선 차단 기능을 더한 어드밴스드 핸드크림도 한 번 경험해 보시길 권해드려요. 실내는 에센셜, 야외는 어드밴스드로 나눠 쓰시면 손 케어가 더 촘촘해져요.',
+    essential: s.phrase + '에는 실내에서 수시로 덧바르기 좋은 에센셜 핸드크림도 함께 사용해 보시면 좋아요. 실내는 에센셜, 야외는 어드밴스드로 나눠 쓰시면 손 안팎을 함께 챙기실 수 있어요.',
+    suncream: s.phrase + ', 얼굴 자외선 케어까지 챙기고 싶으시다면 자외선은 막고 NMN으로 회복을 돕는 EGA UV IN&OUT Protector 선크림도 한 번 경험해 보시길 권해드려요.',
+    maskpack: '자외선을 받은 날에는 세피라 프로텍트(CefiraProtect CLR™)로 지친 피부를 보호하고 회복을 돕는 NMN 지우개 마스크팩도 함께 사용해 보시면 좋아요.'
+  };
+  return lines[target] || '';
+}
+
+function buildTemplateReply(r) {
+  const key = _rtProductKey(r);
+  const P = RT_PRODUCTS[key];
+  const text = String(r.text || '');
+  const sig = {};
+  Object.keys(RT_SIGNALS).forEach(k => { sig[k] = RT_SIGNALS[k].test(text); });
+  if (r.has_repurchase) sig.repurchase = true;
+  const sent = r.sentiment === '부정' ? 'neg' : (r.sentiment === '혼합' || r.sentiment === '중립') ? 'mix' : 'pos';
+  // 같은 리뷰라도 [다시 생성]할 때마다 다른 표현이 나오도록 시드를 올린다
+  r._rtSeed = (r._rtSeed || 0) + 1;
+  const seed = _rtHash(String(r.id || text)) + r._rtSeed * 7;
+  const pick = (arr, k) => arr[(seed + (k || 0) * 13) % arr.length];
+  const name = P.name;
+  const quote = sent === 'neg' ? '' : _rtQuote(text, sig);
+
+  const p1 = [], p2 = [], p3 = [];
+  if (sent === 'pos') {
+    p1.push(pick([
+      'EGA ' + name + '에 대한 소중한 후기를 남겨주셔서 진심으로 감사드립니다.',
+      '이렇게 따뜻한 후기로 ' + name + ' 사용 경험을 나눠주셔서 정말 감사합니다.',
+      '바쁘신 와중에도 ' + name + ' 사용 후기를 꼼꼼히 남겨주셔서 감사드립니다.',
+      name + ' 사용 후기를 읽으며 저희도 큰 힘을 얻었어요. 진심으로 감사드립니다.'
+    ]));
+    if (quote) p1.push(pick([
+      '특히 "' + quote + '"라고 말씀해 주신 부분이 저희에게 정말 기쁘게 다가왔어요.',
+      '"' + quote + '"라는 말씀 덕분에 저희 모두 미소 지었답니다.',
+      '"' + quote + '"라고 남겨주신 한마디가 저희에게 큰 보람이 됩니다.'
+    ], 1));
+    if (sig.repurchase) p1.push(pick([
+      '다시 EGA를 찾아주셔서 정말 감사드려요. 꾸준히 믿고 함께해 주시는 마음이 저희에게 가장 큰 힘이 됩니다.',
+      '재구매로 다시 만나 뵙게 되어 무척 반갑습니다. 변함없이 선택해 주셔서 감사합니다.'
+    ], 2));
+    else if (sig.gift) p1.push('소중한 분께 마음을 전하는 선물로 EGA를 골라주셔서 감사해요. 받으시는 분께도 기분 좋은 케어가 되었으면 좋겠습니다.');
+    else if (sig.design) p1.push('포장과 디자인까지 마음에 들어 하셨다니 저희도 정말 기쁩니다.');
+  } else if (sent === 'mix') {
+    p1.push(pick([
+      name + ' 사용 후기를 솔직하게 남겨주셔서 감사합니다. 아쉬우셨던 부분까지 자세히 말씀해 주셔서 저희에게 정말 큰 도움이 됩니다.',
+      '좋았던 점과 아쉬웠던 점을 함께 들려주셔서 감사드립니다. 고객님의 솔직한 의견 덕분에 더 나은 EGA를 만들어 갈 수 있어요.'
+    ]));
+    if (quote) p1.push('"' + quote + '"라고 말씀해 주신 부분은 저희도 무척 반가웠어요.');
+  } else {
+    p1.push(sig.delivery
+      ? '배송 과정에서 불편을 드려 진심으로 죄송합니다. 기다리신 만큼 실망이 크셨을 텐데, 소중한 의견을 남겨주셔서 감사드립니다.'
+      : pick([
+        name + ' 사용 중 불편을 느끼셨다니 마음이 무겁습니다. 기대하셨던 만큼의 경험을 드리지 못해 죄송합니다.',
+        '기대하고 구매해 주셨을 텐데 만족스럽지 못한 경험을 드려 진심으로 죄송합니다. 솔직한 의견을 남겨주셔서 감사드립니다.'
+      ]));
+  }
+
+  // 2문단: 고객이 언급한 포인트에 맞는 제품 설명 우선, 나머지는 기본 설명으로 채움
+  if (sent !== 'neg') {
+    ['cooling', 'moist', 'absorb', 'scent'].forEach(k => { if (sig[k] && P[k] && p2.length < 2) p2.push(P[k]); });
+    const facts = P.facts.slice();
+    let i = seed % facts.length;
+    while (p2.length < (sent === 'pos' ? 3 : 2) && facts.length) { const f = facts.splice(i % facts.length, 1)[0]; if (!p2.includes(f)) p2.push(f); i++; }
+    if (sent === 'mix' && P.tip) p2.push(P.tip);
+  } else {
+    p2.push('말씀해 주신 내용은 담당 부서에 꼼꼼히 전달해 제품과 서비스 개선에 반영하겠습니다.');
+    if (P.tip && !sig.delivery) p2.push('혹시 사용 방법이 맞지 않아 아쉬우셨다면, ' + P.tip);
+  }
+
+  // 3문단: 사용 루틴 + (긍정만) 연관 제품 1개
+  if (sent === 'pos') {
+    p3.push(pick(P.usage, 3));
+    const cross = _rtCrossSell(key);
+    if (cross) p3.push(cross);
+  } else if (sent === 'mix') {
+    p3.push('사용하시면서 궁금하신 점이 있으시면 언제든 1:1 문의로 편하게 남겨주세요. 더 만족스러운 경험이 되실 수 있도록 함께 도와드리겠습니다.');
+  } else {
+    p3.push('사용 중 불편하신 점이나 교환·환불 관련 문의는 고객센터 1:1 문의로 남겨주시면 빠르게 확인해 도와드리겠습니다.');
+  }
+
+  return [RT_OPEN, p1.join(' '), p2.filter(Boolean).join(' '), p3.join(' '), RT_CLOSE].join('\n\n');
+}
+// 단건·일괄·재생성 흐름이 공통으로 쓰는 진입점
+async function makeAutoReply(review) { return buildTemplateReply(review); }
+
+// ── 게시 서버 선택 ──
+// 회사 서버(로그인 보호)에 크리마 키가 설정돼 있으면 회사 서버로 게시하고,
+// 아직이면 임시로 기존 외부 서버(onrender)를 쓴다. 키가 들어가는 순간 자동 전환.
+let POST_SERVER = REPLY_SERVER;
+let postServerKind = 'external';
+async function resolvePostServer() {
+  try {
+    const base = location.pathname.replace(/[^/]*$/, '');
+    const res = await fetch(base + 'api/crema-status', { cache: 'no-store', signal: AbortSignal.timeout(15000) });
+    if (res.ok) {
+      const d = await res.json();
+      if (d.configured && d.tokenOk) {
+        POST_SERVER = base.replace(/\/$/, '');
+        postServerKind = 'company';
+        return true;
       }
-      const res = await fetch(REPLY_SERVER + '/api/generate-reply', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ review, prompt }),
-        signal: AbortSignal.timeout(60000)
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok || data.error) throw new Error(data.error || data.message || 'HTTP ' + res.status);
-      serverOnline = true;
-      const dot = document.getElementById('server-dot');
-      const txt = document.getElementById('server-status-text');
-      if (dot) dot.className = 'server-dot online';
-      if (txt) txt.textContent = '서버 연결됨';
-      return data.reply || data.output_text || data.text || '';
-    } catch (e) {
-      if (attempt === 1) {
-        await new Promise(r => setTimeout(r, 3000));
-        continue;
-      }
-      serverOnline = false;
-      console.warn('서버 호출 실패 → 브라우저 직접 호출로 전환:', e.message);
-      showToast('서버 연결 실패 → 브라우저에서 OpenAI 직접 호출 (API 키 노출 주의)', 'error');
     }
-  }
-
-  // 2순위: 브라우저 직접 호출 (서버 연결 실패 시 fallback)
-  const apiKey = getOpenAIKey();
-  if (!apiKey) throw new Error('API 키가 입력되지 않았습니다');
-  const res = await fetch('https://api.openai.com/v1/responses', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
-    body: JSON.stringify({ model: 'gpt-4.1-mini', input: prompt, temperature: 0.65 })
-  });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error?.message || 'AI 생성 실패');
-  return data.output_text || data.output?.flatMap(o => o.content || []).map(c => c.text || '').join('') || '';
+  } catch (e) { /* 회사 서버 미설정 → 외부 서버 */ }
+  POST_SERVER = REPLY_SERVER;
+  postServerKind = 'external';
+  return false;
 }
 async function generateReplyForReview(id) {
   const r = ALL_REVIEWS.find(x => x.id === id); if (!r) return;
@@ -6215,13 +6401,13 @@ async function generateReplyForReview(id) {
   const btn = card?.querySelector('.btn-generate-reply');
   if (btn) { btn.disabled = true; btn.innerHTML = '<span class="loader"></span> 생성 중...'; }
   try {
-    const reply = await callOpenAIReply(r);
+    const reply = await makeAutoReply(r);
     r.ai_reply = reply.trim();
     r.ai_reply_date = new Date().toISOString().slice(0, 10);
     r.reply_status = 'ai_generated';
     persistReply(id);
-    showToast('AI 답변을 생성하고 저장했습니다', 'success');
-  } catch (e) { showToast('AI 생성 오류: ' + e.message, 'error'); }
+    showToast(r.sentiment === '부정' ? '부정 리뷰 초안이에요. 게시 전에 꼭 내용을 확인·수정해 주세요' : '답변 초안을 채웠습니다', r.sentiment === '부정' ? 'error' : 'success');
+  } catch (e) { showToast('답변 채우기 오류: ' + e.message, 'error'); }
   updateReplyStats(); renderReplyList();
 }
 async function generateCurrentReplyPage() {
@@ -6229,8 +6415,10 @@ async function generateCurrentReplyPage() {
   const start = (replyPage - 1) * REPLY_PER_PAGE;
   const pageReviews = reviews.slice(start, start + REPLY_PER_PAGE).filter(r => r.reply_status !== 'posted');
   if (pageReviews.length === 0) { showToast('현재 페이지에 생성할 리뷰가 없습니다', 'error'); return; }
-  if (!confirm('현재 페이지의 미게시 리뷰 ' + pageReviews.length + '건에 AI 답변을 생성할까요? (동시 처리)')) return;
-  await _bulkRun(pageReviews.map(r => r.id), 'AI 생성');   // 중앙 진행률 바 공통 사용
+  const ids = pageReviews.filter(r => !r.ai_reply && r.sentiment !== '부정').map(r => r.id);
+  const negN = pageReviews.filter(r => !r.ai_reply && r.sentiment === '부정').length;
+  if (ids.length === 0) { showToast('현재 페이지에 새로 채울 리뷰가 없습니다' + (negN ? ' (부정 리뷰 ' + negN + '건은 하나씩 확인해 주세요)' : ''), 'error'); return; }
+  await _bulkRun(ids, '자동 답변 채우기', negN);   // 중앙 진행률 바 공통 사용
 }
 
 // ── 자사몰(카페24 게시판) 실제 답변 상태 반영 ──
@@ -6415,7 +6603,7 @@ function renderIssueReviewsList() {
 // 모달 안 답변 카드 HTML (renderReplyList의 카드와 동일 구조, id만 issue- prefix)
 function _buildIssueReplyCardHtml(r) {
   const statusClass = r.reply_status || 'none';
-  const statusLabel = r.reply_status === 'posted' ? '게시 완료' : r.reply_status === 'ai_generated' ? 'AI 답변 생성됨' : '미답변';
+  const statusLabel = r.reply_status === 'posted' ? '게시 완료' : r.reply_status === 'ai_generated' ? '답변 작성됨' : '미답변';
   const isEditing = window._issueEditingId === r.id;
   const canPost = r.reply_status === 'ai_generated' && r.ai_reply && getCremaReviewId(r);
   const channelEmoji = r.channel === '스마트스토어' ? '🟢' : r.channel === '올리브영' ? '🛍️' : '🛒';
@@ -6443,7 +6631,7 @@ function _buildIssueReplyCardHtml(r) {
     '</div>' +
     (r.ai_reply ? (
       '<div class="reply-ai-box" style="background:#eff6ff;border-radius:8px;padding:10px 12px;margin-bottom:10px">' +
-        '<label style="font-size:11px;color:#1d4ed8;font-weight:600">🤖 AI 생성 답변 ' + (r.ai_reply_date ? '(' + r.ai_reply_date + ')' : '') + '</label>' +
+        '<label style="font-size:11px;color:#1d4ed8;font-weight:600">✍️ 답변 초안 ' + (r.ai_reply_date ? '(' + r.ai_reply_date + ')' : '') + '</label>' +
         (isEditing ?
           ('<textarea id="issue-edit-area-' + r.id + '" style="width:100%;min-height:120px;margin-top:8px;padding:8px;border:1px solid #93c5fd;border-radius:6px;font-size:13px;font-family:inherit;line-height:1.7">' + r.ai_reply + '</textarea>' +
            '<div style="margin-top:8px;display:flex;gap:6px"><button class="btn btn-primary btn-sm" onclick="saveIssueReplyEdit(\'' + r.id + '\')">저장</button><button class="btn btn-outline btn-sm" onclick="cancelIssueReplyEdit()">취소</button></div>')
@@ -6452,7 +6640,7 @@ function _buildIssueReplyCardHtml(r) {
         ) +
       '</div>'
     ) : (
-      '<div style="padding:10px;background:#f9fafb;border-radius:8px;border:1px dashed #d1d5db;color:#6b7280;font-size:12.5px;margin-bottom:10px;text-align:center">AI 답변이 아직 생성되지 않았습니다. 아래 버튼을 눌러 바로 생성할 수 있습니다.</div>'
+      '<div style="padding:10px;background:#f9fafb;border-radius:8px;border:1px dashed #d1d5db;color:#6b7280;font-size:12.5px;margin-bottom:10px;text-align:center">아직 답변이 없습니다. 아래 [자동 답변 채우기]를 누르면 바로 초안이 만들어집니다.</div>'
     )) +
     '<div class="reply-actions" style="display:flex;gap:6px;flex-wrap:wrap">' +
       (r.ai_reply && !isOliveYoung ? (
@@ -6460,7 +6648,7 @@ function _buildIssueReplyCardHtml(r) {
         '<button class="btn-edit" onclick="startIssueReplyEdit(\'' + r.id + '\')">✏️ 수정</button>' +
         '<button onclick="markReplyAsPosted(\'' + r.id + '\')" style="background:#f0fdf4;border:1px solid #86efac;border-radius:6px;padding:6px 12px;font-size:12px;cursor:pointer;color:#166534;font-weight:500" title="외부에서 게시 확인됐을 때 수동으로 표시">✅ 수동 게시 완료</button>'
       ) : '') +
-      (!isOliveYoung ? '<button class="btn btn-primary btn-sm" onclick="generateIssueReply(\'' + r.id + '\')">🤖 ' + (r.ai_reply ? 'AI 답변 다시 생성' : 'AI 답변 생성') + '</button>' : '') +
+      (!isOliveYoung ? '<button class="btn btn-primary btn-sm" onclick="generateIssueReply(\'' + r.id + '\')">✨ ' + (r.ai_reply ? '다른 표현으로' : '자동 답변 채우기') + '</button>' : '') +
       (isOliveYoung ? '<button class="btn btn-outline btn-sm" onclick="markIssueAsHandled(\'' + r.id + '\')">✅ 처리 완료로 표시 (올리브영)</button>' : '') +
     '</div>' +
   '</div>';
@@ -6473,13 +6661,13 @@ window.generateIssueReply = async function(id) {
   const btn = document.querySelector('#issue-reply-card-' + id + ' .btn');
   if (btn) { btn.disabled = true; btn.innerHTML = '<span class="loader"></span> 생성 중...'; }
   try {
-    const reply = await callOpenAIReply(r);
+    const reply = await makeAutoReply(r);
     r.ai_reply = reply.trim();
     r.ai_reply_date = new Date().toISOString().slice(0, 10);
     r.reply_status = 'ai_generated';
     persistReply(id);
-    showToast('AI 답변을 생성하고 저장했습니다', 'success');
-  } catch (e) { showToast('AI 생성 오류: ' + e.message, 'error'); }
+    showToast(r.sentiment === '부정' ? '부정 리뷰 초안이에요. 게시 전에 꼭 내용을 확인·수정해 주세요' : '답변 초안을 채웠습니다', r.sentiment === '부정' ? 'error' : 'success');
+  } catch (e) { showToast('답변 채우기 오류: ' + e.message, 'error'); }
   updateReplyStats();
   renderIssueReviewsList();
   if (typeof updateDashboard === 'function') updateDashboard();
@@ -6517,7 +6705,7 @@ window.postIssueReply = async function(id) {
   const btn = card?.querySelector('.btn-post');
   if (btn) { btn.disabled = true; btn.innerHTML = '<span class="loader"></span> 게시 중...'; }
   try {
-    const res = await fetch(REPLY_SERVER + '/api/post-reply', {
+    const res = await fetch(POST_SERVER + '/api/post-reply', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ reviewId: r.id, cremaReviewId: cremaReviewId, replyText: r.ai_reply, channel: r.channel })
     });
@@ -6616,7 +6804,7 @@ function renderReplyList() {
 
   listEl.innerHTML = pageReviews.map(r => {
     const statusClass = r.board_answered ? 'posted' : (r.reply_status || 'none');
-    const statusLabel = r.reply_status === 'posted' ? '게시 완료' : (r.board_answered ? '자사몰 답변완료' : (r.reply_status === 'ai_generated' ? 'AI 답변 생성됨' : '미답변'));
+    const statusLabel = r.reply_status === 'posted' ? '게시 완료' : (r.board_answered ? '자사몰 답변완료' : (r.reply_status === 'ai_generated' ? '답변 작성됨' : '미답변'));
     const isEditing = replyEditingId === r.id;
     const isSelected = bulkSelected.has(r.id);
     const canPost = r.reply_status === 'ai_generated' && r.ai_reply && getCremaReviewId(r);
@@ -6648,7 +6836,7 @@ function renderReplyList() {
 
       ${r.ai_reply ? `
         <div class="reply-ai-box">
-          <label>🤖 AI 생성 답변 ${r.ai_reply_date ? '('+r.ai_reply_date+')' : ''}</label>
+          <label>✍️ 답변 초안 ${r.ai_reply_date ? '('+r.ai_reply_date+')' : ''}</label>
           ${isEditing ? `
             <textarea class="reply-edit-area" id="edit-area-${r.id}">${r.ai_reply}</textarea>
             <div style="margin-top:8px;display:flex;gap:6px">
@@ -6661,7 +6849,7 @@ function renderReplyList() {
         </div>
       ` : `
         <div style="padding:12px;background:var(--bg);border-radius:var(--radius-sm);border:1px dashed var(--border);color:var(--text-muted);font-size:12.5px;margin-bottom:12px;text-align:center">
-          AI 답변이 아직 생성되지 않았습니다. 아래 버튼을 눌러 바로 생성할 수 있습니다.
+          아직 답변이 없습니다. 아래 [자동 답변 채우기]를 누르면 바로 초안이 만들어집니다.
         </div>
       `}
 
@@ -6685,7 +6873,7 @@ function renderReplyList() {
           <button class="btn-edit" onclick="startReplyEdit('${r.id}')">✏️ 수정</button>
           <button onclick="markReplyAsPosted('${r.id}')" style="background:#f0fdf4;border:1px solid #86efac;border-radius:6px;padding:6px 12px;font-size:12px;cursor:pointer;color:#166534;font-weight:500" title="외부 채널에서 게시 확인됐을 때 수동으로 표시">✅ 수동 게시 완료 표시</button>
         ` : ''}
-        ${r.reply_status !== 'posted' ? `<button class="btn btn-primary btn-sm btn-generate-reply" onclick="generateReplyForReview('${r.id}')">🤖 ${r.ai_reply ? 'AI 답변 다시 생성' : 'AI 답변 생성'}</button>` : ''}
+        ${r.reply_status !== 'posted' ? `<button class="btn btn-primary btn-sm btn-generate-reply" onclick="generateReplyForReview('${r.id}')">✨ ${r.ai_reply ? '다른 표현으로' : '자동 답변 채우기'}</button>` : ''}
         <button class="btn-edit" onclick="showReviewDetail('${r.id}',true)" style="margin-left:auto">📋 상세보기</button>
       </div>
     </div>`;
@@ -6748,7 +6936,7 @@ async function postSingleReply(id) {
   if (btn) { btn.disabled = true; btn.innerHTML = '<span class="loader"></span> 게시 중...'; }
 
   try {
-    const res = await fetch(REPLY_SERVER + '/api/post-reply', {
+    const res = await fetch(POST_SERVER + '/api/post-reply', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -6824,7 +7012,7 @@ async function _genReplyCore(id) {
   const r = ALL_REVIEWS.find(x => x.id === id);
   if (!r || r.reply_status === 'posted') return false;
   try {
-    const reply = await callOpenAIReply(r);
+    const reply = await makeAutoReply(r);
     r.ai_reply = (reply || '').trim();
     if (!r.ai_reply) return false;
     r.ai_reply_date = new Date().toISOString().slice(0, 10);
@@ -6849,9 +7037,9 @@ async function _runReplyPool(ids, concurrency, onProgress) {
   return ok;
 }
 // 공통 실행부
-async function _bulkRun(ids, verb) {
+async function _bulkRun(ids, verb, skippedNeg) {
   // 일괄 게시와 동일한 중앙 진행률 바 (몇 개 중 몇 개)
-  showCenterProgress(verb + ' 중...', 0, ids.length, '잠시만 기다려주세요 (서버 준비 중이면 최대 1분)', '✨');
+  showCenterProgress(verb + ' 중...', 0, ids.length, '잠시만 기다려주세요', '✨');
   const ok = await _runReplyPool(ids, 6, (done, total, okc) => {
     const failN = done - okc;
     showCenterProgress(verb + ' 중...', done, total, '✅ 완료 ' + okc + (failN > 0 ? '   ·   ⚠️ 실패 ' + failN : ''), '✨');
@@ -6860,13 +7048,13 @@ async function _bulkRun(ids, verb) {
   updateReplyStats(); renderReplyList();
   const fail = ids.length - ok;
   if (ok === ids.length) {
-    showCenterPopup(verb + ' 완료', ok + '건의 AI 답변을 생성했습니다. 👏', 'success');
+    showCenterPopup(verb + ' 완료', ok + '건의 답변 초안을 채웠습니다. 게시 전에 한 번씩 읽어봐 주세요.' + (skippedNeg ? '\n\n부정 리뷰 ' + skippedNeg + '건은 일괄 처리에서 뺐어요. 카드의 [자동 답변 채우기]로 하나씩 확인하며 작성해 주세요.' : ''), 'success');
   } else if (ok > 0) {
     showCenterPopup(ok + ' / ' + ids.length + '건 ' + verb + ' 완료',
-      fail + '건은 실패했습니다. (선택이 유지되니 다시 시도할 수 있어요)\n\n대개 서버 연결 또는 API 키 문제예요 — 우측 상단 "서버 확인"과 "API 키 재설정"을 확인해주세요.', 'error');
+      fail + '건은 채우지 못했습니다. (선택이 유지되니 다시 시도할 수 있어요)', 'error');
   } else {
     showCenterPopup(verb + ' 실패',
-      'AI 답변 생성에 실패했습니다.\n\n우측 상단 "서버 확인"으로 서버 연결을, "API 키 재설정"으로 OpenAI 키를 확인한 뒤 다시 시도해주세요.', 'error');
+      '답변 초안을 채우지 못했습니다. 새로고침 후 다시 시도해 주세요.', 'error');
   }
 }
 // 선택 항목 AI 생성 (병렬) — 아직 답변 없는 미답변만
@@ -6875,9 +7063,10 @@ async function bulkGenerateSelected() {
     const r = ALL_REVIEWS.find(x => x.id === id);
     return r && r.reply_status !== 'posted' && !r.ai_reply;
   });
-  if (ids.length === 0) { showToast('선택 항목 중 새로 생성할 미답변 리뷰가 없습니다 (이미 답변 있는 건 [재생성] 사용)', 'error'); return; }
-  if (!confirm('선택한 미답변 ' + ids.length + '건에 AI 답변을 생성할까요? (동시 처리로 빠르게 진행)')) return;
-  await _bulkRun(ids, 'AI 생성');
+  const negN = ids.filter(id => (ALL_REVIEWS.find(x => x.id === id) || {}).sentiment === '부정').length;
+  const fillIds = ids.filter(id => (ALL_REVIEWS.find(x => x.id === id) || {}).sentiment !== '부정');
+  if (fillIds.length === 0) { showToast(negN ? '선택한 리뷰가 모두 부정 리뷰예요. 카드의 [자동 답변 채우기]로 하나씩 확인하며 작성해 주세요' : '선택 항목 중 새로 채울 미답변 리뷰가 없습니다 (이미 답변 있는 건 [다른 표현으로] 사용)', 'error'); return; }
+  await _bulkRun(fillIds, '자동 답변 채우기', negN);
 }
 // 선택 항목 AI 재생성 (병렬) — 이미 답변 있는 것을 새 프롬프트로 덮어쓰기
 async function bulkRegenerateSelected() {
@@ -6885,9 +7074,9 @@ async function bulkRegenerateSelected() {
     const r = ALL_REVIEWS.find(x => x.id === id);
     return r && r.reply_status !== 'posted' && r.ai_reply;
   });
-  if (ids.length === 0) { showToast('선택 항목 중 재생성할(이미 답변 있는) 리뷰가 없습니다', 'error'); return; }
-  if (!confirm('선택한 ' + ids.length + '건의 기존 답변을 새 프롬프트로 다시 생성(덮어쓰기)할까요?')) return;
-  await _bulkRun(ids, 'AI 재생성');
+  if (ids.length === 0) { showToast('선택 항목 중 다시 채울(이미 답변 있는) 리뷰가 없습니다', 'error'); return; }
+  if (!confirm('선택한 ' + ids.length + '건의 기존 답변을 다른 표현으로 다시 채울까요? (직접 수정한 내용도 덮어써요)')) return;
+  await _bulkRun(ids, '다른 표현으로 채우기');
 }
 function updateBulkBar() {
   const bar = document.getElementById('bulk-bar');
@@ -6921,7 +7110,7 @@ async function postBulkReplies() {
   });
   if (items.length === 0) {
     let reason = '선택한 ' + selectedIds.length + '건 중 지금 크리마에 게시할 수 있는 리뷰가 없습니다.\n';
-    if (noReply) reason += '\n• AI 답변 미생성: ' + noReply + '건 → 먼저 "선택 AI 생성"을 눌러 답변을 만들어주세요.';
+    if (noReply) reason += '\n• 답변 없음: ' + noReply + '건 → 먼저 "선택 자동 답변"으로 초안을 채워주세요.';
     if (noCrema) reason += '\n• 크리마 리뷰 ID 없음: ' + noCrema + '건 → 올리브영 등 외부 리뷰는 크리마에 게시할 수 없습니다.';
     showCenterPopup('게시할 수 있는 리뷰가 없습니다', reason, 'error');
     return;
@@ -6933,11 +7122,11 @@ async function postBulkReplies() {
   let successN = 0, doneN = 0;
   const failMsgs = [];
   let connError = null;
-  showCenterProgress('크리마에 게시 중...', 0, items.length, '잠시만 기다려주세요 (서버 준비 중이면 최대 1분)');
+  showCenterProgress('크리마에 게시 중...', 0, items.length, postServerKind === 'external' ? '잠시만 기다려주세요 (임시 외부 서버 준비 중이면 최대 1분)' : '잠시만 기다려주세요');
   for (let i = 0; i < items.length; i += CHUNK) {
     const chunk = items.slice(i, i + CHUNK);
     try {
-      const res = await fetch(REPLY_SERVER + '/api/post-bulk', {
+      const res = await fetch(POST_SERVER + '/api/post-bulk', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ items: chunk, replies: chunk })
@@ -6980,7 +7169,7 @@ async function postBulkReplies() {
       (items.length - successN) + '건은 실패했습니다. (선택 유지되니 다시 [일괄 게시]로 재시도 가능)\n\n[실패 사유]\n' + ([...new Set(failMsgs)].slice(0, 3).join('\n') || '알 수 없음'), 'error');
   } else {
     let detail = failMsgs[0] || '서버가 결과를 반환하지 않았습니다.';
-    if (connError) detail = REPLY_SERVER + ' 연결 오류: ' + connError + '\n\n서버(onrender)가 잠자기 상태였다면 30초~1분 뒤 다시 시도하면 대개 됩니다.';
+    if (connError) detail = '게시 서버 연결 오류: ' + connError + (postServerKind === 'external' ? '\n\n임시 외부 서버(onrender)가 잠자기 상태였다면 30초~1분 뒤 다시 시도하면 대개 됩니다.' : '');
     showCenterPopup('게시 실패', '크리마 게시에 실패했습니다.\n\n사유: ' + detail, 'error');
   }
 }
