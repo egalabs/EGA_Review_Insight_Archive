@@ -40,34 +40,29 @@
   html,body{height:100%;font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text-primary);font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
 
   /* Layout */
-  .app{display:flex;height:100vh;overflow:hidden}
-  .sidebar{width:240px;min-width:240px;background:var(--sidebar);border-right:1px solid var(--sidebar-border);display:flex;flex-direction:column;padding:0;overflow:hidden;z-index:10}
-  .sidebar-logo{padding:22px 20px 14px;display:flex;align-items:baseline;gap:8px}
-  .sidebar-logo .brand{font-size:18px;font-weight:800;color:var(--text-primary);letter-spacing:0.04em}
-  .sidebar-logo .tagline{font-size:11.5px;color:var(--text-secondary);letter-spacing:0.01em;font-weight:500}
-  .sidebar-nav{flex:1;padding:4px 12px 12px;overflow-y:auto}
-  .sidebar-nav::-webkit-scrollbar{width:3px}
-  .sidebar-nav::-webkit-scrollbar-thumb{background:rgba(59,108,240,.18);border-radius:2px}
-  .nav-section-label{font-size:11px;font-weight:700;color:var(--text-muted);letter-spacing:0.02em;padding:16px 10px 6px}
-  .nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;margin:1px 0;cursor:pointer;color:var(--text-primary);font-size:13.5px;font-weight:500;transition:background .15s,color .15s;border-radius:9px;text-decoration:none}
-  .nav-item:hover{background:var(--sidebar-hover)}
-  .nav-item.active{color:var(--blue);background:var(--sidebar-active);font-weight:700;box-shadow:0 1px 3px rgba(59,108,240,.16)}
-  .nav-item svg{width:17px;height:17px;flex-shrink:0;opacity:.6}
-  .nav-item.active svg{opacity:1}
-  .nav-badge{margin-left:auto;background:#e5e9f2;color:var(--text-secondary);font-size:10.5px;font-weight:700;padding:1px 8px;border-radius:999px;min-width:22px;text-align:center}
+  .app{display:flex;flex-direction:column;height:100vh;overflow:hidden}
+  /* 위쪽 탭 (Biz Index 형식) */
+  .topnav{display:flex;align-items:center;gap:20px;height:56px;padding:0 20px;background:var(--sidebar);border-bottom:1px solid var(--sidebar-border);flex-shrink:0;z-index:30}
+  .tn-brand{display:flex;align-items:baseline;gap:8px;white-space:nowrap}
+  .tn-brand b{font-size:17px;font-weight:800;letter-spacing:.04em;color:var(--text-primary)}
+  .tn-brand span{font-size:11.5px;font-weight:600;color:var(--text-secondary)}
+  .tn-tabs{display:flex;gap:2px;flex:1;min-width:0;overflow-x:auto;scrollbar-width:none}
+  .tn-tabs::-webkit-scrollbar{display:none}
+  .nav-item{display:flex;align-items:center;gap:6px;padding:7px 13px;cursor:pointer;color:var(--text-secondary);font-size:13.5px;font-weight:600;border-radius:8px;white-space:nowrap;text-decoration:none;transition:background .15s,color .15s}
+  .nav-item:hover{background:var(--sidebar-hover);color:var(--text-primary)}
+  .nav-item.active{color:var(--blue);background:var(--sidebar-active);box-shadow:0 1px 3px rgba(59,108,240,.16)}
+  .nav-badge{background:#e5e9f2;color:var(--text-secondary);font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:999px;min-width:20px;text-align:center}
   .nav-badge.alert{background:var(--negative-bg);color:var(--negative)}
   .nav-badge.warn{background:#fff4e0;color:#c76a00}
-  .nav-fold{display:flex;align-items:center;justify-content:space-between;width:100%;border:0;background:transparent;font:inherit;font-size:11px;font-weight:700;color:var(--text-muted);letter-spacing:0.02em;padding:16px 10px 6px;cursor:pointer}
-  .nav-fold:hover{color:var(--text-secondary)}
-  .nav-fold-body[hidden]{display:none}
-  .sidebar-footer{padding:12px 16px 14px;border-top:1px solid var(--sidebar-border)}
-  .sidebar-footer .user-info{display:flex;align-items:center;gap:10px}
-  .user-avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#3b6cf0,#6b8ff5);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
-  .user-name{font-size:12.5px;color:var(--text-primary);font-weight:600}
-  .user-role{font-size:10.5px;color:var(--text-muted)}
+  .tn-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
+  .tn-right #ega-userbar{position:static !important;box-shadow:none !important;padding:4px 6px 4px 12px !important}
   .logout-btn{background:#fff;border:1px solid var(--sidebar-border);border-radius:7px;padding:5px 9px;color:var(--text-secondary);cursor:pointer;font-size:11px;font-weight:600;flex-shrink:0;transition:all .15s}
   .logout-btn:hover{border-color:var(--negative);color:var(--negative);background:var(--negative-bg)}
-  #build-stamp{font-size:10.5px;color:var(--text-muted);margin-top:8px}
+  #build-stamp{font-size:10.5px;color:var(--text-muted);text-align:center;padding:18px 0 22px}
+  /* 그룹 안의 세부 탭 */
+  .subtabs{display:none;gap:2px;padding:8px 32px 0;background:var(--bg);border-bottom:1px solid var(--border);flex-shrink:0;overflow-x:auto}
+  .subtabs.show{display:flex}
+  @media (max-width:900px){.topnav{gap:12px;padding:0 12px}.tn-brand span{display:none}.subtabs{padding:8px 16px 0}}
 
   /* Main content */
   .main{flex:1;overflow-y:auto;overflow-x:hidden;background:var(--bg)}
@@ -76,14 +71,11 @@
   .page{display:none;padding:28px 32px;min-height:100%}
   .page.active{display:block}
 
-  /* Reports 내부 탭 (Weekly/Insights/판매/작성률/재구매) */
-  #reports-tabbar{display:none;position:sticky;top:0;z-index:20;background:var(--bg);padding:14px 32px 0;border-bottom:1px solid var(--border)}
-  #reports-tabbar.show{display:flex;gap:2px;flex-wrap:wrap}
+  /* 세부 탭 버튼 */
   .rtab{appearance:none;border:none;background:transparent;color:var(--text-muted);font-family:inherit;font-size:13px;font-weight:600;padding:9px 16px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;display:flex;align-items:center;gap:6px;transition:color .15s}
   .rtab:hover{color:var(--text-primary)}
   .rtab.active{color:var(--blue);border-bottom-color:var(--blue)}
   .rtab .nav-badge{margin-left:0}
-  @media (max-width:900px){#reports-tabbar{padding:12px 16px 0}}
 
   /* 홈: 오늘 할 일 */
   .section-label{font-size:12px;font-weight:700;color:var(--text-secondary);letter-spacing:.02em}
@@ -445,7 +437,6 @@
   @media (max-width: 900px){
     .grid-2,.grid-3,.grid-2-1,.grid-1-2,.grid-2-1-1{grid-template-columns:1fr}
     .page{padding:20px 16px}
-    .sidebar{width:200px;min-width:200px}
   }
 
   /* Week selector */
@@ -872,82 +863,37 @@ window.logoutEGA = logoutEGA;
 </script>
 <!-- ===== 로그인 게이트 끝 ===== -->
 <div class="app">
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <div class="sidebar-logo">
-      <div class="brand">EGA</div>
-      <div class="tagline">리뷰 인사이트</div>
-    </div>
-    <nav class="sidebar-nav">
-      <div class="nav-section-label">업무</div>
-      <a class="nav-item" onclick="showPage('replies')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"></path></svg>
-        답변 관리
-        <span class="nav-badge alert" id="nav-reply-count" title="답변 안 한 리뷰" hidden>0</span>
-      </a>
-      <a class="nav-item" onclick="showPage('cafe24qa')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.1 9a3 3 0 015.8 1c0 2-3 3-3 3"></path><path d="M12 17h.01"></path></svg>
-        Q&amp;A 문의
-        <span class="nav-badge warn" id="nav-qa-count" title="답변 대기 문의" hidden>0</span>
-      </a>
-      <a class="nav-item" onclick="showPage('csTemplates')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2h-2"></path><rect x="8" y="2" width="8" height="4" rx="1"></rect><path d="M9 12h6M9 16h4"></path></svg>
-        CS 답변 템플릿
-      </a>
-      <div class="nav-section-label">분석</div>
-      <a class="nav-item active" onclick="showPage('dashboard')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5 9.5V21h14V9.5"></path></svg>
-        홈 · 대시보드
-      </a>
-      <a class="nav-item" onclick="showPage('archive')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 10h16M4 14h10"></path><circle cx="17" cy="17" r="3"></circle><path d="m21 21-1.5-1.5"></path></svg>
-        리뷰 아카이브
-        <span class="nav-badge" id="nav-total" title="누적 리뷰">0</span>
-      </a>
-      <a class="nav-item" id="nav-reports" onclick="showPage('reports')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"></path></svg>
-        리포트
-      </a>
-      <a class="nav-item" onclick="showPage('reviewWorkflow')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-        리뷰 워크플로
-      </a>
-      <button class="nav-fold" id="nav-fold-settings" onclick="toggleNavSettings()">설정 <span id="nav-fold-ic">▸</span></button>
-      <div class="nav-fold-body" id="nav-settings" hidden>
-        <a class="nav-item" onclick="showPage('admin')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M19.07 19.07l-1.41-1.41M4.93 19.07l1.41-1.41M20 12h1M3 12H2M12 20v1M12 3V2"></path></svg>
-          데이터 관리
-        </a>
-        <a class="nav-item" onclick="showPage('promptConfig')" style="display:none">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a7 7 0 0 1 7 7c0 2.5-1.4 4-2.5 5.2-.7.8-1.5 1.6-1.5 2.8H9c0-1.2-.8-2-1.5-2.8C6.4 13 5 11.5 5 9a7 7 0 0 1 7-7z"></path><path d="M9 21h6M10 18h4"></path></svg>
-          프롬프트 관리
-        </a>
-      </div>
+  <!-- 위쪽 탭 (Biz Index 형식) -->
+  <header class="topnav">
+    <div class="tn-brand"><b>EGA</b><span>Review Index</span></div>
+    <nav class="tn-tabs">
+      <a class="nav-item active" data-group="index" onclick="showNavGroup('index')">리뷰 Index</a>
+      <a class="nav-item" data-group="cs" onclick="showNavGroup('cs')">응대 <span class="nav-badge alert" id="nav-cs-count" title="답변 안 한 리뷰 + 답변 대기 문의" hidden>0</span></a>
+      <a class="nav-item" data-group="archive" onclick="showNavGroup('archive')">리뷰 아카이브 <span class="nav-badge" id="nav-total" title="누적 리뷰">0</span></a>
+      <a class="nav-item" data-group="customer" onclick="showNavGroup('customer')">고객 분석</a>
+      <a class="nav-item" data-group="guide" onclick="showNavGroup('guide')">기준 가이드</a>
     </nav>
-    <div class="sidebar-footer">
-      <div class="user-info" style="justify-content:space-between">
-        <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
-          <div class="user-avatar">E</div>
-          <div style="min-width:0">
-            <div class="user-name">EGA Team</div>
-            <div class="user-role">Admin</div>
-          </div>
-        </div>
-        <button class="logout-btn" onclick="logoutEGA()" title="로그아웃">로그아웃</button>
-      </div>
-      <div id="build-stamp">BUILD 251027-A · 리뷰 주간 리포트(BI 형식)</div>
+    <div class="tn-right" id="tn-right">
+      <button class="logout-btn" id="local-logout" onclick="logoutEGA()" title="로그아웃">로그아웃</button>
     </div>
-  </aside>
+  </header>
+  <div class="subtabs show" data-group="index">
+    <button class="rtab active" data-page="dashboard" onclick="showPage('dashboard')">요약</button>
+    <button class="rtab" data-page="insights" onclick="showPage('insights')">누적 인사이트</button>
+  </div>
+  <div class="subtabs" data-group="cs">
+    <button class="rtab" data-page="replies" onclick="showPage('replies')">리뷰 답변 <span class="nav-badge alert" id="nav-reply-count" title="답변 안 한 리뷰" hidden>0</span></button>
+    <button class="rtab" data-page="cafe24qa" onclick="showPage('cafe24qa')">Q&amp;A 문의 <span class="nav-badge warn" id="nav-qa-count" title="답변 대기 문의" hidden>0</span></button>
+    <button class="rtab" data-page="csTemplates" onclick="showPage('csTemplates')">CS 답변 템플릿</button>
+  </div>
+  <div class="subtabs" data-group="customer">
+    <button class="rtab" data-page="writeRate" onclick="showPage('writeRate')">리뷰 작성률</button>
+    <button class="rtab" data-page="repurchase" onclick="showPage('repurchase')">재구매 분석</button>
+    <button class="rtab" data-page="reviewWorkflow" onclick="showPage('reviewWorkflow')">리뷰 타이밍</button>
+  </div>
 
   <!-- Main -->
   <main class="main">
-
-    <div id="reports-tabbar">
-      <button class="rtab" data-rtab="insights" onclick="showPage('insights')">Insights</button>
-      <button class="rtab" data-rtab="sales" onclick="showPage('sales')">판매 분석</button>
-      <button class="rtab" data-rtab="writeRate" onclick="showPage('writeRate')">리뷰 작성률</button>
-      <button class="rtab" data-rtab="repurchase" onclick="showPage('repurchase')">재구매 분석 <span class="nav-badge">NEW</span></button>
-    </div>
 
     <!-- ===== DASHBOARD ===== -->
     <div class="page active" id="page-dashboard">
@@ -2074,30 +2020,6 @@ window.logoutEGA = logoutEGA;
       </div>
     </div>
 
-    <!-- ===== SALES ANALYSIS ===== -->
-    <div class="page" id="page-sales">
-      <div class="page-header">
-        <div class="page-header-row">
-          <div>
-            <div class="page-title">📈 판매 분석</div>
-            <div class="page-subtitle">판매량 대비 리뷰 전환율 진단 · 채널별 · 제품별</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 채널 탭 -->
-      <div class="sales-tabs" style="display:flex;gap:0;margin-bottom:20px;border-bottom:2px solid #e5e7eb">
-        <button class="sales-tab-btn active" data-channel="oliveyoung" onclick="switchSalesTab('oliveyoung', this)" style="padding:12px 24px;background:none;border:none;border-bottom:3px solid #3b6cf0;font-weight:600;font-size:14px;color:#3b6cf0;cursor:pointer;margin-bottom:-2px">🛍️ 올리브영</button>
-        <button class="sales-tab-btn" data-channel="smartstore" onclick="switchSalesTab('smartstore', this)" style="padding:12px 24px;background:none;border:none;border-bottom:3px solid transparent;font-weight:500;font-size:14px;color:#6b7280;cursor:pointer;margin-bottom:-2px">🟢 스마트스토어</button>
-        <button class="sales-tab-btn" data-channel="cafe24" onclick="switchSalesTab('cafe24', this)" style="padding:12px 24px;background:none;border:none;border-bottom:3px solid transparent;font-weight:500;font-size:14px;color:#6b7280;cursor:pointer;margin-bottom:-2px">🛒 카페24</button>
-      </div>
-
-      <!-- 채널별 컨텐츠 -->
-      <div id="sales-content-oliveyoung" class="sales-content"></div>
-      <div id="sales-content-smartstore" class="sales-content" style="display:none"></div>
-      <div id="sales-content-cafe24" class="sales-content" style="display:none"></div>
-    </div>
-
     <!-- ===== REPLY MANAGEMENT ===== -->
     <div class="page" id="page-replies">
       <div class="page-header">
@@ -2214,21 +2136,6 @@ window.logoutEGA = logoutEGA;
       <div class="pagination" id="reply-pagination"></div>
     </div>
 
-    <!-- 🧠 프롬프트 관리 -->
-    <div class="page" id="page-promptConfig">
-      <div class="page-header">
-        <h1 class="page-title">🧠 프롬프트 관리</h1>
-        <div class="page-subtitle">제품별 AI 답변 프롬프트를 직접 수정 → 저장하면 다음 생성부터 즉시 반영됩니다 (팀 공유)</div>
-      </div>
-      <div id="promptcfg-status" style="margin-bottom:14px"></div>
-      <div id="promptcfg-list"></div>
-      <div style="position:sticky;bottom:0;background:var(--white);padding:14px 0;margin-top:8px;border-top:1px solid var(--border);display:flex;gap:10px;align-items:center;flex-wrap:wrap;z-index:5">
-        <button class="btn btn-primary" onclick="savePromptConfig()">💾 저장 (즉시 반영)</button>
-        <button class="btn btn-outline" onclick="initPromptConfig()">↩ 서버값 다시 불러오기</button>
-        <span id="promptcfg-saveresult" style="font-size:13px"></span>
-      </div>
-    </div>
-
     <!-- Toast notification -->
     <div class="toast" id="toast-msg"></div>
 
@@ -2249,6 +2156,7 @@ window.logoutEGA = logoutEGA;
       </div>
     </div>
 
+    <div id="build-stamp">BUILD 251027-B · 위쪽 탭 메뉴 · 판매 분석/프롬프트 관리 삭제</div>
   </main>
 </div>
 <script>
@@ -2345,60 +2253,58 @@ function searchKeyword(kw) {
   if(el) el.textContent = ALL_REVIEWS.length.toLocaleString();
 })();
 
-// ===== NAVIGATION =====
-const REPORT_TABS = ['insights','sales','writeRate','repurchase'];
-let _lastReportTab = 'insights';
-function _syncReportsNav(id) {
-  const isReport = REPORT_TABS.includes(id);
-  const navRep = document.getElementById('nav-reports');
-  if (navRep) navRep.classList.toggle('active', isReport);
-  const bar = document.getElementById('reports-tabbar');
-  if (bar) bar.classList.toggle('show', isReport);
-  document.querySelectorAll('.rtab').forEach(b => b.classList.toggle('active', b.dataset.rtab === id));
-}
+// ===== NAVIGATION (위쪽 탭 + 그룹별 세부 탭) =====
+const NAV_GROUPS = {
+  index: ['dashboard', 'insights'],
+  cs: ['replies', 'cafe24qa', 'csTemplates'],
+  archive: ['archive'],
+  customer: ['writeRate', 'repurchase', 'reviewWorkflow'],
+  guide: ['admin'],
+};
+const _navLast = {};   // 그룹마다 마지막으로 본 세부 탭 기억
+function _navGroupOf(id) { return Object.keys(NAV_GROUPS).find(g => NAV_GROUPS[g].includes(id)); }
+function showNavGroup(g) { showPage(_navLast[g] || NAV_GROUPS[g][0]); }
 function showPage(id) {
-  if (id === 'reports') id = _lastReportTab;
-  if (REPORT_TABS.includes(id)) _lastReportTab = id;
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.getElementById('page-'+id).classList.add('active');
-  event && event.currentTarget && event.currentTarget.classList.add('active');
-  document.querySelectorAll('.nav-item').forEach(n=>{
-    if(n.getAttribute('onclick') && n.getAttribute('onclick').includes("'"+id+"'")) n.classList.add('active');
-  });
-  _syncReportsNav(id);
-  if (id === 'admin' || id === 'promptConfig') toggleNavSettings(true);
+  if (!document.getElementById('page-' + id)) id = 'dashboard';
+  const g = _navGroupOf(id);
+  if (g) _navLast[g] = id;
+  document.querySelectorAll('.page').forEach(p => p.classList.toggle('active', p.id === 'page-' + id));
+  document.querySelectorAll('.topnav .nav-item').forEach(a => a.classList.toggle('active', a.dataset.group === g));
+  document.querySelectorAll('.subtabs').forEach(b => b.classList.toggle('show', b.dataset.group === g));
+  document.querySelectorAll('.subtabs .rtab').forEach(b => b.classList.toggle('active', b.dataset.page === id));
+  const main = document.querySelector('.main'); if (main) main.scrollTop = 0;
   if(id==='insights') initInsights();
   if(id==='archive') { if(!archiveInitialized) { initArchive(); archiveInitialized=true; } renderVoc(); }
   if(id==='admin') initAdmin();
   if(id==='dashboard') updateDashboard();
   if(id==='replies') initReplies();
-  if(id==='sales') initSalesAnalysis();
   if(id==='writeRate') initWriteRate();
   if(id==='repurchase') initRepurchase();
   if(id==='reviewWorkflow') initReviewWorkflow();
   if(id==='csTemplates') initCsTemplates();
   if(id==='cafe24qa') initCafe24QA();
-  if(id==='promptConfig') initPromptConfig();
-}
-_syncReportsNav('dashboard');
-
-function toggleNavSettings(forceOpen) {
-  const body = document.getElementById('nav-settings');
-  if (!body) return;
-  const open = forceOpen === true ? true : body.hidden;
-  body.hidden = !open;
-  const ic = document.getElementById('nav-fold-ic');
-  if (ic) ic.textContent = open ? '▾' : '▸';
 }
 
-// 사이드바 숫자: 0이면 숨기고, 숫자가 바뀌면 홈의 '오늘 할 일'도 갱신
+// 회사 서버가 붙여주는 로그인 바(이름·로그아웃)를 위쪽 탭 오른쪽에 넣고, 중복되는 로컬 로그아웃 버튼은 숨김
+document.addEventListener('DOMContentLoaded', () => {
+  const bar = document.getElementById('ega-userbar');
+  const slot = document.getElementById('tn-right');
+  if (bar && slot) {
+    slot.appendChild(bar);
+    const local = document.getElementById('local-logout'); if (local) local.hidden = true;
+  }
+});
+
+// 메뉴 숫자: 0이면 숨기고, 숫자가 바뀌면 '응대' 탭 합계와 홈의 '오늘 할 일'도 갱신
 function _setNavBadge(id, n) {
   const el = document.getElementById(id);
   if (!el) return;
   const num = Number(n) || 0;
   el.textContent = num.toLocaleString();
   el.hidden = num === 0;
+  const sum = ['nav-reply-count', 'nav-qa-count'].reduce((a, k) => { const e = document.getElementById(k); return a + (e && !e.hidden ? Number(String(e.textContent).replace(/,/g, '')) || 0 : 0); }, 0);
+  const cs = document.getElementById('nav-cs-count');
+  if (cs) { cs.textContent = sum.toLocaleString(); cs.hidden = sum === 0; }
   if (typeof updateTodoStrip === 'function') updateTodoStrip();
 }
 
@@ -3537,65 +3443,6 @@ function _cstRenderChecklist(){
   `).join('');
 }
 
-// ===== 🧠 프롬프트 관리 (제품별 AI 답변 프롬프트 웹 편집) =====
-let _promptCfg = null;
-function _pcfgEsc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-async function initPromptConfig(){
-  const statusEl=document.getElementById('promptcfg-status');
-  const listEl=document.getElementById('promptcfg-list');
-  if(!statusEl||!listEl) return;
-  if(!serverOnline){
-    statusEl.innerHTML='<div style="padding:12px;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;color:#991b1b">서버에 연결되어 있지 않습니다. 우측 상단 "서버 확인"을 눌러 연결한 뒤 다시 열어주세요.</div>';
-    listEl.innerHTML=''; return;
-  }
-  statusEl.innerHTML='<div style="color:var(--text-muted);font-size:13px">불러오는 중…</div>';
-  try{
-    const res=await fetch(REPLY_SERVER+'/api/prompt-config?t='+Date.now());
-    const data=await res.json();
-    _promptCfg=data.config||{products:{},labels:{},order:[]};
-    const order=(_promptCfg.order&&_promptCfg.order.length)?_promptCfg.order:Object.keys(_promptCfg.products||{});
-    const labels=_promptCfg.labels||{};
-    listEl.innerHTML=order.map(k=>{
-      const val=(_promptCfg.products&&_promptCfg.products[k])||'';
-      const rows=Math.min(18,Math.max(5,val.split('\n').length+1));
-      return '<div style="margin-bottom:16px">'+
-        '<label style="display:block;font-weight:700;font-size:14px;margin-bottom:6px;color:var(--text-primary)">'+_pcfgEsc(labels[k]||k)+'</label>'+
-        '<textarea id="pcfg-'+k+'" rows="'+rows+'" style="width:100%;font-size:13px;line-height:1.6;padding:12px;border:1px solid var(--border);border-radius:8px;font-family:inherit;resize:vertical;box-sizing:border-box">'+_pcfgEsc(val)+'</textarea>'+
-      '</div>';
-    }).join('');
-    const upd=_promptCfg.updatedAt?(' · 최근 저장 '+String(_promptCfg.updatedAt).slice(0,16).replace('T',' ')):'';
-    statusEl.innerHTML='<div style="padding:10px 12px;background:#eef2ff;border-radius:8px;font-size:12.5px;color:#3730a3">✏️ 각 제품 프롬프트를 수정하고 아래 "저장"을 누르면 <b>다음 AI 생성부터 바로 반영</b>돼요. (팀 공유)'+upd+'</div>';
-  }catch(e){
-    statusEl.innerHTML='<div style="padding:12px;background:#fef2f2;color:#991b1b;border-radius:8px">불러오기 실패: '+_pcfgEsc(e.message)+' (서버가 잠자기 상태면 30초 뒤 다시)</div>';
-  }
-}
-async function savePromptConfig(){
-  if(!_promptCfg){ showCenterPopup('먼저 불러오기','프롬프트를 먼저 불러온 뒤 저장해주세요.','error'); return; }
-  const resultEl=document.getElementById('promptcfg-saveresult');
-  const order=(_promptCfg.order&&_promptCfg.order.length)?_promptCfg.order:Object.keys(_promptCfg.products||{});
-  const products={};
-  order.forEach(k=>{ const ta=document.getElementById('pcfg-'+k); if(ta) products[k]=ta.value; });
-  const cfg=Object.assign({},_promptCfg,{products:products});
-  if(resultEl){ resultEl.textContent='저장 중…'; resultEl.style.color='var(--text-muted)'; }
-  try{
-    const res=await fetch(REPLY_SERVER+'/api/prompt-config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({config:cfg})});
-    const data=await res.json().catch(()=>({}));
-    if(data.ok){
-      _promptCfg=cfg;
-      if(resultEl){ resultEl.textContent=data.committed?'✅ 저장 완료(서버 영구저장)':'✅ 즉시 반영됨(영구저장 미설정)'; resultEl.style.color=data.committed?'#166534':'#92400e'; }
-      showCenterPopup('프롬프트 저장 완료', data.committed
-        ? '수정한 프롬프트가 서버에 반영·저장됐어요. 다음 AI 답변 생성부터 적용돼요. 👏'
-        : '수정한 프롬프트가 지금 즉시 반영됐어요.\n\n(단, "서버 영구 저장(GH_TOKEN)"이 아직 설정 전이라, 서버가 재시작되면 초기화될 수 있어요. 영구 저장을 켜려면 GH_TOKEN 설정이 필요해요.)','success');
-    }else{
-      if(resultEl){ resultEl.textContent='저장 실패: '+(data.message||('HTTP '+res.status)); resultEl.style.color='#991b1b'; }
-      showCenterPopup('저장 실패', data.message||('HTTP '+res.status),'error');
-    }
-  }catch(e){
-    if(resultEl){ resultEl.textContent='서버 연결 오류: '+e.message; resultEl.style.color='#991b1b'; }
-    showCenterPopup('서버 연결 오류', e.message,'error');
-  }
-}
-
 // ===== 💬 카페24 Q&A (문의글 주제/제품별) =====
 let _qaData = null;
 let _qaView = 'topic';       // 'topic' | 'product'
@@ -4684,51 +4531,7 @@ function renderWriteRate() {
   }, 50);
 }
 
-// ===== 판매 분석 페이지 =====
-let _salesDataCache = {};
-
-async function initSalesAnalysis() {
-  // 첫 진입 시 모든 채널 데이터 로드
-  if (!_salesDataCache.oliveyoung) {
-    try {
-      const res = await fetch('sales_oliveyoung.json?t=' + Date.now(), { cache: 'no-store' });
-      if (res.ok) _salesDataCache.oliveyoung = await res.json();
-    } catch(e) { console.warn('sales_oliveyoung.json 로드 실패', e); }
-  }
-  if (!_salesDataCache.cafe24) {
-    try {
-      const res = await fetch('sales_cafe24.json?t=' + Date.now(), { cache: 'no-store' });
-      if (res.ok) _salesDataCache.cafe24 = await res.json();
-    } catch(e) { console.warn('sales_cafe24.json 로드 실패', e); }
-  }
-  if (!_salesDataCache.smartstore) {
-    try {
-      const res = await fetch('sales_smartstore.json?t=' + Date.now(), { cache: 'no-store' });
-      if (res.ok) _salesDataCache.smartstore = await res.json();
-    } catch(e) { console.warn('sales_smartstore.json 로드 실패', e); }
-  }
-  renderOliveyoungSales();
-}
-
-function switchSalesTab(channel, btnEl) {
-  document.querySelectorAll('.sales-tab-btn').forEach(b => {
-    b.classList.remove('active');
-    b.style.borderBottomColor = 'transparent';
-    b.style.color = '#6b7280';
-    b.style.fontWeight = '500';
-  });
-  btnEl.classList.add('active');
-  btnEl.style.borderBottomColor = '#3b6cf0';
-  btnEl.style.color = '#3b6cf0';
-  btnEl.style.fontWeight = '600';
-  document.querySelectorAll('.sales-content').forEach(c => c.style.display = 'none');
-  document.getElementById('sales-content-' + channel).style.display = '';
-  if (channel === 'oliveyoung') renderOliveyoungSales();
-  if (channel === 'cafe24') renderCafe24Sales();
-  if (channel === 'smartstore') renderSmartstoreSales();
-}
-
-// ───── 공통: 자사몰 카테고리 분류 (카페24/스마트스토어 공용) ─────
+// ===== 제품 카테고리 분류 (답변 관리 제품 필터) =====
 function _categorizeForSelfShop(p, text) {
   const byName = _catByName(p);
   if (byName) return byName;
@@ -4764,520 +4567,6 @@ function _catByText(t) {
   if (/앰플|바이알/.test(t)) return '앰플';
   if (/먹으니|먹고|한포|1포|스틱|복용|알약|가루|분말|물없이|맛이|이너뷰티|영양제|챙겨먹|섭취/.test(t)) return 'NMN';
   return null;
-}
-
-// ───── 자사몰 공통 렌더링 ─────
-function _renderSelfShopSales(containerId, channelName, data, channelEmoji, extraNote) {
-  const container = document.getElementById(containerId);
-  if (!data) {
-    container.innerHTML = '<div style="text-align:center;padding:60px;color:#9ca3af">📊 매출 데이터 로딩 중...</div>';
-    return;
-  }
-
-  const salesPeriod = data.salesPeriod || { start: '2020-01-01', end: '2099-12-31' };
-  // 매출 기간 내 리뷰만 매칭
-  const channelReviews = (ALL_REVIEWS || []).filter(r =>
-    r.channel === channelName &&
-    (r.date || '') >= salesPeriod.start &&
-    (r.date || '') <= salesPeriod.end
-  );
-  const reviewByCat = {};
-  channelReviews.forEach(r => {
-    const p = (r.product || r.product_norm || r.product_category || '');
-    const cat = _categorizeForSelfShop(p, r.text);
-    if (cat) reviewByCat[cat] = (reviewByCat[cat] || 0) + 1;
-  });
-
-  const convColor = (r) => r >= 30 ? '#3b6cf0' : r >= 10 ? '#10b981' : r >= 3 ? '#f59e0b' : r >= 1 ? '#ef4444' : '#9ca3af';
-  const convBg = (r) => r >= 30 ? '#dbeafe' : r >= 10 ? '#dcfce7' : r >= 3 ? '#fef3c7' : r >= 1 ? '#fee2e2' : '#f3f4f6';
-
-  const order = ['핸드크림','선크림','NMN','마스크팩','앰플','종합 패키지','시즌 선물세트','기타'];
-  const catEmoji = { '핸드크림':'🤲', '선크림':'🌞', 'NMN':'💊', '마스크팩':'🩹', '앰플':'💧', '종합 패키지':'📦', '시즌 선물세트':'🎁', '기타':'🛒' };
-
-  const totalOrders = data.totalNetOrders;
-  const totalAmt = data.totalAmount;
-  const totalReviews = channelReviews.length;
-  const avgConv = totalOrders > 0 ? (totalReviews / totalOrders * 100) : 0;
-
-  const formatAmt = (a) => a >= 100000000 ? (Math.round(a/10000000)/10) + '억' : (Math.round(a/10000) + '만');
-
-  const kpiHtml = `
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px">
-      <div class="card" style="padding:18px"><div class="kpi-label">총 순주문건수</div><div class="kpi-value">${totalOrders.toLocaleString()}<span style="font-size:14px;font-weight:500;color:var(--text-muted)">건</span></div><div class="kpi-change neutral">결제 - 환불</div></div>
-      <div class="card" style="padding:18px"><div class="kpi-label">총 매출액</div><div class="kpi-value">${formatAmt(totalAmt)}<span style="font-size:14px;font-weight:500;color:var(--text-muted)">원</span></div><div class="kpi-change neutral">${data.periods.length}개 구간 누적</div></div>
-      <div class="card" style="padding:18px"><div class="kpi-label">${channelName} 리뷰</div><div class="kpi-value">${totalReviews.toLocaleString()}<span style="font-size:14px;font-weight:500;color:var(--text-muted)">건</span></div><div class="kpi-change neutral">매출 기간 내</div></div>
-      <div class="card" style="padding:18px;background:${convBg(avgConv)}"><div class="kpi-label">평균 전환율</div><div class="kpi-value" style="color:${convColor(avgConv)}">${avgConv.toFixed(2)}<span style="font-size:14px;font-weight:500">%</span></div><div class="kpi-change neutral">리뷰 / 순주문</div></div>
-    </div>
-  `;
-
-  const catRows = order.map(cat => {
-    const s = data.byCategory[cat];
-    if (!s) return '';
-    const revs = reviewByCat[cat] || 0;
-    const rate = s.netOrders > 0 ? (revs/s.netOrders*100) : 0;
-    return `<tr style="border-bottom:1px solid #f3f4f6">
-        <td style="padding:12px;font-weight:600">${catEmoji[cat]||'•'} ${cat}</td>
-        <td style="padding:12px;text-align:right">${s.netOrders.toLocaleString()}</td>
-        <td style="padding:12px;text-align:right;color:#6b7280">${formatAmt(s.amount)}</td>
-        <td style="padding:12px;text-align:right">${revs.toLocaleString()}</td>
-        <td style="padding:12px;text-align:right"><span style="background:${convBg(rate)};color:${convColor(rate)};padding:4px 12px;border-radius:6px;font-weight:700">${rate.toFixed(2)}%</span></td>
-      </tr>`;
-  }).filter(Boolean).join('');
-
-  const periods = data.periods || [];
-  const periodHeader = periods.map(p => `<th style="padding:8px 10px;text-align:right;font-size:11px;color:#6b7280">${p}<br><span style="font-weight:400">(주문건수)</span></th>`).join('');
-  const periodRows = order.map(cat => {
-    const s = data.byCategory[cat];
-    if (!s) return '';
-    const cells = periods.map(p => {
-      const pd = s.periods?.[p];
-      const orders = pd ? pd.netOrders : 0;
-      return `<td style="padding:8px 10px;text-align:right;font-size:13px">${orders > 0 ? orders.toLocaleString() : '<span style="color:#d1d5db">—</span>'}</td>`;
-    }).join('');
-    return `<tr style="border-bottom:1px solid #f3f4f6"><td style="padding:8px 10px;font-weight:500">${catEmoji[cat]||'•'} ${cat}</td>${cells}<td style="padding:8px 10px;text-align:right;font-weight:600;background:#f9fafb">${s.netOrders.toLocaleString()}</td></tr>`;
-  }).filter(Boolean).join('');
-
-  // 자동 인사이트
-  const catConv = order.map(cat => {
-    const s = data.byCategory[cat]; if (!s) return null;
-    const revs = reviewByCat[cat] || 0;
-    return { cat, orders: s.netOrders, revs, rate: s.netOrders > 0 ? revs/s.netOrders*100 : 0 };
-  }).filter(x => x && x.orders >= 50);
-
-  const sortedByRate = [...catConv].sort((a,b) => b.rate - a.rate);
-  const best = sortedByRate[0];
-  const worst = sortedByRate[sortedByRate.length - 1];
-  const insights = [];
-  if (best) insights.push(`<li>🏆 <strong>전환율 1위</strong>: ${catEmoji[best.cat]} ${best.cat} <strong>${best.rate.toFixed(2)}%</strong> (${best.revs.toLocaleString()}건 / ${best.orders.toLocaleString()}주문)</li>`);
-  if (worst && worst.cat !== best?.cat) insights.push(`<li>📉 <strong>전환율 최하위</strong>: ${catEmoji[worst.cat]} ${worst.cat} <strong>${worst.rate.toFixed(2)}%</strong> — 리뷰 유도 캠페인 ROI 큼</li>`);
-  insights.push(`<li>✨ <strong>평균 전환율 ${avgConv.toFixed(2)}%</strong> — 업계 평균(1~3%)과 비교 시 ${avgConv >= 10 ? '매우 높음' : avgConv >= 3 ? '높음' : '평균'}</li>`);
-  if (catConv.find(x => x.rate > 100)) {
-    insights.push(`<li>⚠️ <strong>100% 초과 카테고리 존재</strong> — 1주문에 여러 리뷰(일반+한달후기 등) 또는 매출 데이터에 누락된 SKU가 있을 가능성. 정확도는 카페24가 더 신뢰 가능</li>`);
-  }
-  if (extraNote) insights.push('<li>' + extraNote + '</li>');
-
-  container.innerHTML = `
-    ${kpiHtml}
-    <div class="card" style="margin-bottom:20px;padding:18px">
-      <div class="card-title" style="margin-bottom:12px">📊 ${channelEmoji} 카테고리별 주문건수 vs 리뷰 vs 전환율</div>
-      <table style="width:100%;border-collapse:collapse;font-size:13px">
-        <thead><tr style="background:#fafafa;color:#6b7280;font-size:12px">
-          <th style="padding:10px;text-align:left;font-weight:600">카테고리</th>
-          <th style="padding:10px;text-align:right;font-weight:600">순주문(건)</th>
-          <th style="padding:10px;text-align:right;font-weight:600">매출액</th>
-          <th style="padding:10px;text-align:right;font-weight:600">리뷰(건)</th>
-          <th style="padding:10px;text-align:right;font-weight:600">전환율</th>
-        </tr></thead>
-        <tbody>${catRows}</tbody>
-      </table>
-      <div style="font-size:11px;color:#9ca3af;margin-top:10px">※ 매출 기간(${salesPeriod.start} ~ ${salesPeriod.end}) 내 리뷰만 매칭</div>
-    </div>
-    <div class="card" style="margin-bottom:20px;padding:18px;background:#fefce8;border:1px solid #fde68a">
-      <div style="font-size:14px;font-weight:700;color:#854d0e;margin-bottom:10px">🔍 자동 인사이트</div>
-      <ul style="margin:0;padding-left:20px;font-size:13px;line-height:1.9;color:#374151">${insights.join('')}</ul>
-    </div>
-    <div class="card" style="margin-bottom:20px;padding:18px">
-      <div class="card-title" style="margin-bottom:12px">📅 기간별 주문건수 추이</div>
-      <table style="width:100%;border-collapse:collapse;font-size:13px">
-        <thead><tr style="background:#fafafa;color:#6b7280">
-          <th style="padding:10px;text-align:left;font-size:11px">카테고리</th>
-          ${periodHeader}
-          <th style="padding:10px;text-align:right;font-size:11px;background:#f3f4f6">합계</th>
-        </tr></thead>
-        <tbody>${periodRows}</tbody>
-      </table>
-    </div>
-  `;
-}
-
-// ───── 스마트스토어 렌더링 ─────
-function renderSmartstoreSales() {
-  _renderSelfShopSales('sales-content-smartstore', '스마트스토어', _salesDataCache.smartstore, '🟢',
-    '네이버 페이는 <strong>일반 리뷰 + 한달후기</strong>를 각각 카운트해서 일부 카테고리 전환율이 100% 넘을 수 있음 (정상 시그널)');
-}
-
-// ───── 카페24 렌더링 ─────
-function renderCafe24Sales() {
-  const container = document.getElementById('sales-content-cafe24');
-  const data = _salesDataCache.cafe24;
-  if (!data) {
-    container.innerHTML = '<div style="text-align:center;padding:60px;color:#9ca3af">📊 매출 데이터 로딩 중...</div>';
-    return;
-  }
-
-  // 카페24 리뷰 매칭 — 정규화 함수 (sales.byCategory 키와 동일하게)
-  function _catReview(r) {
-    const p = (r.product || r.product_norm || r.product_category || '').replace(/&amp;/g, '&');
-    if (!p) return null;
-    if (/Protector|UV\s*IN.?&.?OUT|UV\s*IN.?AND.?OUT|UV\s*인앤아웃|인앤아웃\s*프로텍/i.test(p)) return '선크림';
-    if (/UV Healer|UV힐러|앰플/i.test(p)) return '앰플';
-    if (/마스크팩|지우개팩|repair.*kit|face.*neck.*kit|7일팩|자외선.*팩/i.test(p)) {
-      if (p.includes('&') && /핸드크림/i.test(p)) return '종합 패키지';
-      return '마스크팩';
-    }
-    if (/NMN.*Daily Routine|NMN.*Daily Regenerator|NMN.*스킨.?부스터|NMN.*Solution|NMN Skin booster|NMN.*Regenerator/i.test(p)) return 'NMN';
-    if (/Daily Regenerator/i.test(p)) return 'NMN';
-    if (/FISETIN.*NMN|NMN.*특별/i.test(p)) return 'NMN';
-    if (/에센셜 리제너레이터|어드밴스드 리제너레이터|손티에이징 크림|손티에이징 핸드크림|핸드크림 인앤아웃|에센셜 미니어처|에센셜.*기프트|어드밴스드.*기프트|에센셜.*50ml|어드밴스드.*30ml|핸드크림/i.test(p)) return '핸드크림';
-    if (/리버스 루틴|리버스 스타터|역노화.*패키지|리버스.*패키지/i.test(p)) return '종합 패키지';
-    if (/Holiday|명절|설|추석|선물세트|선물 세트|종합선물/i.test(p)) return '시즌 선물세트';
-    return null;
-  }
-
-  const cafe24Reviews = (ALL_REVIEWS || []).filter(r => r.channel === '카페24');
-  const reviewByCat = {};
-  cafe24Reviews.forEach(r => {
-    const c = _catReview(r);
-    if (c) reviewByCat[c] = (reviewByCat[c] || 0) + 1;
-  });
-
-  const convColor = (r) => r >= 5 ? '#10b981' : r >= 2 ? '#3b6cf0' : r >= 1 ? '#f59e0b' : '#ef4444';
-  const convBg = (r) => r >= 5 ? '#dcfce7' : r >= 2 ? '#dbeafe' : r >= 1 ? '#fef3c7' : '#fee2e2';
-
-  const order = ['핸드크림','선크림','NMN','마스크팩','앰플','종합 패키지','시즌 선물세트','기타'];
-  const catEmoji = { '핸드크림':'🤲', '선크림':'🌞', 'NMN':'💊', '마스크팩':'🩹', '앰플':'💧', '종합 패키지':'📦', '시즌 선물세트':'🎁', '기타':'🛒' };
-
-  // KPI
-  const totalOrders = data.totalNetOrders;
-  const totalAmt = data.totalAmount;
-  const totalReviews = cafe24Reviews.length;
-  const avgConv = totalOrders > 0 ? (totalReviews / totalOrders * 100) : 0;
-
-  const kpiHtml = `
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px">
-      <div class="card" style="padding:18px"><div class="kpi-label">총 순주문건수</div><div class="kpi-value">${totalOrders.toLocaleString()}<span style="font-size:14px;font-weight:500;color:var(--text-muted)">건</span></div><div class="kpi-change neutral">결제 - 환불 기준</div></div>
-      <div class="card" style="padding:18px"><div class="kpi-label">총 매출액</div><div class="kpi-value">${Math.round(totalAmt/100000000*10)/10}<span style="font-size:14px;font-weight:500;color:var(--text-muted)">억원</span></div><div class="kpi-change neutral">3년치 누적</div></div>
-      <div class="card" style="padding:18px"><div class="kpi-label">카페24 리뷰</div><div class="kpi-value">${totalReviews.toLocaleString()}<span style="font-size:14px;font-weight:500;color:var(--text-muted)">건</span></div><div class="kpi-change neutral">우리 시스템 누적</div></div>
-      <div class="card" style="padding:18px;background:${convBg(avgConv)}"><div class="kpi-label">평균 전환율</div><div class="kpi-value" style="color:${convColor(avgConv)}">${avgConv.toFixed(2)}<span style="font-size:14px;font-weight:500">%</span></div><div class="kpi-change neutral">리뷰 / 순주문</div></div>
-    </div>
-  `;
-
-  // 카테고리별 표
-  const catRows = order.map(cat => {
-    const s = data.byCategory[cat];
-    if (!s) return '';
-    const revs = reviewByCat[cat] || 0;
-    const rate = s.netOrders > 0 ? (revs/s.netOrders*100) : 0;
-    return `
-      <tr style="border-bottom:1px solid #f3f4f6">
-        <td style="padding:12px;font-weight:600">${catEmoji[cat]||'•'} ${cat}</td>
-        <td style="padding:12px;text-align:right">${s.netOrders.toLocaleString()}</td>
-        <td style="padding:12px;text-align:right;color:#6b7280">${Math.round(s.amount/1000000)}M</td>
-        <td style="padding:12px;text-align:right">${revs.toLocaleString()}</td>
-        <td style="padding:12px;text-align:right">
-          <span style="background:${convBg(rate)};color:${convColor(rate)};padding:4px 12px;border-radius:6px;font-weight:700">${rate.toFixed(2)}%</span>
-        </td>
-      </tr>`;
-  }).filter(Boolean).join('');
-
-  // 기간별 표
-  const periods = data.periods || [];
-  const periodHeader = periods.map(p => `<th style="padding:8px 10px;text-align:right;font-size:11px;color:#6b7280">${p}<br><span style="font-weight:400">(주문건수)</span></th>`).join('');
-  const periodRows = order.map(cat => {
-    const s = data.byCategory[cat];
-    if (!s) return '';
-    const cells = periods.map(p => {
-      const pd = s.periods?.[p];
-      const orders = pd ? pd.netOrders : 0;
-      return `<td style="padding:8px 10px;text-align:right;font-size:13px">${orders > 0 ? orders.toLocaleString() : '<span style="color:#d1d5db">—</span>'}</td>`;
-    }).join('');
-    return `<tr style="border-bottom:1px solid #f3f4f6"><td style="padding:8px 10px;font-weight:500">${catEmoji[cat]||'•'} ${cat}</td>${cells}<td style="padding:8px 10px;text-align:right;font-weight:600;background:#f9fafb">${s.netOrders.toLocaleString()}</td></tr>`;
-  }).filter(Boolean).join('');
-
-  // 자동 인사이트
-  const catConv = order.map(cat => {
-    const s = data.byCategory[cat]; if (!s) return null;
-    const revs = reviewByCat[cat] || 0;
-    return { cat, orders: s.netOrders, revs, rate: s.netOrders > 0 ? revs/s.netOrders*100 : 0 };
-  }).filter(Boolean).filter(x => x.orders >= 50);
-
-  const sortedByRate = [...catConv].sort((a,b) => b.rate - a.rate);
-  const best = sortedByRate[0];
-  const worst = sortedByRate[sortedByRate.length - 1];
-  const insights = [];
-  if (best) insights.push(`<li>🏆 <strong>전환율 1위</strong>: ${catEmoji[best.cat]} ${best.cat} <strong>${best.rate.toFixed(2)}%</strong> (${best.revs.toLocaleString()}건 / ${best.orders.toLocaleString()}주문) — 광고/USP 카피 활용 후보</li>`);
-  if (worst && worst.cat !== best?.cat) insights.push(`<li>📉 <strong>전환율 최하위</strong>: ${catEmoji[worst.cat]} ${worst.cat} <strong>${worst.rate.toFixed(2)}%</strong> (${worst.revs.toLocaleString()}건 / ${worst.orders.toLocaleString()}주문) — 리뷰 유도 캠페인 ROI 큼</li>`);
-  insights.push(`<li>✨ <strong>자사몰 평균 전환율 ${avgConv.toFixed(2)}%</strong> — 업계 평균(1~3%)의 ${(avgConv/2).toFixed(1)}배. 자사몰 단골/팬덤 고객 기반의 강점.</li>`);
-  const nmn = catConv.find(x => x.cat === 'NMN');
-  if (nmn) insights.push(`<li>💊 <strong>NMN 전환율 ${nmn.rate.toFixed(2)}%</strong> — 자사몰 평균보다 낮음. 단가 높은 SKU(Daily Routine 63만원)는 한달후기 자동화 알림톡 ROI 가장 큼.</li>`);
-
-  container.innerHTML = `
-    ${kpiHtml}
-
-    <div class="card" style="margin-bottom:20px;padding:18px">
-      <div class="card-title" style="margin-bottom:12px">📊 카테고리별 주문건수 vs 리뷰 vs 전환율</div>
-      <table style="width:100%;border-collapse:collapse;font-size:13px">
-        <thead><tr style="background:#fafafa;color:#6b7280;font-size:12px">
-          <th style="padding:10px;text-align:left;font-weight:600">카테고리</th>
-          <th style="padding:10px;text-align:right;font-weight:600">순주문(건)</th>
-          <th style="padding:10px;text-align:right;font-weight:600">매출액</th>
-          <th style="padding:10px;text-align:right;font-weight:600">리뷰(건)</th>
-          <th style="padding:10px;text-align:right;font-weight:600">전환율</th>
-        </tr></thead>
-        <tbody>${catRows}</tbody>
-      </table>
-    </div>
-
-    <div class="card" style="margin-bottom:20px;padding:18px;background:#fefce8;border:1px solid #fde68a">
-      <div style="font-size:14px;font-weight:700;color:#854d0e;margin-bottom:10px">🔍 자동 인사이트</div>
-      <ul style="margin:0;padding-left:20px;font-size:13px;line-height:1.9;color:#374151">${insights.join('')}</ul>
-    </div>
-
-    <div class="card" style="margin-bottom:20px;padding:18px">
-      <div class="card-title" style="margin-bottom:12px">📅 기간별 주문건수 추이 (카테고리 × 기간)</div>
-      <table style="width:100%;border-collapse:collapse;font-size:13px">
-        <thead><tr style="background:#fafafa;color:#6b7280">
-          <th style="padding:10px;text-align:left;font-size:11px">카테고리</th>
-          ${periodHeader}
-          <th style="padding:10px;text-align:right;font-size:11px;background:#f3f4f6">합계</th>
-        </tr></thead>
-        <tbody>${periodRows}</tbody>
-      </table>
-      <div style="font-size:11px;color:#9ca3af;margin-top:10px">※ 주문건수 = 결제수량 - 환불수량 (순주문 기준)</div>
-    </div>
-  `;
-}
-
-// 제품 정규화: 매출 데이터 ↔ 리뷰 데이터를 같은 카테고리로 묶기
-function _normalizeProductForSales(name) {
-  if (!name) return '기타';
-  // 매출 데이터 카테고리 (헤더 행 제외)
-  if (name === '상품명') return null;
-  if (/어워즈/.test(name)) return '에센셜 50ml 어워즈 한정기획';
-  if (/에센셜.*기획.*\+10ml/.test(name) || /에센셜.*\+10ml.*증정/.test(name)) return '에센셜 50ml 기획(+10ml)';
-  if (/어드밴스드.*기획/.test(name) || /어드밴스드.*\+에센셜.*증정/.test(name)) return '어드밴스드 30ml 기획(+에센셜10ml)';
-  if (/에센셜.*50ml/.test(name)) return '에센셜 리제너레이터 50ml';
-  if (/어드밴스드.*30ml/.test(name)) return '어드밴스드 리제너레이터 30ml';
-  return name;
-}
-
-// 리뷰 매칭용 정규화 (리뷰 데이터의 product 필드 기준)
-function _normalizeReviewForSales(r) {
-  const p = (r.product || r.product_norm || r.product_category || '').toLowerCase();
-  if (/어워즈/.test(p)) return '에센셜 50ml 어워즈 한정기획';
-  if (/에센셜.*기획/.test(p) || /에센셜.*\+10ml/.test(p)) return '에센셜 50ml 기획(+10ml)';
-  if (/어드밴스드.*기획/.test(p) || /어드밴스드.*\+에센셜/.test(p)) return '어드밴스드 30ml 기획(+에센셜10ml)';
-  if (/에센셜.*50ml|에센셜.*리제너레이터/.test(p)) return '에센셜 리제너레이터 50ml';
-  if (/어드밴스드.*30ml|어드밴스드.*리제너레이터|어드밴스드.*자외선|UV/i.test(p)) return '어드밴스드 리제너레이터 30ml';
-  return null;
-}
-
-function renderOliveyoungSales() {
-  const container = document.getElementById('sales-content-oliveyoung');
-  const data = _salesDataCache.oliveyoung;
-  if (!data) {
-    container.innerHTML = '<div style="text-align:center;padding:60px;color:#9ca3af">📊 매출 데이터 로딩 중...</div>';
-    return;
-  }
-
-  // ── 매출 데이터: 월별 집계 (헤더 행 제외) ──
-  const validTx = (data.transactions || []).filter(t => t.product && t.product !== '상품명' && t.qty > 0);
-  const byMonth = {};
-  validTx.forEach(t => {
-    byMonth[t.ym] = byMonth[t.ym] || {qty:0, amount:0};
-    byMonth[t.ym].qty += t.qty;
-    byMonth[t.ym].amount += t.amount;
-  });
-  const months = Object.keys(byMonth).sort();
-
-  // ── 매출: 정규화된 제품별 집계 ──
-  const salesByProd = {};
-  validTx.forEach(t => {
-    const cat = _normalizeProductForSales(t.product);
-    if (!cat) return;
-    salesByProd[cat] = salesByProd[cat] || {qty:0, amount:0, byMonth:{}};
-    salesByProd[cat].qty += t.qty;
-    salesByProd[cat].amount += t.amount;
-    salesByProd[cat].byMonth[t.ym] = (salesByProd[cat].byMonth[t.ym] || 0) + t.qty;
-  });
-
-  // ── 리뷰: 올리브영만, 정규화된 제품별 집계 ──
-  const oyReviews = (ALL_REVIEWS || []).filter(r => r.channel === '올리브영');
-  const reviewByProd = {};
-  const reviewByMonth = {};
-  oyReviews.forEach(r => {
-    const cat = _normalizeReviewForSales(r);
-    const ym = (r.date || '').slice(0,7);
-    if (cat) {
-      reviewByProd[cat] = reviewByProd[cat] || {count:0, byMonth:{}};
-      reviewByProd[cat].count++;
-      if (ym) reviewByProd[cat].byMonth[ym] = (reviewByProd[cat].byMonth[ym] || 0) + 1;
-    }
-    if (ym) reviewByMonth[ym] = (reviewByMonth[ym] || 0) + 1;
-  });
-
-  // ── 전체 KPI ──
-  const totalQty = Object.values(byMonth).reduce((a,b)=>a+b.qty, 0);
-  const totalAmt = Object.values(byMonth).reduce((a,b)=>a+b.amount, 0);
-  const totalReviews = oyReviews.length;
-  // 신뢰 가능한 기간(2026-01 이후)만 평균 전환율
-  const reliableMonths = months.filter(m => m >= '2026-01');
-  let reliableQty = 0, reliableRev = 0;
-  reliableMonths.forEach(m => {
-    reliableQty += byMonth[m].qty;
-    reliableRev += reviewByMonth[m] || 0;
-  });
-  const avgConv = reliableQty > 0 ? (reliableRev / reliableQty * 100) : 0;
-
-  // ── 색상 코딩 헬퍼 ──
-  const convColor = (rate) => rate >= 3 ? '#10b981' : rate >= 1 ? '#f59e0b' : rate > 0 ? '#ef4444' : '#9ca3af';
-  const convBg = (rate) => rate >= 3 ? '#dcfce7' : rate >= 1 ? '#fef3c7' : rate > 0 ? '#fee2e2' : '#f3f4f6';
-
-  // ── KPI 카드 ──
-  const kpiHtml = `
-    <div class="grid-4 mb-16" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px">
-      <div class="card" style="padding:18px">
-        <div class="kpi-label">총 판매수량</div>
-        <div class="kpi-value">${totalQty.toLocaleString()}<span style="font-size:14px;font-weight:500;color:var(--text-muted)">개</span></div>
-        <div class="kpi-change neutral">${months[0]} ~ ${months[months.length-1]}</div>
-      </div>
-      <div class="card" style="padding:18px">
-        <div class="kpi-label">총 매출액</div>
-        <div class="kpi-value">${Math.round(totalAmt/1000000).toLocaleString()}<span style="font-size:14px;font-weight:500;color:var(--text-muted)">백만원</span></div>
-        <div class="kpi-change neutral">${months.length}개월 누적</div>
-      </div>
-      <div class="card" style="padding:18px">
-        <div class="kpi-label">올영 리뷰 수</div>
-        <div class="kpi-value">${totalReviews.toLocaleString()}<span style="font-size:14px;font-weight:500;color:var(--text-muted)">건</span></div>
-        <div class="kpi-change neutral">우리 시스템 누적</div>
-      </div>
-      <div class="card" style="padding:18px;background:${convBg(avgConv)}">
-        <div class="kpi-label">평균 전환율</div>
-        <div class="kpi-value" style="color:${convColor(avgConv)}">${avgConv.toFixed(2)}<span style="font-size:14px;font-weight:500">%</span></div>
-        <div class="kpi-change neutral">2026-01 이후 신뢰 구간</div>
-      </div>
-    </div>
-  `;
-
-  // ── 월별 추이 표 ──
-  const monthBars = months.map(m => {
-    const sales = byMonth[m];
-    const revs = reviewByMonth[m] || 0;
-    const rate = sales.qty > 0 ? (revs/sales.qty*100) : 0;
-    const reliable = m >= '2026-01' || revs > 0;
-    const note = m === '2025-12' ? ' 🏆 어워즈 기획 출시' : '';
-    return `
-      <tr style="border-bottom:1px solid #f3f4f6">
-        <td style="padding:10px 12px;font-weight:500">${m}${note}</td>
-        <td style="padding:10px 12px;text-align:right">${sales.qty.toLocaleString()}</td>
-        <td style="padding:10px 12px;text-align:right;color:#6b7280">${Math.round(sales.amount/1000000)}M</td>
-        <td style="padding:10px 12px;text-align:right">${revs > 0 ? revs : '<span style="color:#d1d5db">—</span>'}</td>
-        <td style="padding:10px 12px;text-align:right">
-          ${reliable ? `<span style="background:${convBg(rate)};color:${convColor(rate)};padding:3px 10px;border-radius:6px;font-weight:600">${rate.toFixed(2)}%</span>` : '<span style="color:#d1d5db;font-size:11px">수집 X</span>'}
-        </td>
-      </tr>`;
-  }).join('');
-
-  // ── 제품별 분석 ──
-  const prodCards = Object.entries(salesByProd).sort((a,b) => b[1].qty - a[1].qty).map(([cat, sales]) => {
-    const revs = reviewByProd[cat] || {count:0, byMonth:{}};
-    // 신뢰 가능한 기간 매칭
-    let prodReliableQty = 0, prodReliableRev = 0;
-    reliableMonths.forEach(m => {
-      prodReliableQty += (sales.byMonth[m] || 0);
-      prodReliableRev += (revs.byMonth[m] || 0);
-    });
-    const prodRate = prodReliableQty > 0 ? (prodReliableRev / prodReliableQty * 100) : 0;
-
-    // 월별 미니 그래프
-    const monthRows = months.map(m => {
-      const sQty = sales.byMonth[m] || 0;
-      const rCnt = revs.byMonth[m] || 0;
-      const maxQty = Math.max(...Object.values(sales.byMonth), 1);
-      const barWidth = sQty > 0 ? Math.max(2, (sQty/maxQty*100)) : 0;
-      const rate = sQty > 0 ? (rCnt/sQty*100) : 0;
-      const reliable = m >= '2026-01' || rCnt > 0;
-      return `
-        <tr style="border-bottom:1px solid #f9fafb;font-size:12px">
-          <td style="padding:6px 8px;color:#6b7280">${m}</td>
-          <td style="padding:6px 8px;width:35%">
-            <div style="display:flex;align-items:center;gap:6px">
-              <div style="height:6px;background:#3b6cf0;width:${barWidth}%;border-radius:3px;min-width:${sQty>0?'2px':'0'}"></div>
-              <span style="color:#374151;font-weight:500">${sQty.toLocaleString()}</span>
-            </div>
-          </td>
-          <td style="padding:6px 8px;text-align:right">${rCnt > 0 ? rCnt : '<span style="color:#d1d5db">—</span>'}</td>
-          <td style="padding:6px 8px;text-align:right">
-            ${reliable && sQty > 0 ? `<span style="background:${convBg(rate)};color:${convColor(rate)};padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600">${rate.toFixed(1)}%</span>` : '<span style="color:#d1d5db;font-size:11px">—</span>'}
-          </td>
-        </tr>`;
-    }).join('');
-
-    return `
-      <div class="card" style="padding:0;overflow:hidden;margin-bottom:14px;border:1px solid #e5e7eb">
-        <div style="padding:16px 18px;background:linear-gradient(135deg,#f8faff 0%,#eff6ff 100%);border-bottom:1px solid #e5e7eb">
-          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
-            <div style="font-size:15px;font-weight:700;color:#111827">${cat}</div>
-            <div style="display:flex;gap:14px;align-items:center">
-              <div style="text-align:right"><div style="font-size:11px;color:#6b7280">누적 판매</div><div style="font-size:14px;font-weight:700">${sales.qty.toLocaleString()}개</div></div>
-              <div style="text-align:right"><div style="font-size:11px;color:#6b7280">매출액</div><div style="font-size:14px;font-weight:700">${Math.round(sales.amount/1000000)}M</div></div>
-              <div style="text-align:right"><div style="font-size:11px;color:#6b7280">누적 리뷰</div><div style="font-size:14px;font-weight:700">${revs.count}건</div></div>
-              <div style="text-align:right;background:${convBg(prodRate)};padding:6px 12px;border-radius:8px"><div style="font-size:11px;color:${convColor(prodRate)}">전환율(26-01~)</div><div style="font-size:16px;font-weight:800;color:${convColor(prodRate)}">${prodRate.toFixed(2)}%</div></div>
-            </div>
-          </div>
-        </div>
-        <table style="width:100%;border-collapse:collapse">
-          <thead><tr style="background:#fafafa;font-size:11px;color:#6b7280">
-            <th style="padding:8px 10px;text-align:left">월</th>
-            <th style="padding:8px 10px;text-align:left">판매</th>
-            <th style="padding:8px 10px;text-align:right">리뷰</th>
-            <th style="padding:8px 10px;text-align:right">전환율</th>
-          </tr></thead>
-          <tbody>${monthRows}</tbody>
-        </table>
-      </div>
-    `;
-  }).join('');
-
-  // ── 자동 인사이트 ──
-  const topProd = Object.entries(salesByProd).sort((a,b)=>b[1].qty-a[1].qty)[0];
-  const bestConvProd = Object.entries(salesByProd).map(([cat,s]) => {
-    let q=0,r=0;
-    reliableMonths.forEach(m => { q += s.byMonth[m]||0; r += (reviewByProd[cat]?.byMonth[m]||0); });
-    return [cat, q>0 ? r/q*100 : 0, q, r];
-  }).filter(x => x[2] > 50).sort((a,b)=>b[1]-a[1]);
-  const insights = [];
-  insights.push(`<li>📦 <strong>매출 1위</strong>: ${topProd[0]} (${topProd[1].qty.toLocaleString()}개 / ${Math.round(topProd[1].amount/1000000)}M원)</li>`);
-  if (bestConvProd[0]) insights.push(`<li>🎯 <strong>전환율 1위</strong>: ${bestConvProd[0][0]} (${bestConvProd[0][1].toFixed(2)}%, 26-01 이후 ${bestConvProd[0][3]}건/${bestConvProd[0][2].toLocaleString()}개)</li>`);
-  if (bestConvProd[bestConvProd.length-1] && bestConvProd.length > 1) {
-    const worst = bestConvProd[bestConvProd.length-1];
-    insights.push(`<li>⚠️ <strong>전환율 최하위</strong>: ${worst[0]} (${worst[1].toFixed(2)}%) — 리뷰 유도 캠페인 검토</li>`);
-  }
-  insights.push(`<li>🏆 <strong>2025-12 매출 피크</strong>: 7,764개 (어워즈 기획 출시 효과) — 같은 구조의 한정기획 재실행 검토</li>`);
-  insights.push(`<li>📉 <strong>2025년 리뷰 수집 공백</strong>: 3~6월, 8~9월은 우리 시스템 미가동 기간. 진짜 전환율은 2026-01 이후만 신뢰</li>`);
-  if (avgConv >= 1.5) insights.push(`<li>✅ <strong>평균 전환율 ${avgConv.toFixed(2)}%</strong> — 업계 평균(1~3%) 정상 범위</li>`);
-  else insights.push(`<li>🔻 <strong>평균 전환율 ${avgConv.toFixed(2)}%</strong> — 업계 평균 하단. 알림톡 / 인센티브 캠페인 ROI 큼</li>`);
-
-  container.innerHTML = `
-    <div style="background:#fef3c7;border:1px solid #fde68a;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:12.5px;color:#854d0e;line-height:1.6">
-      ⚠️ <strong>올리브영은 매장 판매 특성상 "주문건수" 데이터가 없어요.</strong> 받은 매출 파일은 <strong>일별 판매수량</strong>만 포함 (한 명이 여러 개 사면 1결제·N수량). 따라서 전환율 수치는 <strong>참고용</strong>이며, 자사몰(카페24)의 주문건수 기반 전환율과 직접 비교 어렵습니다.
-    </div>
-
-    ${kpiHtml}
-
-    <div class="card" style="margin-bottom:20px;padding:18px">
-      <div class="card-title" style="margin-bottom:12px">📅 월별 판매 vs 리뷰 vs 전환율 (참고치)</div>
-      <table style="width:100%;border-collapse:collapse;font-size:13px">
-        <thead><tr style="background:#fafafa;color:#6b7280;font-size:12px">
-          <th style="padding:10px 12px;text-align:left;font-weight:600">월</th>
-          <th style="padding:10px 12px;text-align:right;font-weight:600">판매(개)</th>
-          <th style="padding:10px 12px;text-align:right;font-weight:600">매출(원)</th>
-          <th style="padding:10px 12px;text-align:right;font-weight:600">리뷰(건)</th>
-          <th style="padding:10px 12px;text-align:right;font-weight:600">전환율</th>
-        </tr></thead>
-        <tbody>${monthBars}</tbody>
-      </table>
-      <div style="font-size:11px;color:#9ca3af;margin-top:10px">※ 2025-03~12 일부 월의 전환율이 낮은 건 우리 리뷰 수집 시스템 미가동 영향. 2026-01부터 신뢰 가능.</div>
-    </div>
-
-    <div class="card" style="margin-bottom:20px;padding:18px;background:#fefce8;border:1px solid #fde68a">
-      <div style="font-size:14px;font-weight:700;color:#854d0e;margin-bottom:10px">🔍 자동 인사이트</div>
-      <ul style="margin:0;padding-left:20px;font-size:13px;line-height:1.9;color:#374151">${insights.join('')}</ul>
-    </div>
-
-    <div style="margin-bottom:12px;font-size:15px;font-weight:700;color:#111827">📦 제품별 상세 분석</div>
-    ${prodCards}
-  `;
 }
 
 // ===== DASHBOARD =====
@@ -5783,6 +5072,7 @@ let insightsInitialized = false;
 function initInsights() {
   if(insightsInitialized) return;
   insightsInitialized = true;
+  MONTHS = getActiveMonths();
   renderInsightsOverview();
   renderInsightsKeywords();
   renderInsightsProducts();
@@ -5804,7 +5094,8 @@ function getActiveMonths() {
   });
   return Array.from(monthSet).sort();
 }
-const MONTHS = getActiveMonths();
+// 리뷰 데이터는 페이지가 열린 뒤에 불러오므로, 인사이트를 처음 그릴 때 월 목록을 채운다
+let MONTHS = [];
 
 function getMonthlyData() {
   return MONTHS.map(m => {
