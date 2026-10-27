@@ -162,6 +162,63 @@
   .voc-modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;font-size:14px}
   .voc-modal-x{border:0;background:transparent;font-size:16px;cursor:pointer;color:var(--text-muted);padding:4px 8px;border-radius:6px}
   .voc-modal-x:hover{background:var(--bg);color:var(--text-primary)}
+  /* 📋 리뷰 주간 리포트 (Biz Index 주간 리포트 형식) */
+  .wr-modal{position:fixed;inset:0;background:rgba(17,24,39,.45);display:flex;align-items:flex-start;justify-content:center;z-index:990;padding:24px 16px;overflow:auto}
+  .wr-modal[hidden]{display:none}
+  .wr-box{background:var(--white);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);width:min(860px,100%);padding:20px 22px 24px}
+  .wr-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+  .wr-top h3{margin:0;font-size:18px}
+  .wr-top .wr-period{font-size:12.5px;color:var(--text-muted)}
+  .wr-tools{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+  .wr-summary{background:#eef3ff;border-left:3px solid #1e50ff;border-radius:8px;padding:10px 14px;font-weight:700;font-size:13.5px;margin-bottom:14px}
+  .wr-sec{border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:12px}
+  .wr-h{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14.5px;margin-bottom:8px}
+  .wr-n{width:22px;height:22px;border-radius:6px;background:#1e50ff;color:#fff;font-size:12px;display:inline-flex;align-items:center;justify-content:center}
+  .wr-h small{font-weight:500;color:var(--text-muted);font-size:12px}
+  .wr-cnt{background:#eef3ff;color:#1e50ff;border-radius:999px;padding:0 8px;font-size:12px}
+  .wr-p{font-size:13.5px;margin:0 0 10px;line-height:1.7}
+  .wr-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+  .wr-kpi{background:#f6f8fd;border-radius:8px;padding:10px 12px;min-width:0}
+  .wr-kpi .k{font-size:11.5px;color:var(--text-secondary);font-weight:600}
+  .wr-kpi .v{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums}
+  .wr-kpi .d{font-size:11.5px;color:var(--text-muted)}
+  .wr-up{color:var(--positive);font-weight:700}.wr-down{color:var(--negative);font-weight:700}
+  .wr-cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:10px}
+  .wr-col{border:1px solid var(--border);border-radius:8px;padding:10px 12px;min-width:0}
+  .wr-col h4{margin:0 0 6px;font-size:12.5px}
+  .wr-col.g h4{color:var(--positive)}.wr-col.r h4{color:var(--negative)}
+  .wr-mv{display:flex;justify-content:space-between;gap:8px;font-size:13px;padding:3px 0}
+  .wr-mv small{color:var(--text-muted);font-variant-numeric:tabular-nums}
+  .wr-tbl{overflow-x:auto}
+  .wr-tbl table{width:100%;border-collapse:collapse;font-size:12.5px;min-width:480px}
+  .wr-tbl th,.wr-tbl td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--border)}
+  .wr-tbl th{font-size:11.5px;color:var(--text-muted)}
+  .wr-tbl .r{text-align:right;font-variant-numeric:tabular-nums}
+  .wr-chip{display:inline-block;font-size:11px;background:#f3f4f6;color:#4b5563;border-radius:999px;padding:0 7px;margin-right:3px}
+  .wr-bars{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;align-items:end;height:120px}
+  .wr-bar{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px;height:100%}
+  .wr-bar i{display:block;width:100%;max-width:48px;background:#dbe4fb;border-radius:5px 5px 0 0}
+  .wr-bar.cur i{background:#1e50ff}
+  .wr-bar b{font-size:12px;font-variant-numeric:tabular-nums}
+  .wr-bar span{font-size:11px;color:var(--text-muted)}
+  .wr-flag{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;border:1px solid var(--border);border-radius:8px;padding:8px 10px;margin-bottom:6px}
+  .wr-flag b{display:block;font-size:13px}.wr-flag p{margin:0;font-size:12.5px;color:var(--text-secondary)}
+  .wr-tag{font-size:11px;font-weight:700;border-radius:5px;padding:2px 7px;white-space:nowrap;align-self:start}
+  .wr-tag.warn{background:#fdf0dc;color:#b35c00}.wr-tag.note{background:#eceff6;color:#4a5677}.wr-tag.good{background:#e2f5ec;color:#0f8a5f}
+  .wr-none{font-size:12.5px;color:var(--text-muted)}
+  .wr-vgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .wr-vgrid h4{margin:0 0 6px;font-size:12.5px}
+  .wr-voice{border-left:3px solid var(--border);padding:4px 0 4px 10px;margin-bottom:8px;font-size:12.5px;cursor:pointer}
+  .wr-voice:hover{background:#f6f8fd}
+  .wr-voice.pos{border-color:var(--positive)}.wr-voice.chk{border-color:#f59e0b}
+  .wr-voice .m{font-size:11px;color:var(--text-muted)}
+  .wr-todo{list-style:none;margin:0;padding:0}
+  .wr-todo li{display:grid;grid-template-columns:70px minmax(0,1fr) auto;gap:8px;align-items:center;font-size:13px;padding:6px 0;border-bottom:1px solid var(--border)}
+  .wr-todo li:last-child{border-bottom:0}
+  .wr-todo .who{font-size:11.5px;color:var(--text-muted)}
+  .wr-month{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .wr-foot{font-size:11.5px;color:var(--text-muted);margin-top:4px}
+  @media (max-width:640px){.wr-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.wr-cols,.wr-vgrid,.wr-month{grid-template-columns:minmax(0,1fr)}}
   .voc-m-meta{font-size:11.5px;color:var(--text-muted)}
   .voc-m-product{font-size:14px;font-weight:700;color:var(--text-primary);margin:4px 0 8px;line-height:1.4}
   .voc-m-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
@@ -878,7 +935,7 @@ window.logoutEGA = logoutEGA;
         </div>
         <button class="logout-btn" onclick="logoutEGA()" title="로그아웃">로그아웃</button>
       </div>
-      <div id="build-stamp">BUILD 251026-B · 자동 답변(템플릿) · 게시 서버 자동 선택</div>
+      <div id="build-stamp">BUILD 251027-A · 리뷰 주간 리포트(BI 형식)</div>
     </div>
   </aside>
 
@@ -1176,7 +1233,8 @@ window.logoutEGA = logoutEGA;
               <button data-mode="month" onclick="setVocMode('month')">월간</button>
             </div>
             <select class="filter-select" id="voc-period" onchange="renderVoc()"></select>
-            <button class="btn btn-primary btn-sm" onclick="downloadVocExcel()">📥 회의용 엑셀 다운로드</button>
+            <button class="btn btn-primary btn-sm" onclick="openWeeklyReport()">📋 주간 리포트</button>
+            <button class="btn btn-outline btn-sm" onclick="downloadVocExcel()">📥 회의용 엑셀 다운로드</button>
             <button class="btn btn-outline btn-sm" id="voc-copy-btn" onclick="copyVocText()">슬랙용 요약 복사</button>
           </div>
         </div>
@@ -1187,6 +1245,21 @@ window.logoutEGA = logoutEGA;
         <div class="voc-modal-box" role="dialog" aria-label="리뷰 원본">
           <div class="voc-modal-head"><b>리뷰 원본</b><button class="voc-modal-x" onclick="closeVocReview()" aria-label="닫기">✕</button></div>
           <div id="voc-modal-body"></div>
+        </div>
+      </div>
+
+      <div class="wr-modal" id="wr-modal" hidden onclick="if(event.target===this)closeWeeklyReport()">
+        <div class="wr-box" role="dialog" aria-label="리뷰 주간 리포트">
+          <div class="wr-top">
+            <div><h3>📋 리뷰 주간 리포트</h3><div class="wr-period" id="wr-period"></div></div>
+            <div class="wr-tools">
+              <select class="filter-select" id="wr-week" onchange="renderWeeklyReport()"></select>
+              <button class="btn btn-outline btn-sm" id="wr-copy-btn" onclick="copyWeeklyReport()">슬랙용 복사</button>
+              <button class="btn btn-outline btn-sm" onclick="downloadWeeklyReportExcel()">📥 엑셀</button>
+              <button class="voc-modal-x" onclick="closeWeeklyReport()" aria-label="닫기">✕</button>
+            </div>
+          </div>
+          <div id="wr-body"></div>
         </div>
       </div>
 
@@ -2655,6 +2728,234 @@ function copyVocText(){
     cur.praise.slice(0,2).forEach(r => lines.push(`- [${_vocProduct(r)}] ${_vocCut(r.text, 70)}`));
   }
   copyTextWithFeedback(lines.join('\n'), document.getElementById('voc-copy-btn'));
+}
+
+// ===== 📋 리뷰 주간 리포트 (Biz Index '기획팀 주간 리포트' 형식) =====
+// 한 줄 요약 → ①전체 ②채널 ③제품 → 6주 흐름 → 레드플래그/긍정 신호(규칙 기반) → 고객의 소리 → 할 일 → 월간 누계
+let _wrCurrent = null;
+function _wrPct(a, b){ return b ? Math.round((a - b) / b * 100) : null; }
+function _wrChg(p){ return p === null ? '<span class="wr-up">신규</span>' : p > 0 ? `<span class="wr-up">▲ ${p}%</span>` : p < 0 ? `<span class="wr-down">▼ ${-p}%</span>` : '–'; }
+function _wrChgText(p){ return p === null ? '신규' : p > 0 ? `+${p}%` : p < 0 ? `${p}%` : '변화 없음'; }
+// 스마트스토어 리뷰는 "본문 앞부분... 본문 전체" 형태라 앞의 미리보기를 떼어낸다
+function _wrText(t){
+  const s = String(t || '');
+  const re = /\.\.\.\s+/g; let m;
+  while ((m = re.exec(s))) { const rest = s.slice(m.index + m[0].length); if (m.index >= 8 && rest.startsWith(s.slice(0, 8))) return rest; }
+  return s.replace(/\s*스마트스토어에서 작성된 구매평\s*$/, '');
+}
+function _wrWeek(start){ const list = ALL_REVIEWS.filter(r => r.date >= start && r.date <= _vocAddDays(start, 6)); return list; }
+
+function _wrBuild(start){
+  const end = _vocAddDays(start, 6);
+  const S = _vocStats(start, end);
+  const P = _vocStats(_vocAddDays(start, -7), _vocAddDays(start, -1));
+  const prevN = [1,2,3,4,5].map(i => _wrWeek(_vocAddDays(start, -7*i)).length);
+  const avg5 = Math.round(prevN.reduce((a,b) => a+b, 0) / 5);
+  const six = [5,4,3,2,1,0].map(i => { const s = _vocAddDays(start, -7*i); return { s, n: i ? prevN[i-1] : S.total }; });
+
+  // 답변 현황 (크리마 답변 상태 데이터 기준)
+  const crema = S.list.filter(r => getCremaReviewId(r));
+  let ans = null;
+  if (crema.length && !(CREMA_ANSWERED_IDS && CREMA_ANSWERED_IDS.size)) ans = { n: crema.length, stale: true };
+  else if (crema.length) {
+    const maxAns = Math.max(...[...CREMA_ANSWERED_IDS].map(Number));
+    const minCur = Math.min(...crema.map(r => Number(getCremaReviewId(r))));
+    ans = maxAns >= minCur ? { n: crema.length, done: crema.filter(r => CREMA_ANSWERED_IDS.has(String(getCremaReviewId(r))) || r.reply_status === 'posted').length } : { n: crema.length, stale: true };
+  }
+
+  // 채널 · 제품
+  const chMap = {}; S.channels.forEach(([c, n]) => chMap[c] = { c, n, prev: 0 });
+  P.channels.forEach(([c, n]) => { (chMap[c] = chMap[c] || { c, n: 0, prev: 0 }).prev = n; });
+  const channels = Object.values(chMap).map(x => Object.assign(x, { chg: _wrPct(x.n, x.prev) })).sort((a,b) => b.n - a.n);
+  const pPrev = {}; P.products.forEach(p => pPrev[p.name] = p.total);
+  const names = new Set([...S.products.map(p => p.name), ...P.products.map(p => p.name)]);
+  const products = [...names].map(name => {
+    const c = S.products.find(p => p.name === name) || { total: 0, pos: 0, neg: 0 };
+    const kw = _vocCount(S.list.filter(r => _vocProduct(r) === name), r => r.keywords).slice(0,2).map(([k]) => k);
+    return { name, n: c.total, prev: pPrev[name] || 0, chg: _wrPct(c.total, pPrev[name] || 0), posRate: c.total ? Math.round(c.pos / c.total * 100) : null, neg: c.neg, kw };
+  }).sort((a,b) => b.n - a.n);
+  const grew = products.filter(p => p.n > p.prev && (p.prev === 0 ? p.n >= 2 : p.chg >= 20)).slice(0, 4);
+  const fell = products.filter(p => p.prev >= 2 && p.chg <= -20).slice(0, 4);
+
+  // 🚩 레드플래그 · 📈 긍정 신호 (규칙 기반)
+  const flags = [], goods = [];
+  if (S.neg >= 5 && P.neg && S.neg >= P.neg * 1.5) flags.push(['warn', '부정 리뷰 급증', `전주 대비 ${_wrPct(S.neg, P.neg)}% 증가(${P.neg}건→${S.neg}건).`]);
+  products.forEach(p => { if (p.n >= 5 && p.neg >= 2 && p.neg / p.n >= 0.15) flags.push(['warn', `${p.name} 부정 비율 높음`, `이번 주 ${p.n}건 중 부정 ${p.neg}건(${Math.round(p.neg / p.n * 100)}%).`]); });
+  S.issueKeywords.filter(([,n]) => n >= 3).slice(0, 2).forEach(([k, n]) => flags.push(['warn', `불만 키워드 반복: "${k}"`, `부정·이슈 리뷰에서 ${n}회 언급.`]));
+  if (prevN[1] > prevN[0] && prevN[0] > S.total) flags.push(['warn', '리뷰 수 3주 연속 감소', `최근 3주 ${prevN[1]}건→${prevN[0]}건→${S.total}건. 구매 후 리뷰 요청 흐름 점검 필요.`]);
+  channels.forEach(x => { if (x.prev >= 3 && x.n === 0) flags.push(['warn', `${x.c} 리뷰 0건`, `전주 ${x.prev}건 → 이번 주 0건. 수집이 멈췄는지 확인 필요.`]); });
+  const oyLast = ALL_REVIEWS.filter(r => /올리브영/.test(r.channel || '')).map(r => r.date).sort().pop();
+  if (oyLast && oyLast < _vocAddDays(start, -14)) flags.push(['note', '올리브영 리뷰 수집 중단', `마지막 수집 ${oyLast}. 올리브영이 자동 접속을 막아 수집이 멈춘 상태입니다.`]);
+  if (ans && ans.stale) flags.push(['note', '답변 현황 확인 불가', `크리마 답변 상태 데이터가 이번 주보다 오래돼 리뷰 ${ans.n}건의 답변 여부를 알 수 없습니다.`]);
+  else if (ans && ans.n >= 3 && ans.done / ans.n < 0.5) flags.push(['warn', '답변률 낮음', `이번 주 크리마 리뷰 ${ans.n}건 중 답변 ${ans.done}건(${Math.round(ans.done / ans.n * 100)}%).`]);
+  if (products[0] && S.total >= 5 && products[0].n / S.total >= 0.5) flags.push(['note', '제품 편중', `${products[0].name} 리뷰가 이번 주의 ${Math.round(products[0].n / S.total * 100)}%. 다른 제품 리뷰 요청 점검.`]);
+  if (P.total && S.total > P.total) goods.push(['good', '리뷰 수 증가', `전주 대비 ${_wrPct(S.total, P.total)}% 증가(${P.total}건→${S.total}건).`]);
+  if (S.total >= 5 && P.total && S.posPct > P.posPct) goods.push(['good', '긍정 비율 상승', `${P.posPct}% → ${S.posPct}%.`]);
+  if (S.repurchase > P.repurchase) goods.push(['good', '재구매 언급 증가', `${P.repurchase}건 → ${S.repurchase}건.`]);
+  grew.filter(p => p.prev >= 3).forEach(p => goods.push(['good', `${p.name} 리뷰 증가`, `전주 대비 ${p.chg}% 증가(${p.prev}건→${p.n}건).`]));
+
+  // 🗓 이번 주 할 일 (자동 제안)
+  const todo = [];
+  if (S.praise.length) todo.push(['이번 주', `마케팅 후보 리뷰 ${Math.min(S.praise.length, 3)}건 상세페이지·SNS 소재 검토`, '마케팅']);
+  if (S.issues.length) todo.push(['이번 주', `확인 필요 리뷰 ${S.issues.length}건 원문 확인 후 답변 (감정 분류가 틀렸으면 아카이브에서 수정)`, 'CS']);
+  if (S.questions.length) todo.push(['이번 주', `질문 리뷰 ${S.questions.length}건 답변 + 상세페이지 안내 보완`, 'CS']);
+  if (ans && !ans.stale && ans.n - ans.done > 0) todo.push(['이번 주', `이번 주 미답변 리뷰 ${ans.n - ans.done}건 답변`, 'CS']);
+  flags.filter(f => f[0] === 'warn').forEach(f => todo.push(['확인', `${f[1]} — 원인 확인`, '담당 지정']));
+
+  // 📆 월간 누계 (리포트 주의 마지막 날이 속한 달)
+  const mStart = _vocMonthStart(end), mEnd = _vocMonthEnd(mStart);
+  const latest = ALL_REVIEWS.map(r => r.date).filter(Boolean).sort().pop() || end;
+  const mLast = latest < mEnd ? latest : mEnd;
+  const mtd = ALL_REVIEWS.filter(r => r.date >= mStart && r.date <= mLast).length;
+  const pmStart = _vocAddMonths(mStart, -1);
+  const prevMonth = ALL_REVIEWS.filter(r => r.date >= pmStart && r.date <= _vocMonthEnd(pmStart)).length;
+  const days = Number(mLast.slice(8, 10)), dim = Number(mEnd.slice(8, 10));
+  const done = mLast >= mEnd;
+  const pace = done ? mtd : Math.round(mtd / Math.max(days, 1) * dim);
+  const month = { label: `${mStart.slice(0,4)}-${mStart.slice(5,7)}`, mtd, prevMonth, days, done, pace, pacePct: _wrPct(pace, prevMonth) };
+
+  const flagNames = flags.slice(0, 3).map(f => f[1]).join(', ');
+  const summary = `이번 주 리뷰 ${S.total}건(전주 대비 ${_wrChgText(_wrPct(S.total, P.total))}), 긍정 ${S.posPct}%.` + (flags.length ? ` 레드플래그 ${flags.length}건(${flagNames}${flags.length > 3 ? ' 등' : ''}).` : ' 레드플래그 없음.');
+  return { start, end, S, P, avg5, six, ans, channels, products, grew, fell, flags, goods, todo, month, summary };
+}
+
+function _wrBuildWeekOptions(){
+  const sel = document.getElementById('wr-week');
+  if (!sel || sel.options.length) return;
+  const thisMon = _vocMonday(_vocToday());
+  const opts = [];
+  for (let i = 1; i <= 12; i++) { const s = _vocAddDays(thisMon, -7*i); opts.push(`<option value="${s}">${_vocLabel('week', s)}${i === 1 ? ' · 지난주' : ''}</option>`); }
+  sel.innerHTML = opts.join('');
+}
+function openWeeklyReport(){
+  _wrBuildWeekOptions();
+  document.getElementById('wr-modal').hidden = false;
+  renderWeeklyReport();
+}
+function closeWeeklyReport(){ const m = document.getElementById('wr-modal'); if (m) m.hidden = true; }
+// 리뷰 원본 창이 위에 떠 있으면 Esc는 그 창만 닫도록 (capture로 먼저 상태 확인)
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.getElementById('voc-modal')?.hidden !== false) closeWeeklyReport(); }, true);
+
+function renderWeeklyReport(){
+  const body = document.getElementById('wr-body');
+  if (!body) return;
+  if (!Array.isArray(ALL_REVIEWS) || !ALL_REVIEWS.length) { body.innerHTML = '<div class="wr-none">리뷰 데이터를 불러오는 중이에요.</div>'; return; }
+  const d = _wrCurrent = _wrBuild(document.getElementById('wr-week').value);
+  const { S, P } = d;
+  const esc = _cstEsc;
+  document.getElementById('wr-period').textContent = `${_vocMd(d.start)} ~ ${_vocMd(d.end)} · 기준일 ${_vocMd(d.end)}`;
+  const maxSix = Math.max(1, ...d.six.map(x => x.n));
+  const flag = f => `<div class="wr-flag"><span class="wr-tag ${f[0]}">${f[0] === 'warn' ? '주의' : f[0] === 'note' ? '참고' : '개선'}</span><div><b>${esc(f[1])}</b><p>${esc(f[2])}</p></div></div>`;
+  const voice = (r, cls) => `<div class="wr-voice ${cls}" onclick="openVocReview('${r.id}')"><div class="m">${_vocMd(r.date)} · ${esc(r.channel || '')} · ${esc(_vocProduct(r))}</div>${esc(_vocCut(_wrText(r.text), 120))}</div>`;
+  const checks = S.issues.concat(S.questions.filter(q => !S.issues.includes(q)));
+  const ansKpi = !d.ans ? ['–', '크리마 리뷰 없음'] : d.ans.stale ? ['확인 불가', '답변 상태 데이터 갱신 필요'] : [`${d.ans.done}/${d.ans.n}`, `답변률 ${Math.round(d.ans.done / d.ans.n * 100)}%`];
+
+  body.innerHTML = `
+    <div class="wr-summary">${esc(d.summary)}</div>
+    <div class="wr-sec">
+      <div class="wr-h"><span class="wr-n">1</span>주간 전체 리뷰</div>
+      <p class="wr-p">이번 주 리뷰는 <b>${S.total}건</b>으로, 전주(${P.total}건) 대비 ${_wrChg(_wrPct(S.total, P.total))}, 직전 5주 평균(${d.avg5}건) 대비 ${_wrChg(_wrPct(S.total, d.avg5))}입니다.</p>
+      <div class="wr-kpis">
+        <div class="wr-kpi"><div class="k">주간 리뷰</div><div class="v">${S.total}건</div><div class="d">전주 ${P.total}건</div></div>
+        <div class="wr-kpi"><div class="k">긍정 비율</div><div class="v">${S.posPct}%</div><div class="d">전주 ${P.posPct}%</div></div>
+        <div class="wr-kpi"><div class="k">확인 필요 · 질문</div><div class="v">${S.issues.length} · ${S.questions.length}건</div><div class="d">전주 ${P.issues.length} · ${P.questions.length}건</div></div>
+        <div class="wr-kpi"><div class="k">답변 완료</div><div class="v">${ansKpi[0]}</div><div class="d">${ansKpi[1]}</div></div>
+      </div>
+    </div>
+    <div class="wr-sec">
+      <div class="wr-h"><span class="wr-n">2</span>채널별 리뷰</div>
+      <div class="wr-tbl"><table><thead><tr><th>채널</th><th class="r">이번 주</th><th class="r">전주</th><th class="r">전주 대비</th></tr></thead><tbody>
+        ${d.channels.map(c => `<tr><td>${esc(c.c)}</td><td class="r">${c.n}</td><td class="r">${c.prev}</td><td class="r">${_wrChg(c.chg)}</td></tr>`).join('') || '<tr><td colspan="4" class="wr-none">리뷰 없음</td></tr>'}
+      </tbody></table></div>
+    </div>
+    <div class="wr-sec">
+      <div class="wr-h"><span class="wr-n">3</span>제품별 증가 / 감소</div>
+      <div class="wr-cols">
+        <div class="wr-col g"><h4>▲ 늘어난 제품</h4>${d.grew.map(p => `<div class="wr-mv"><span>${esc(p.name)}</span><span>${_wrChg(p.chg)} <small>${p.prev}→${p.n}</small></span></div>`).join('') || '<div class="wr-none">없음</div>'}</div>
+        <div class="wr-col r"><h4>▼ 줄어든 제품</h4>${d.fell.map(p => `<div class="wr-mv"><span>${esc(p.name)}</span><span>${_wrChg(p.chg)} <small>${p.prev}→${p.n}</small></span></div>`).join('') || '<div class="wr-none">없음</div>'}</div>
+      </div>
+      <div class="wr-tbl"><table><thead><tr><th>제품</th><th class="r">리뷰</th><th class="r">전주 대비</th><th class="r">긍정률</th><th>많이 나온 말</th></tr></thead><tbody>
+        ${d.products.map(p => `<tr><td>${esc(p.name)}</td><td class="r">${p.n}</td><td class="r">${_wrChg(p.chg)}</td><td class="r">${p.posRate === null ? '–' : p.posRate + '%'}</td><td>${p.kw.map(k => `<span class="wr-chip">${esc(k)}</span>`).join('')}</td></tr>`).join('')}
+      </tbody></table></div>
+    </div>
+    <div class="wr-sec">
+      <div class="wr-h">최근 6주 리뷰 흐름</div>
+      <div class="wr-bars">${d.six.map((x, i) => `<div class="wr-bar${i === 5 ? ' cur' : ''}"><b>${x.n}</b><i style="height:${Math.max(4, Math.round(x.n / maxSix * 80))}%"></i><span>${_vocMd(x.s)}~</span></div>`).join('')}</div>
+    </div>
+    <div class="wr-sec">
+      <div class="wr-h">🚩 이번 주 레드플래그 <span class="wr-cnt">${d.flags.length}</span></div>
+      ${d.flags.map(flag).join('') || '<div class="wr-none">이번 주에 걸린 레드플래그가 없어요.</div>'}
+    </div>
+    <div class="wr-sec">
+      <div class="wr-h">📈 긍정적 신호 <span class="wr-cnt">${d.goods.length}</span></div>
+      ${d.goods.map(flag).join('') || '<div class="wr-none">이번 주에 눈에 띄는 개선 신호는 없어요.</div>'}
+    </div>
+    <div class="wr-sec">
+      <div class="wr-h">💬 이번 주 고객의 소리 <small>누르면 원본이 열려요</small></div>
+      <div class="wr-vgrid">
+        <div><h4>👍 마케팅 활용 후보</h4>${S.praise.slice(0, 3).map(r => voice(r, 'pos')).join('') || '<div class="wr-none">없음</div>'}</div>
+        <div><h4>⚠ 확인 필요 · 질문</h4>${checks.slice(0, 4).map(r => voice(r, 'chk')).join('') || '<div class="wr-none">없음</div>'}</div>
+      </div>
+    </div>
+    <div class="wr-sec">
+      <div class="wr-h">🗓 이번 주 할 일</div>
+      ${d.todo.length ? `<ul class="wr-todo">${d.todo.map(t => `<li><span class="wr-tag ${t[0] === '확인' ? 'warn' : 'note'}">${esc(t[0])}</span><span>${esc(t[1])}</span><span class="who">${esc(t[2])}</span></li>`).join('')}</ul>` : '<div class="wr-none">자동으로 제안할 할 일이 없어요.</div>'}
+    </div>
+    <div class="wr-sec">
+      <div class="wr-h">📆 월간 리포트 (${d.month.label})</div>
+      <div class="wr-month">
+        <div class="wr-kpi"><div class="k">${d.month.done ? '이번 달 전체' : `이번 달 누계 (${d.month.days}일 경과)`}</div><div class="v">${d.month.mtd}건</div><div class="d">전월 전체 ${d.month.prevMonth}건</div></div>
+        <div class="wr-kpi"><div class="k">${d.month.done ? '전월 대비' : '현재 페이스 → 월말 예상'}</div><div class="v">${d.month.pace}건</div><div class="d">전월 대비 ${_wrChg(d.month.pacePct)}</div></div>
+      </div>
+    </div>
+    <div class="wr-foot">분석 기준: 월~일 한 주 vs 전주, 직전 5주 평균, 6주 추세. 레드플래그·긍정 신호·할 일은 규칙 기반 자동 진단이에요. 감정(긍정/부정)은 자동 분류라 틀릴 수 있으니 확인 필요 리뷰는 원문으로 확인해 주세요.</div>`;
+}
+
+function copyWeeklyReport(){
+  if (!_wrCurrent) renderWeeklyReport();
+  const d = _wrCurrent; if (!d) return;
+  const L = [`📋 EGA 리뷰 주간 리포트 (${_vocMd(d.start)} ~ ${_vocMd(d.end)})`, d.summary, '',
+    `① 전체: ${d.S.total}건 · 전주 ${d.P.total}건(${_wrChgText(_wrPct(d.S.total, d.P.total))}) · 5주 평균 ${d.avg5}건 · 긍정 ${d.S.posPct}%`,
+    `② 채널: ${d.channels.map(c => `${c.c} ${c.n}건(${_wrChgText(c.chg)})`).join(', ') || '-'}`,
+    `③ 제품: ${d.products.slice(0, 5).map(p => `${p.name} ${p.n}건`).join(', ') || '-'}`];
+  if (d.flags.length) { L.push('', `🚩 레드플래그 ${d.flags.length}건`); d.flags.forEach(f => L.push(`- ${f[1]}: ${f[2]}`)); }
+  if (d.goods.length) { L.push('', `📈 긍정 신호 ${d.goods.length}건`); d.goods.forEach(f => L.push(`- ${f[1]}: ${f[2]}`)); }
+  if (d.S.praise.length) { L.push('', '👍 마케팅 후보'); d.S.praise.slice(0, 2).forEach(r => L.push(`- [${_vocProduct(r)}] ${_vocCut(_wrText(r.text), 80)}`)); }
+  if (d.todo.length) { L.push('', '🗓 이번 주 할 일'); d.todo.forEach(t => L.push(`- (${t[2]}) ${t[1]}`)); }
+  L.push('', `📆 ${d.month.label}: ${d.month.done ? '전체' : '누계'} ${d.month.mtd}건${d.month.done ? '' : ` → 월말 예상 ${d.month.pace}건`} (전월 ${d.month.prevMonth}건)`);
+  copyTextWithFeedback(L.join('\n'), document.getElementById('wr-copy-btn'));
+}
+
+function downloadWeeklyReportExcel(){
+  if (!_wrCurrent) renderWeeklyReport();
+  const d = _wrCurrent;
+  if (!d || typeof XLSX === 'undefined') { alert('엑셀 라이브러리를 불러오지 못했어요. 새로고침 후 다시 시도해주세요.'); return; }
+  const wb = XLSX.utils.book_new();
+  const sum = [
+    ['EGA 리뷰 주간 리포트'], ['기간', `${d.start} ~ ${d.end}`], ['한 줄 요약', d.summary], [],
+    ['항목', '이번 주', '전주', '직전 5주 평균'],
+    ['리뷰 수', d.S.total, d.P.total, d.avg5],
+    ['긍정 비율(%)', d.S.posPct, d.P.posPct, ''],
+    ['확인 필요(부정·이슈)', d.S.issues.length, d.P.issues.length, ''],
+    ['질문 리뷰', d.S.questions.length, d.P.questions.length, ''],
+    ['재구매 언급', d.S.repurchase, d.P.repurchase, ''],
+    ['답변 완료', d.ans ? (d.ans.stale ? '확인 불가' : `${d.ans.done}/${d.ans.n}`) : '-', '', ''],
+    [], ['최근 6주'], ...d.six.map(x => [x.s + ' 주', x.n]),
+    [], ['구분', '항목', '내용'], ...d.flags.map(f => ['레드플래그', f[1], f[2]]), ...d.goods.map(f => ['긍정 신호', f[1], f[2]]),
+    [], ['할 일', '담당'], ...d.todo.map(t => [t[1], t[2]]),
+    [], ['월간', d.month.label], ['누계', d.month.mtd], ['월말 예상', d.month.pace], ['전월 전체', d.month.prevMonth],
+  ];
+  const ws1 = XLSX.utils.aoa_to_sheet(sum); ws1['!cols'] = [{wch:24},{wch:40},{wch:70},{wch:14}];
+  XLSX.utils.book_append_sheet(wb, ws1, '요약');
+  const ws2 = XLSX.utils.json_to_sheet(d.products.map(p => ({ '제품': p.name, '이번 주': p.n, '전주': p.prev, '전주 대비': _wrChgText(p.chg), '긍정률(%)': p.posRate === null ? '' : p.posRate, '부정': p.neg, '많이 나온 말': p.kw.join(', ') })));
+  XLSX.utils.book_append_sheet(wb, ws2, '제품별');
+  const ws3 = XLSX.utils.json_to_sheet(d.channels.map(c => ({ '채널': c.c, '이번 주': c.n, '전주': c.prev, '전주 대비': _wrChgText(c.chg) })));
+  XLSX.utils.book_append_sheet(wb, ws3, '채널별');
+  const rows = list => list.length ? list.map(r => Object.assign(_vocReviewRow(r), { '리뷰 원문': _wrText(r.text) })) : [{ '날짜': '해당 없음' }];
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rows(d.S.praise)), '마케팅 후보');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rows(d.S.issues.concat(d.S.questions.filter(q => !d.S.issues.includes(q))))), '확인 필요·질문');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rows(d.S.list.slice().sort((a,b) => (a.date||'').localeCompare(b.date||'')))), '이번 주 전체');
+  XLSX.writeFile(wb, `EGA_리뷰주간리포트_${d.start}_${d.end}.xlsx`);
 }
 
 let _todoVocCache = null;  // { key, html } — 지난주 요약은 리뷰 데이터가 바뀔 때만 다시 계산
