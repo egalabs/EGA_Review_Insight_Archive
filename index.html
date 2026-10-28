@@ -208,6 +208,19 @@
   .ix-praise .btn{height:26px;padding:0 9px;font-size:11.5px}
   .ix-empty{font-size:12.5px;color:var(--text-muted);padding:6px 0}
   .ix-foot{font-size:11.5px;color:var(--text-muted);margin-top:6px}
+  .ix-cs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+  .ix-cs .ix-goal{cursor:pointer}.ix-cs .ix-goal:hover{box-shadow:0 0 0 1px #1e50ff inset}
+  .ix-proj{display:grid;grid-template-columns:minmax(0,1fr) 120px 90px;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--border-light);font-size:13px}
+  .ix-proj:last-child{border-bottom:0}
+  .ix-proj .n{font-weight:700}.ix-proj .m{font-size:11.5px;color:var(--text-muted)}
+  .gd-tbl table{width:100%;border-collapse:collapse;font-size:13px}
+  .gd-tbl th,.gd-tbl td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border-light);vertical-align:top}
+  .gd-tbl th{font-size:11.5px;color:var(--text-muted);font-weight:600}
+  .gd-tbl td.w{white-space:nowrap;font-weight:600}
+  .gd-ok{color:var(--positive);font-weight:700}.gd-warn{color:#c76a00;font-weight:700}.gd-info{color:var(--text-muted)}
+  .gd-rules{margin:0;padding-left:18px;font-size:13px;line-height:1.8}
+  @media (max-width:1100px){.ix-cs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media (max-width:640px){.ix-cs{grid-template-columns:minmax(0,1fr)}.ix-proj{grid-template-columns:minmax(0,1fr)}}
   @media (max-width:1100px){.ix-kpis,.ix-goals{grid-template-columns:repeat(2,minmax(0,1fr))}}
   @media (max-width:640px){.ix-kpis,.ix-goals{grid-template-columns:minmax(0,1fr)}.ix-sep{display:none}}
   /* 📋 리뷰 주간 리포트 (Biz Index 주간 리포트 형식) */
@@ -1046,6 +1059,18 @@ window.logoutEGA = logoutEGA;
         </div>
       </div>
 
+      <!-- ⑦ 응대 현황 -->
+      <div class="card mb-16">
+        <div class="card-title">응대 현황 <span class="card-subtitle">누르면 응대 화면으로 이동해요</span></div>
+        <div class="ix-cs" id="ix-cs"></div>
+      </div>
+
+      <!-- ⑩ 리뷰 프로젝트 -->
+      <div class="card mb-16">
+        <div class="card-title">진행 중인 리뷰 프로젝트 <span class="card-subtitle">목표 · 기간 · 담당</span></div>
+        <div id="ix-projects"><div class="ix-empty">불러오는 중...</div></div>
+      </div>
+
       <div class="ix-foot" id="ix-foot"></div>
     </div>
 
@@ -1608,99 +1633,49 @@ window.logoutEGA = logoutEGA;
       </div>
     </div>
 
-    <!-- ===== ADMIN ===== -->
+    <!-- ===== 기준 가이드 · 데이터 상태 ===== -->
     <div class="page" id="page-admin">
       <div class="page-header">
-        <div class="page-title">데이터 관리</div>
-        <div class="page-subtitle">데이터 관리 · 키워드 사전 · 감정 분류 기준</div>
-      </div>
-
-      <div class="grid-2 mb-16">
-        <!-- Upload -->
-        <div class="card">
-          <div class="card-title">데이터 업로드</div>
-          <div class="upload-zone" onclick="document.getElementById('file-upload').click()">
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin:0 auto 10px;display:block;color:var(--text-muted)"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-            <div style="font-size:14px;font-weight:600;margin-bottom:4px;color:var(--text-primary)">파일을 드래그하거나 클릭하여 업로드</div>
-            <div style="font-size:12px;color:var(--text-muted)">CSV, Excel (.xlsx) 파일 지원 · 카페24 / 스마트스토어 / 올리브영</div>
-            <input type="file" id="file-upload" accept=".csv,.xlsx" style="display:none" onchange="handleFileUpload(this)">
-          </div>
-          <div class="mt-12">
-            <div class="callout">
-              <strong>업로드 형식 안내</strong><br>
-              날짜 · 채널 · 제품명 · 리뷰내용 컬럼이 포함된 Excel/CSV 파일을 업로드하세요. 중복 리뷰는 자동 감지됩니다.
-            </div>
-          </div>
-        </div>
-
-        <!-- Stats -->
-        <div class="card">
-          <div class="card-title">데이터 현황</div>
-          <div class="kpi-grid" style="grid-template-columns:1fr 1fr;gap:12px">
-            <div class="kpi-card" style="padding:14px">
-              <div class="kpi-label">총 리뷰 수</div>
-              <div class="kpi-value" style="font-size:22px">826</div>
-              <div class="kpi-sub">2025.05 ~ 2026.03</div>
-            </div>
-            <div class="kpi-card" style="padding:14px">
-              <div class="kpi-label">채널 수</div>
-              <div class="kpi-value" style="font-size:22px">6</div>
-              <div class="kpi-sub">스마트스토어 외</div>
-            </div>
-            <div class="kpi-card" style="padding:14px">
-              <div class="kpi-label">등록 제품</div>
-              <div class="kpi-value" style="font-size:22px">79</div>
-              <div class="kpi-sub">옵션 포함</div>
-            </div>
-            <div class="kpi-card" style="padding:14px">
-              <div class="kpi-label">이슈 리뷰</div>
-              <div class="kpi-value" style="font-size:22px;color:var(--negative)">41</div>
-              <div class="kpi-sub">즉시 확인 필요</div>
-            </div>
+        <div class="page-header-row">
+          <div>
+            <div class="page-title">기준 가이드</div>
+            <div class="page-subtitle">숫자가 어디서 오는지, 언제 갱신됐는지, 어떻게 계산하는지</div>
           </div>
         </div>
       </div>
 
-      <!-- Keyword Dict -->
       <div class="card mb-16">
-        <div class="card-title flex-between">
-          키워드 사전 관리
-          <button class="btn btn-primary btn-sm">+ 키워드 추가</button>
-        </div>
-        <div class="table-container">
-          <table class="data-table">
-            <thead>
-              <tr><th>대표 키워드</th><th>포함 표현</th><th>분류</th><th>등장 횟수</th><th>액션</th></tr>
-            </thead>
-            <tbody id="keyword-dict-table"></tbody>
-          </table>
-        </div>
+        <div class="card-title">데이터 상태 <span class="card-subtitle">매일 아침 8시 자동 수집 · 2일 넘게 안 바뀌면 ⚠</span></div>
+        <div class="gd-tbl" id="gd-status"><div class="ix-empty">확인 중...</div></div>
       </div>
 
-      <!-- Issue Tag Rules -->
       <div class="card mb-16">
-        <div class="card-title flex-between">
-          특이 리뷰 분류 기준
-          <button class="btn btn-outline btn-sm">기준 수정</button>
-        </div>
-        <div id="issue-rules"></div>
+        <div class="card-title">지표 정의</div>
+        <div class="gd-tbl"><table>
+          <thead><tr><th>지표</th><th>계산 방법</th><th>데이터</th></tr></thead>
+          <tbody>
+            <tr><td class="w">리뷰 수</td><td>선택한 기간에 작성된 리뷰 수. 전기 = 바로 앞 같은 길이 기간(이번 달은 지난달 같은 날짜까지), 전년 = 1년 전 같은 날짜</td><td>reviews.json (크리마·스마트스토어)</td></tr>
+            <tr><td class="w">긍정 비율</td><td>긍정 리뷰 ÷ 전체 리뷰. 감정은 자동 분류라 틀릴 수 있고, 리뷰 아카이브에서 직접 고치면 반영돼요</td><td>reviews.json</td></tr>
+            <tr><td class="w">확인 필요 리뷰</td><td>감정이 "부정"이거나 이슈 표시가 붙은 리뷰</td><td>reviews.json</td></tr>
+            <tr><td class="w">답변률</td><td>크리마 리뷰 중 댓글이 1개 이상 달린 리뷰 비율(대시보드에서 게시한 것 포함). 올리브영은 제외</td><td>crema_answered.json (매일 미답변만 재확인)</td></tr>
+            <tr><td class="w">재구매자 후기 작성률</td><td>2번 이상 구매한 고객 중 후기를 쓴 고객 비율 (자사몰)</td><td>review_workflow.json · 카페24 주문</td></tr>
+            <tr><td class="w">첫구매자 후기 작성률</td><td>1번 구매한 고객 중 후기를 쓴 고객 비율 (자사몰)</td><td>repurchase_cafe24.json</td></tr>
+            <tr><td class="w">가격 불만 언급률</td><td>부정 리뷰 중 가격을 언급한 리뷰 비율</td><td>review_workflow.json</td></tr>
+            <tr><td class="w">월 평균 첫구매 고객</td><td>최근 6개월 동안 처음 구매한 고객 수의 월평균 (자사몰)</td><td>review_workflow.json</td></tr>
+            <tr><td class="w">리뷰 작성률</td><td>배송 완료 주문 대비 리뷰 작성 비율 (자사몰, 일별)</td><td>crema_review_rate.json</td></tr>
+          </tbody>
+        </table></div>
       </div>
 
-      <!-- Recent uploads log -->
-      <div class="card">
-        <div class="card-title">최근 업로드 이력</div>
-        <div class="table-container">
-          <table class="data-table">
-            <thead>
-              <tr><th>업로드 일시</th><th>파일명</th><th>채널</th><th>건수</th><th>상태</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>2026-03-23 14:30</td><td>EGA 주간 리뷰_cs 트래킹.xlsx</td><td>전체</td><td>826건</td><td><span class="tag tag-positive">완료</span></td></tr>
-              <tr><td>2026-03-16 10:15</td><td>올리브영_3월2주차.xlsx</td><td>올리브영</td><td>42건</td><td><span class="tag tag-positive">완료</span></td></tr>
-              <tr><td>2026-03-09 09:00</td><td>스마트스토어_주간.csv</td><td>스마트스토어</td><td>27건</td><td><span class="tag tag-positive">완료</span></td></tr>
-            </tbody>
-          </table>
-        </div>
+      <div class="card mb-16">
+        <div class="card-title">자동 판단 규칙</div>
+        <ul class="gd-rules">
+          <li><b>레드플래그(주간 리포트)</b>: 부정 리뷰 급증(5건 이상이면서 전주의 1.5배) · 제품별 부정 비율 15% 이상(2건 이상) · 같은 불만 키워드 3회 이상 · 리뷰 수 3주 연속 감소 · 채널 리뷰 0건 · 수집 중단 · 답변률 50% 미만 · 한 제품에 리뷰 50% 이상 편중</li>
+          <li><b>마케팅 활용 후보</b>: 긍정 리뷰 중 내용이 구체적인(35자 이상) 리뷰를 감정 점수·길이 순으로</li>
+          <li><b>질문 리뷰</b>: "?", "궁금", "되나요", "어떻게 먹/사용" 같은 질문 표현이 들어간 리뷰</li>
+          <li><b>리뷰 답변</b>: Claude가 쓴 초안 또는 템플릿 자동 답변이 "승인 대기"로 올라오고, 담당자가 읽고 [승인하고 게시]를 눌러야 크리마에 게시돼요. 부정 리뷰는 일괄 처리에서 빠져요</li>
+          <li><b>수집 중단 표시</b>: 채널 리뷰가 7일 넘게 안 들어오면 ⚠ (반년 넘게 끊긴 채널은 과거 데이터로 표시)</li>
+        </ul>
       </div>
     </div>
 
@@ -1920,7 +1895,7 @@ window.logoutEGA = logoutEGA;
         </div>
         <div class="reply-stat-card clickable" title="답변은 채웠으나 아직 게시 안 한 리뷰" onclick="setReplyFilter('ai_generated')">
           <div class="reply-stat-val" style="color:var(--mixed)" id="rstat-generated">0</div>
-          <div class="reply-stat-lbl">답변 작성됨</div>
+          <div class="reply-stat-lbl">승인 대기</div>
           <div style="font-size:10px;color:#9ca3af;margin-top:2px">클릭하여 보기</div>
         </div>
         <div class="reply-stat-card clickable" title="실제 게시 완료된 답변" onclick="setReplyFilter('posted')">
@@ -1946,7 +1921,7 @@ window.logoutEGA = logoutEGA;
           <button class="btn-bulk-post" style="background:#6366f1;color:#fff" onclick="bulkRegenerateSelected()">🔄 선택 다른 표현으로</button>
           <button class="btn-bulk-post" onclick="postBulkReplies()">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"></path><path d="M22 2l-7 20-4-9-9-4 20-7z"></path></svg>
-            선택 일괄 게시
+            선택 승인·게시
           </button>
         </div>
       </div>
@@ -1954,7 +1929,7 @@ window.logoutEGA = logoutEGA;
       <!-- Filters -->
       <div class="reply-filter-bar">
         <button class="reply-filter-btn active" onclick="setReplyFilter('all',this)">전체</button>
-        <button class="reply-filter-btn" onclick="setReplyFilter('ai_generated',this)">답변 작성됨</button>
+        <button class="reply-filter-btn" onclick="setReplyFilter('ai_generated',this)">승인 대기</button>
         <button class="reply-filter-btn" onclick="setReplyFilter('posted',this)">게시 완료</button>
         <button class="reply-filter-btn" onclick="setReplyFilter('none',this)">미답변</button>
         <label style="display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;cursor:pointer;padding:6px 12px;border:1px solid var(--border);border-radius:20px" title="현재 페이지의 미게시 리뷰 전체 선택"><input type="checkbox" id="reply-select-all" onchange="toggleSelectAllReplies(this)" style="cursor:pointer;width:15px;height:15px">전체 선택</label>
@@ -2052,7 +2027,7 @@ window.logoutEGA = logoutEGA;
         </div>
       </div>
 
-    <div id="build-stamp">BUILD 251027-C · 리뷰 Index 첫 화면</div>
+    <div id="build-stamp">BUILD 251028-A · 응대 현황·리뷰 프로젝트·기준 가이드 · Claude 초안 승인 게시</div>
   </main>
 </div>
 <script>
@@ -4533,8 +4508,8 @@ function _ixFillSelects(){
 async function _ixLoadExtra(){
   if (_ixExtra) return _ixExtra;
   const get = async f => { try { const r = await fetch(f + '?t=' + Date.now(), { cache: 'no-store' }); return r.ok ? await r.json() : null; } catch(e) { return null; } };
-  const [wf, rp] = await Promise.all([get('review_workflow.json'), get('repurchase_cafe24.json')]);
-  _ixExtra = { wf, rp };
+  const [wf, rp, pj] = await Promise.all([get('review_workflow.json'), get('repurchase_cafe24.json'), get('review_projects.json')]);
+  _ixExtra = { wf, rp, pj };
   return _ixExtra;
 }
 
@@ -4646,7 +4621,8 @@ function updateDashboard() {
   document.getElementById('ix-foot').innerHTML = '데이터 · 마지막 수집: ' + Object.entries(lastBy).sort((x, y) => y[1].localeCompare(x[1])).map(([c, d]) => `${esc(c)} ${d} ${mark(d)}`).join(' · ');
 
   // ② 분기 목표 (별도 파일 — 받아오면 채움)
-  _ixLoadExtra().then(_ixRenderGoals);
+  _ixRenderCs(cur);
+  _ixLoadExtra().then(x => { _ixRenderGoals(x); _ixRenderProjects(x); });
   if (typeof updateTodoStrip === 'function') updateTodoStrip();
 }
 
@@ -4667,6 +4643,52 @@ function _ixRenderGoals(x){
     (sum ? `<div class="ix-goal"><div class="k">첫구매자 후기 작성률</div><div class="v">${sum.firstTimeReviewRate}%</div><div class="d">재구매율 ${sum.repurchaseRate}% · 고객 ${Number(sum.totalCustomers).toLocaleString()}명</div><div class="n">재구매자가 첫구매자보다 ${sum.multiplier}배 더 후기를 써요</div></div>` : '') +
     (k.kpi2 ? goal('부정 리뷰 중 가격 불만', k.kpi2.current, k.kpi2.target, '%', true, `부정 ${k.kpi2.totalNegative}건 중 ${k.kpi2.priceNegative}건`) : '') +
     (k.kpi3 ? goal('월 평균 첫구매 고객', k.kpi3.current, k.kpi3.target, '명', false, '최근 6개월 평균') : '');
+}
+
+// ⑦ 응대 현황: 지금 남은 일(기간과 무관) + 고른 기간의 채널별 답변률
+function _ixRenderCs(cur){
+  const el = document.getElementById('ix-cs');
+  if (!el) return;
+  const today = _vocToday();
+  const pending = getReplyReviews().filter(r => !isReplyDone(r));
+  const waiting = pending.filter(r => r.ai_reply);
+  const claude = waiting.filter(r => r.reply_source === 'claude').length;
+  const over7 = pending.filter(r => r.date <= _vocAddDays(today, -7)).length;
+  const oldest = pending.map(r => r.date).sort()[0];
+  const qa = Number(String(document.getElementById('nav-qa-count')?.textContent || '0').replace(/,/g, '')) || 0;
+  const rate = ch => { const l = cur.filter(r => r.channel === ch && getCremaReviewId(r)); return l.length ? `${Math.round(l.filter(isReplyDone).length / l.length * 100)}% (${l.filter(isReplyDone).length}/${l.length})` : '–'; };
+  const box = (k, v, d, go) => `<div class="ix-goal" onclick="${go}"><div class="k">${k}</div><div class="v">${v}</div><div class="d">${d}</div></div>`;
+  el.innerHTML =
+    box('미답변 리뷰', `${pending.length}건`, pending.length ? `7일 넘은 것 ${over7}건 · 가장 오래된 ${oldest}` : '모두 답변했어요', "showPage('replies');setReplyFilter('none')") +
+    box('승인 대기 답변', `${waiting.length}건`, claude ? `Claude 초안 ${claude}건 · 읽고 승인하면 게시` : '초안이 준비되면 여기 표시', "showPage('replies');setReplyFilter('ai_generated')") +
+    box('Q&A 답변 대기', `${qa}건`, '카페24 상품 Q&A · 1:1 문의', "showPage('cafe24qa')") +
+    (CREMA_ANSWERED_IDS ? box('기간 답변률 (채널별)', '', `카페24 ${rate('카페24')}<br>스마트스토어 ${rate('스마트스토어')}`, "showPage('replies')") : box('기간 답변률', '–', '답변 상태 데이터를 불러오지 못했어요', "showPage('replies')"));
+}
+
+// ⑩ 리뷰 프로젝트 (review_projects.json — 지현님이 정한 목표를 등록)
+function _ixProjValue(p, x){
+  const k = x && x.wf && x.wf.kpi;
+  if (p.metric === 'kpi1') return k && k.kpi1 ? k.kpi1.current : null;
+  if (p.metric === 'kpi2') return k && k.kpi2 ? k.kpi2.current : null;
+  if (p.metric === 'kpi3') return k && k.kpi3 ? k.kpi3.current : null;
+  const l = ALL_REVIEWS.filter(r => r.date >= (p.start || '0') && r.date <= (p.end || '9'));
+  if (p.metric === 'reviewCount') return l.length;
+  if (p.metric === 'answerRate') { const c = l.filter(r => !/올리브영/.test(r.channel || '') && getCremaReviewId(r)); return c.length ? Math.round(c.filter(isReplyDone).length / c.length * 100) : null; }
+  if (p.metric === 'positiveRate') return l.length ? Math.round(l.filter(r => r.sentiment === '긍정').length / l.length * 100) : null;
+  return null;
+}
+function _ixRenderProjects(x){
+  const el = document.getElementById('ix-projects');
+  if (!el) return;
+  const list = (x && x.pj && Array.isArray(x.pj.projects)) ? x.pj.projects : [];
+  if (!list.length) { el.innerHTML = '<div class="ix-empty">아직 등록된 프로젝트가 없어요. "프로젝트 추가: 이름 · 목표 · 기간 · 담당"을 알려주시면 등록해서 여기서 진행률을 추적해요.</div>'; return; }
+  const esc = _cstEsc;
+  el.innerHTML = list.map(p => {
+    const v = _ixProjValue(p, x), unit = p.unit || '';
+    const ok = v !== null && (p.lowerBetter ? v <= p.target : v >= p.target);
+    const pct = v === null ? 0 : p.lowerBetter ? Math.min(100, Math.round(p.target / Math.max(v, 0.01) * 100)) : Math.min(100, Math.round(v / p.target * 100));
+    return `<div class="ix-proj"><div><div class="n">${esc(p.name)}</div><div class="m">${esc(p.start || '')} ~ ${esc(p.end || '')}${p.owner ? ' · ' + esc(p.owner) : ''}${p.note ? ' · ' + esc(p.note) : ''}</div></div><div><div class="ix-gbar"><i class="${ok ? 'ok' : ''}" style="width:${pct}%"></i></div><div class="m">현재 ${v === null ? '–' : v + unit} / 목표 ${p.target}${unit}${p.lowerBetter ? ' 이하' : ''}</div></div><div class="${ok ? 'ix-up' : 'ix-down'}">${v === null ? '–' : ok ? '달성' : '진행 중 ' + pct + '%'}</div></div>`;
+  }).join('');
 }
 
 function ixOpenIssues(){
@@ -5265,63 +5287,28 @@ function renderInsightsChannels() {
 }
 
 
-// ===== ADMIN =====
-function initAdmin() {
-  // 키워드 사전 (동적 카운트)
-  const adminKwCounts = {};
-  ALL_REVIEWS.forEach(r=>r.keywords.forEach(k=>{ adminKwCounts[k]=(adminKwCounts[k]||0)+1; }));
-  const kwDict = [
-    {label:'흡수 빠름', expressions:'"흡수 빨라요", "금방 스며들어요", "겉돌지 않아요"', type:'긍정', count:adminKwCounts['흡수 빠름']||0},
-    {label:'끈적임 없음', expressions:'"안 끈적여요", "산뜻해요", "미끌거리지 않아요"', type:'긍정', count:adminKwCounts['끈적임 없음']||0},
-    {label:'보습력', expressions:'"촉촉해요", "수분감", "건조하지 않아요"', type:'긍정', count:adminKwCounts['보습력']||0},
-    {label:'효과 체감', expressions:'"효과 있어요", "좋아진 것 같아요", "피부가 달라졌어요"', type:'긍정', count:adminKwCounts['효과 체감']||0},
-    {label:'가격 언급', expressions:'"비싸요", "가격이", "할인할 때"', type:'혼합', count:adminKwCounts['가격 언급']||0},
-    {label:'배송 관련', expressions:'"배송", "늦게 왔어요", "포장 파손"', type:'주의', count:adminKwCounts['배송 관련']||0},
-    {label:'재구매 의향', expressions:'"또 샀어요", "N번째 구매", "계속 쓸 거예요"', type:'긍정', count:adminKwCounts['재구매 의향']||0},
-    {label:'향기', expressions:'"향이 좋아요", "향기가 좋아요", "좋은 향"', type:'긍정', count:adminKwCounts['향기']||0},
-    {label:'선물용', expressions:'"선물했어요", "선물로 드렸어요"', type:'긍정', count:adminKwCounts['선물용']||0},
-    {label:'만족', expressions:'"만족합니다", "만족해요", "좋아요"', type:'긍정', count:adminKwCounts['만족']||0},
-    {label:'피부 개선', expressions:'"피부가 좋아졌어요", "광이 나요", "탄력"', type:'긍정', count:adminKwCounts['피부 개선']||0},
-    {label:'꾸준한 복용', expressions:'"꾸준히 먹어요", "매일 먹어요", "챙겨 먹어요"', type:'긍정', count:adminKwCounts['꾸준한 복용']||0},
-  ];
-
-  document.getElementById('keyword-dict-table').innerHTML = kwDict.map(k=>`
-    <tr>
-      <td><strong>${k.label}</strong></td>
-      <td style="color:var(--text-muted);font-size:12px">${k.expressions}</td>
-      <td>${sentimentTag(k.type)}</td>
-      <td>${k.count}회</td>
-      <td>
-        <button class="btn btn-outline btn-sm" onclick="alert('키워드 수정 기능 준비 중')">수정</button>
-      </td>
-    </tr>`).join('');
-
-  const issueRules = [
-    {icon:'⭐',label:'별점 3점 이하', desc:'고객 만족도 저하 리뷰 즉시 확인'},
-    {icon:'🚚',label:'배송/누락/오배송 언급', desc:'"배송", "누락", "오배송" 텍스트 포함'},
-    {icon:'❓',label:'제품 기대와 실제 차이', desc:'"생각과 달라요", "기대보다" 등 표현 포함'},
-    {icon:'💪',label:'강한 긍정 표현', desc:'"최고예요", "완전 좋아요" 등 강도 높은 긍정'},
-    {icon:'📣',label:'광고/상세페이지 활용 가능', desc:'마케팅 카피로 사용 가능한 명확한 긍정 표현'},
-    {icon:'🔄',label:'경쟁 제품 비교', desc:'타 브랜드명 언급 리뷰'},
-    {icon:'⚠️',label:'부작용/민감 반응 언급', desc:'"트러블", "자극", "알레르기" 등 포함'},
-    {icon:'🔁',label:'반복 문의성 내용', desc:'FAQ 업데이트가 필요한 반복 질문형 리뷰'},
-    {icon:'💡',label:'개선 제안 포함', desc:'"있으면 좋겠어요", "개선해주세요" 등'},
-  ];
-  document.getElementById('issue-rules').innerHTML = issueRules.map(r=>`
-    <div class="action-item">
-      <div class="action-icon blue">${r.icon}</div>
-      <div class="action-text">
-        <div class="action-label">${r.label}</div>
-        ${r.desc}
-      </div>
-      <button class="btn btn-outline btn-sm" style="flex-shrink:0;margin-left:auto" onclick="alert('기준 수정 준비 중')">편집</button>
-    </div>`).join('');
-}
-
-function handleFileUpload(input) {
-  const file = input.files[0];
-  if(!file) return;
-  alert(`"${file.name}" 파일이 선택되었습니다.\n실제 서비스에서는 이 파일을 분석하여 리뷰 데이터가 업데이트됩니다.`);
+// ===== 기준 가이드: 데이터 상태 =====
+async function initAdmin() {
+  const el = document.getElementById('gd-status');
+  if (!el) return;
+  const get = async f => { try { const r = await fetch(f + '?t=' + Date.now(), { cache: 'no-store' }); return r.ok ? await r.json() : null; } catch(e) { return null; } };
+  const [ans, wf, rp, rate, qa, drafts, pj] = await Promise.all(['crema_answered.json', 'review_workflow.json', 'repurchase_cafe24.json', 'crema_review_rate.json', 'inquiries_cafe24.json', 'reply_drafts.json', 'review_projects.json'].map(get));
+  const today = _vocToday();
+  const day = v => v ? String(v).slice(0, 10) : '';
+  const st = (d, info) => !d ? '<span class="gd-warn">⚠ 파일 없음</span>' : info ? '<span class="gd-info">참고</span>' : _ixDays(d, today) > 2 ? '<span class="gd-warn">⚠ ' + (_ixDays(d, today) - 1) + '일째 그대로</span>' : '<span class="gd-ok">✓ 정상</span>';
+  const lastBy = {}; ALL_REVIEWS.forEach(r => { const c = r.channel || '기타'; if (!lastBy[c] || r.date > lastBy[c]) lastBy[c] = r.date; });
+  const rows = Object.entries(lastBy).sort((a, b) => b[1].localeCompare(a[1])).map(([c, d]) => {
+    const age = _ixDays(d, today);
+    return ['리뷰 · ' + c, d, age > 180 ? '<span class="gd-info">과거 데이터</span>' : age > 7 ? '<span class="gd-warn">⚠ 수집 멈춤</span>' : '<span class="gd-ok">✓ 정상</span>', '마지막 리뷰 작성일'];
+  });
+  rows.push(['답변 상태 (크리마)', day(ans && ans.generatedAt), st(day(ans && ans.generatedAt)), ans ? `답변 ${ans.answered}건 · 미답변 ${ans.unanswered}건` : '']);
+  rows.push(['분기 KPI · 리뷰 타이밍', day(wf && (wf.generatedAt || wf.analyzedAt)), st(day(wf && (wf.generatedAt || wf.analyzedAt))), '카페24 주문 기준']);
+  rows.push(['재구매 분석', day(rp && (rp.generatedAt || rp.analyzedAt)), st(day(rp && (rp.generatedAt || rp.analyzedAt))), '']);
+  rows.push(['리뷰 작성률', day(rate && (rate.generatedAt || rate.lastUpdated)), st(day(rate && (rate.generatedAt || rate.lastUpdated))), '']);
+  rows.push(['카페24 Q&A·문의', day(qa && qa.generatedAt), st(day(qa && qa.generatedAt)), '']);
+  rows.push(['Claude 답변 초안', day(drafts && drafts.generatedAt), st(day(drafts && drafts.generatedAt), true), drafts ? `초안 ${(drafts.drafts || []).length}건` : '아직 없음']);
+  rows.push(['리뷰 프로젝트', day(pj && pj.updatedAt), st(day(pj && pj.updatedAt), true), pj ? `${(pj.projects || []).length}개` : '아직 없음']);
+  el.innerHTML = `<table><thead><tr><th>데이터</th><th>마지막 갱신</th><th>상태</th><th>메모</th></tr></thead><tbody>${rows.map(r => `<tr><td class="w">${_cstEsc(r[0])}</td><td>${r[1] || '–'}</td><td>${r[2]}</td><td>${r[3] || ''}</td></tr>`).join('')}</tbody></table>`;
 }
 
 // ===== 감정 수동 재분류 (사용자가 직접 정정) =====
@@ -5403,6 +5390,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (typeof applyBoardReplyStatus === 'function') await applyBoardReplyStatus();
   // 사용자가 수동 정정한 감정도 복원
   if (typeof applySentimentOverrides === 'function') applySentimentOverrides();
+  await applyClaudeDrafts();
   // 답변 상태 반영 후 미답변 뱃지 재계산 (사이드바 '답변 관리' 옆 숫자 = 미답변 수)
   if (typeof updateReplyStats === 'function') updateReplyStats();
   updateDashboard();
@@ -6006,6 +5994,27 @@ async function applyBoardReplyStatus() {
 function isReplyDone(r) { return r.reply_status === 'posted' || r.board_answered === true; }
 
 // ── 답변 대상 리뷰 필터 (올리브영 제외) ──
+// Claude가 쓴 답변 초안(reply_drafts.json)을 '승인 대기'로 올린다.
+// 담당자가 이미 고친 답변(브라우저 저장분)이나 답변 완료 리뷰는 건드리지 않는다.
+async function applyClaudeDrafts() {
+  try {
+    const res = await fetch('reply_drafts.json?t=' + Date.now(), { cache: 'no-store' });
+    if (!res.ok) return;
+    const data = await res.json();
+    const byId = {}; (data.drafts || []).forEach(d => { if (d && d.id && d.draft) byId[d.id] = d; });
+    ALL_REVIEWS.forEach(r => {
+      const d = byId[r.id];
+      if (!d || isReplyDone(r)) return;
+      if (r.ai_reply && r.reply_source !== 'claude') return;
+      r.ai_reply = d.draft;
+      r.ai_reply_date = String(d.createdAt || data.generatedAt || '').slice(0, 10);
+      r.reply_status = 'ai_generated';
+      r.reply_source = 'claude';
+      r.reply_flag = d.flag || '';
+    });
+  } catch (e) { /* 초안 파일이 없으면 그냥 넘어감 */ }
+}
+
 function getReplyReviews() {
   // 올리브영은 크리마 게시 불가 → 답변 관리에서 제외. "올리브영 (매장)" 등 변형까지 모두 제외.
   return ALL_REVIEWS.filter(r => !/올리브영/.test(r.channel || ''));
@@ -6071,7 +6080,7 @@ function updateReplyStats() {
   document.getElementById('rstat-posted').textContent = posted;
   document.getElementById('rstat-pending').textContent = pending;
   // nav badge = 미답변 수
-  _setNavBadge('nav-reply-count', pending);
+  _setNavBadge('nav-reply-count', pending + generated);
 }
 
 // ── 필터 변경 ──
@@ -6141,7 +6150,7 @@ function renderIssueReviewsList() {
 // 모달 안 답변 카드 HTML (renderReplyList의 카드와 동일 구조, id만 issue- prefix)
 function _buildIssueReplyCardHtml(r) {
   const statusClass = r.reply_status || 'none';
-  const statusLabel = r.reply_status === 'posted' ? '게시 완료' : r.reply_status === 'ai_generated' ? '답변 작성됨' : '미답변';
+  const statusLabel = r.reply_status === 'posted' ? '게시 완료' : r.reply_status === 'ai_generated' ? '승인 대기' : '미답변';
   const isEditing = window._issueEditingId === r.id;
   const canPost = r.reply_status === 'ai_generated' && r.ai_reply && getCremaReviewId(r);
   const channelEmoji = r.channel === '스마트스토어' ? '🟢' : r.channel === '올리브영' ? '🛍️' : '🛒';
@@ -6169,7 +6178,7 @@ function _buildIssueReplyCardHtml(r) {
     '</div>' +
     (r.ai_reply ? (
       '<div class="reply-ai-box" style="background:#eff6ff;border-radius:8px;padding:10px 12px;margin-bottom:10px">' +
-        '<label style="font-size:11px;color:#1d4ed8;font-weight:600">✍️ 답변 초안 ' + (r.ai_reply_date ? '(' + r.ai_reply_date + ')' : '') + '</label>' +
+        '<label style="font-size:11px;color:#1d4ed8;font-weight:600">' + (r.reply_source === 'claude' ? '✍️ Claude 초안 · 승인 대기 ' : '✍️ 답변 초안 ') + (r.ai_reply_date ? '(' + r.ai_reply_date + ')' : '') + '</label>' +
         (isEditing ?
           ('<textarea id="issue-edit-area-' + r.id + '" style="width:100%;min-height:120px;margin-top:8px;padding:8px;border:1px solid #93c5fd;border-radius:6px;font-size:13px;font-family:inherit;line-height:1.7">' + r.ai_reply + '</textarea>' +
            '<div style="margin-top:8px;display:flex;gap:6px"><button class="btn btn-primary btn-sm" onclick="saveIssueReplyEdit(\'' + r.id + '\')">저장</button><button class="btn btn-outline btn-sm" onclick="cancelIssueReplyEdit()">취소</button></div>')
@@ -6342,7 +6351,7 @@ function renderReplyList() {
 
   listEl.innerHTML = pageReviews.map(r => {
     const statusClass = r.board_answered ? 'posted' : (r.reply_status || 'none');
-    const statusLabel = r.reply_status === 'posted' ? '게시 완료' : (r.board_answered ? '자사몰 답변완료' : (r.reply_status === 'ai_generated' ? '답변 작성됨' : '미답변'));
+    const statusLabel = r.reply_status === 'posted' ? '게시 완료' : (r.board_answered ? '자사몰 답변완료' : (r.reply_status === 'ai_generated' ? '승인 대기' : '미답변'));
     const isEditing = replyEditingId === r.id;
     const isSelected = bulkSelected.has(r.id);
     const canPost = r.reply_status === 'ai_generated' && r.ai_reply && getCremaReviewId(r);
@@ -6374,7 +6383,7 @@ function renderReplyList() {
 
       ${r.ai_reply ? `
         <div class="reply-ai-box">
-          <label>✍️ 답변 초안 ${r.ai_reply_date ? '('+r.ai_reply_date+')' : ''}</label>
+          <label>${r.reply_source === 'claude' ? '✍️ Claude 초안 · 읽고 승인하면 게시돼요' : '✍️ 답변 초안'} ${r.ai_reply_date ? '('+r.ai_reply_date+')' : ''}</label>
           ${isEditing ? `
             <textarea class="reply-edit-area" id="edit-area-${r.id}">${r.ai_reply}</textarea>
             <div style="margin-top:8px;display:flex;gap:6px">
@@ -6382,6 +6391,7 @@ function renderReplyList() {
               <button class="btn btn-outline btn-sm" onclick="cancelReplyEdit('${r.id}')">취소</button>
             </div>
           ` : `
+            ${r.reply_flag ? `<div style="margin:6px 0;padding:6px 10px;border-radius:6px;background:#fdf0dc;color:#9a4d00;font-size:12px;font-weight:600">⚠ ${_cstEsc(r.reply_flag)} · 일괄 게시에서 빠져요</div>` : ''}
             <div class="reply-ai-text">${r.ai_reply}</div>
           `}
         </div>
@@ -6406,7 +6416,7 @@ function renderReplyList() {
         ${r.reply_status !== 'posted' && r.ai_reply ? `
           <button class="btn-post" onclick="postSingleReply('${r.id}')" ${!serverOnline?'disabled title="서버를 먼저 연결하세요"':''}>
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"></path><path d="M22 2l-7 20-4-9-9-4 20-7z"></path></svg>
-            리뷰 달기
+            승인하고 게시
           </button>
           <button class="btn-edit" onclick="startReplyEdit('${r.id}')">✏️ 수정</button>
           <button onclick="markReplyAsPosted('${r.id}')" style="background:#f0fdf4;border:1px solid #86efac;border-radius:6px;padding:6px 12px;font-size:12px;cursor:pointer;color:#166534;font-weight:500" title="외부 채널에서 게시 확인됐을 때 수동으로 표시">✅ 수동 게시 완료 표시</button>
@@ -6446,6 +6456,7 @@ function saveReplyEdit(id) {
   if (!textarea) return;
   const r = ALL_REVIEWS.find(x => x.id === id);
   if (r) {
+    r.reply_source = 'edited';
     r.ai_reply = textarea.value.trim();
     r.ai_reply_date = new Date().toISOString().slice(0, 10);
     r.reply_status = 'ai_generated';
@@ -6468,6 +6479,7 @@ async function postSingleReply(id) {
     showToast('크리마 리뷰 ID가 없어 게시할 수 없습니다', 'error');
     return;
   }
+  if (!confirm('이 답변을 승인하고 크리마에 게시할까요?\n\n' + r.ai_reply.slice(0, 200) + (r.ai_reply.length > 200 ? '…' : ''))) return;
 
   const card = document.getElementById('reply-card-' + id);
   const btn = card?.querySelector('.btn-post');
@@ -6637,11 +6649,12 @@ async function postBulkReplies() {
   }
   // 게시 대상 선별 + 제외 사유 집계
   const items = [];
-  let noReply = 0, noCrema = 0;
+  let noReply = 0, noCrema = 0, flagged = 0;
   selectedIds.forEach(id => {
     const r = ALL_REVIEWS.find(x => x.id === id);
     if (!r) return;
     if (!r.ai_reply) { noReply++; return; }
+    if (r.reply_flag) { flagged++; return; }   // 민감 표시 초안은 하나씩 확인 후 게시
     const cremaReviewId = getCremaReviewId(r);
     if (!cremaReviewId) { noCrema++; return; }
     items.push({ reviewId: r.id, cremaReviewId, replyText: r.ai_reply, channel: r.channel });
@@ -6650,9 +6663,12 @@ async function postBulkReplies() {
     let reason = '선택한 ' + selectedIds.length + '건 중 지금 크리마에 게시할 수 있는 리뷰가 없습니다.\n';
     if (noReply) reason += '\n• 답변 없음: ' + noReply + '건 → 먼저 "선택 자동 답변"으로 초안을 채워주세요.';
     if (noCrema) reason += '\n• 크리마 리뷰 ID 없음: ' + noCrema + '건 → 올리브영 등 외부 리뷰는 크리마에 게시할 수 없습니다.';
+    if (flagged) reason += '\n• 민감 표시 초안: ' + flagged + '건 → 카드에서 하나씩 확인 후 [승인하고 게시]를 눌러주세요.';
     showCenterPopup('게시할 수 있는 리뷰가 없습니다', reason, 'error');
     return;
   }
+
+  if (!confirm('선택한 ' + items.length + '건의 답변을 승인하고 크리마에 게시할까요?\n(게시한 답변은 고객에게 바로 보여요)' + (flagged ? '\n\n민감 표시 초안 ' + flagged + '건은 빼고 게시해요.' : ''))) return;
 
   // 작게 나눠(청크) 보내며 실시간 진행률 표시 — "몇 개 중 몇 개"
   const CHUNK = 5;
