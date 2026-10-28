@@ -154,6 +154,62 @@
   .voc-modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;font-size:14px}
   .voc-modal-x{border:0;background:transparent;font-size:16px;cursor:pointer;color:var(--text-muted);padding:4px 8px;border-radius:6px}
   .voc-modal-x:hover{background:var(--bg);color:var(--text-primary)}
+  /* 📊 리뷰 Index (Biz Index 매출 화면 구성) */
+  .ix-filter{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:6px}
+  .ix-flabel{font-size:12px;font-weight:700;color:var(--text-secondary)}
+  .ix-periods{display:flex;gap:4px;flex-wrap:wrap}
+  .ix-periods button{border:1px solid var(--border);background:var(--white);border-radius:7px;padding:5px 11px;font:inherit;font-size:12.5px;font-weight:600;color:var(--text-secondary);cursor:pointer}
+  .ix-periods button:hover{border-color:#1e50ff;color:#1e50ff}
+  .ix-periods button.on{background:#1e50ff;border-color:#1e50ff;color:#fff}
+  .ix-date{height:32px;padding:0 8px}
+  .ix-tilde{color:var(--text-muted)}
+  .ix-sep{flex:1}
+  .ix-range{font-size:12px;color:var(--text-secondary);margin:0 2px 14px}
+  .ix-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px}
+  .ix-kpi{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;min-width:0}
+  .ix-kpi .k,.ix-goal .k{font-size:12px;color:var(--text-secondary);font-weight:600}
+  .ix-kpi .v{font-size:26px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.3}
+  .ix-kpi .d,.ix-goal .d{font-size:11.5px;color:var(--text-muted)}
+  .ix-up{color:var(--positive);font-weight:700}.ix-down{color:var(--negative);font-weight:700}.ix-na{color:var(--text-muted)}
+  .ix-warn{color:#c76a00;font-weight:700}
+  .ix-goals{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+  .ix-goal{background:#f6f8fd;border-radius:10px;padding:12px 14px;min-width:0}
+  .ix-goal .v{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums}
+  .ix-goal .n{font-size:11px;color:var(--text-muted);margin-top:4px}
+  .ix-gbar{height:6px;background:#e3e9f8;border-radius:3px;margin-top:6px;overflow:hidden}
+  .ix-gbar i{display:block;height:100%;background:#1e50ff;border-radius:3px}
+  .ix-gbar i.ok{background:var(--positive)}.ix-gbar i.bad{background:var(--negative)}
+  .ix-mix{display:flex;height:18px;border-radius:6px;overflow:hidden;background:var(--border-light)}
+  .ix-mix i{display:block;height:100%}
+  .ix-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--text-secondary);margin-top:8px}
+  .ix-legend b{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+  .ix-details{margin-top:10px;font-size:12.5px}
+  .ix-details summary{cursor:pointer;color:var(--text-secondary);font-weight:600}
+  .ix-tbl{overflow-x:auto}
+  .ix-tbl table{width:100%;border-collapse:collapse;font-size:12.5px;min-width:560px}
+  .ix-tbl th,.ix-tbl td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--border-light)}
+  .ix-tbl th{font-size:11.5px;color:var(--text-muted);font-weight:600}
+  .ix-tbl .r{text-align:right;font-variant-numeric:tabular-nums}
+  .ix-row{cursor:pointer}.ix-row:hover{background:#f6f8fd}
+  .ix-chip{display:inline-block;font-size:11px;background:#f3f4f6;color:#4b5563;border-radius:999px;padding:0 7px;margin-right:3px}
+  .ix-kwcols{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+  .ix-kwh{font-size:12px;font-weight:700;margin-bottom:6px}.ix-kwh.good{color:var(--positive)}.ix-kwh.bad{color:var(--negative)}
+  .ix-kw{display:grid;grid-template-columns:minmax(0,140px) minmax(0,1fr) 26px 56px;gap:6px;align-items:center;font-size:12.5px;padding:4px 0;cursor:pointer}
+  .ix-kw:hover .ix-kwn{color:#1e50ff;text-decoration:underline}
+  .ix-kwn{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .ix-kwbar{height:6px;background:var(--border-light);border-radius:3px;overflow:hidden}
+  .ix-kwbar i{display:block;height:100%}.ix-kwbar i.good{background:var(--positive)}.ix-kwbar i.bad{background:var(--negative)}
+  .ix-kwc{text-align:right;font-variant-numeric:tabular-nums;font-weight:700}
+  .ix-kwd{font-size:11px;text-align:right}
+  .ix-praise{border-left:3px solid var(--positive);padding:4px 0 6px 10px;margin-bottom:10px}
+  .ix-praise .m{font-size:11px;color:var(--text-muted)}
+  .ix-praise .t{font-size:12.5px;line-height:1.6}
+  .ix-praise .a{margin-top:4px}
+  .ix-praise .btn{height:26px;padding:0 9px;font-size:11.5px}
+  .ix-empty{font-size:12.5px;color:var(--text-muted);padding:6px 0}
+  .ix-foot{font-size:11.5px;color:var(--text-muted);margin-top:6px}
+  @media (max-width:1100px){.ix-kpis,.ix-goals{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media (max-width:640px){.ix-kpis,.ix-goals{grid-template-columns:minmax(0,1fr)}.ix-sep{display:none}}
   /* 📋 리뷰 주간 리포트 (Biz Index 주간 리포트 형식) */
   .wr-modal{position:fixed;inset:0;background:rgba(17,24,39,.45);display:flex;align-items:flex-start;justify-content:center;z-index:990;padding:24px 16px;overflow:auto}
   .wr-modal[hidden]{display:none}
@@ -900,258 +956,97 @@ window.logoutEGA = logoutEGA;
       <div class="page-header">
         <div class="page-header-row">
           <div>
-            <div class="page-title">홈</div>
-            <div class="page-subtitle">오늘 처리할 일과 최근 고객 반응을 한눈에</div>
+            <div class="page-title">리뷰 Index</div>
+            <div class="page-subtitle">기간을 골라 리뷰 수·감정·제품·키워드를 한 화면에서 봅니다</div>
           </div>
         </div>
       </div>
 
       <!-- 오늘 할 일 -->
-      <div class="todo-strip mb-24">
+      <div class="todo-strip mb-16">
         <div class="todo-card red" onclick="showPage('replies')">
           <div class="todo-l">답변 안 한 리뷰</div>
           <div class="todo-v" id="todo-replies">–</div>
-          <div class="todo-go">답변 관리로 →</div>
+          <div class="todo-go">응대 › 리뷰 답변 →</div>
         </div>
         <div class="todo-card amber" onclick="showPage('cafe24qa')">
           <div class="todo-l">답변 대기 Q&amp;A·문의</div>
           <div class="todo-v" id="todo-qa">–</div>
-          <div class="todo-go">Q&amp;A 문의로 →</div>
+          <div class="todo-go">응대 › Q&amp;A 문의 →</div>
         </div>
-        <div class="todo-card blue" onclick="showPage('archive')">
+        <div class="todo-card blue" onclick="openWeeklyReport()">
           <div class="todo-l">지난주 고객의 소리</div>
           <div class="todo-v" id="todo-voc">–</div>
-          <div class="todo-go">주간 요약 보기 →</div>
+          <div class="todo-go">주간 리포트 보기 →</div>
         </div>
       </div>
 
-      <div class="section-label" style="margin-bottom:12px">최근 4주 고객 반응</div>
+      <!-- 기간 · 채널 · 제품 필터 (Biz Index 형식) -->
+      <div class="ix-filter">
+        <span class="ix-flabel">기간</span>
+        <div class="ix-periods" id="ix-periods">
+          <button data-p="lastweek">지난주</button>
+          <button data-p="week">이번 주</button>
+          <button data-p="month" class="on">이번 달</button>
+          <button data-p="lastmonth">지난달</button>
+          <button data-p="d30">최근 30일</button>
+        </div>
+        <input type="date" class="filter-select ix-date" id="ix-from" aria-label="시작일">
+        <span class="ix-tilde">~</span>
+        <input type="date" class="filter-select ix-date" id="ix-to" aria-label="종료일">
+        <button class="btn btn-outline btn-sm" onclick="ixApplyCustom()">조회</button>
+        <span class="ix-sep"></span>
+        <select class="filter-select" id="ix-channel" onchange="updateDashboard()" aria-label="채널"><option value="">전체 채널</option></select>
+        <select class="filter-select" id="ix-product" onchange="updateDashboard()" aria-label="제품"><option value="">전체 제품</option></select>
+        <button class="btn btn-primary btn-sm ix-report" onclick="openWeeklyReport()">📋 주간 리포트</button>
+      </div>
+      <div class="ix-range" id="ix-range"></div>
 
-      <!-- Summary Banner -->
-      <div class="insight-banner mb-24" id="dash-banner">
-        <div class="week-label" id="dash-banner-label">최근 4주 요약 · 03/08 ~ 04/04</div>
-        <div class="banner-insights" id="dash-summary-text">
-          <div class="banner-insight-item"><div class="banner-insight-dot"></div><div>최근 4주 총 <b>98건</b> 수집 · 전월 대비 <b>-23.4%</b></div></div>
-          <div class="banner-insight-item"><div class="banner-insight-dot green"></div><div>긍정 <b>64%</b> · 부정 13% · 채널 1위 <b>올리브영</b> 50건(51%)</div></div>
-          <div class="banner-insight-item"><div class="banner-insight-dot red"></div><div>즉시 확인 필요 리뷰 <b>13건</b> · 최다 언급 키워드 "향기"(18건)</div></div>
-        </div>
-        <div class="summary-meta">
-          <div><div class="meta-value" id="dash-total-w">98</div><div class="meta-item">최근 4주 총 리뷰</div></div>
-          <div><div class="meta-value" id="dash-avg-score">3.3</div><div class="meta-item">평균 만족도</div></div>
-          <div><div class="meta-value" id="dash-pos-pct">64%</div><div class="meta-item">긍정 비율</div></div>
-          <div><div class="meta-value" id="dash-repurchase">10건</div><div class="meta-item">재구매 언급</div></div>
-        </div>
+      <!-- ① 리뷰 KPI -->
+      <div class="ix-kpis" id="ix-kpis"></div>
+
+      <!-- ② 분기 목표 (자사몰 기준) -->
+      <div class="card mb-16">
+        <div class="card-title">분기 목표 <span class="card-subtitle" id="ix-goal-sub">자사몰(카페24) 기준 · 매일 갱신</span></div>
+        <div class="ix-goals" id="ix-goals"><div class="ix-empty">불러오는 중...</div></div>
       </div>
 
-      <!-- KPI Grid -->
-      <div class="kpi-grid mb-24">
-        <div class="kpi-card">
-          <div class="kpi-label">최근 4주 리뷰</div>
-          <div class="kpi-value" id="kpi-week">98</div>
-          <div class="kpi-change down" id="kpi-week-change">↓ -23.4% vs 전월 (128건)</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">평균 만족도</div>
-          <div class="kpi-value" id="kpi-rating">3.3</div>
-          <div class="kpi-change up">↑ +0.2 vs 전주</div>
-          <div class="kpi-sub">★★★★☆ 기준</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">긍정 리뷰 비율</div>
-          <div class="kpi-value" id="kpi-pos">64%</div>
-          <div class="kpi-change up">↑ +5%p vs 전주</div>
-        </div>
-        <div class="kpi-card" onclick="showIssueReviewsModal()" style="cursor:pointer;transition:transform .12s,box-shadow .12s" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 14px rgba(239,68,68,0.18)'" onmouseout="this.style.transform='';this.style.boxShadow=''" title="클릭하여 부정/이슈 리뷰 확인 및 답변 작성">
-          <div class="kpi-label">즉시 확인 필요</div>
-          <div class="kpi-value" id="kpi-issue" style="color:var(--negative)">13</div>
-          <div class="kpi-change neutral">부정/이슈 리뷰 · 👆 클릭하여 답변</div>
-        </div>
+      <!-- ③ 채널 믹스 -->
+      <div class="card mb-16">
+        <div class="card-title">채널 믹스 <span class="card-subtitle">채널별 리뷰 비중</span></div>
+        <div class="ix-mix" id="ix-mix"></div>
+        <div class="ix-legend" id="ix-mix-legend"></div>
       </div>
 
-      <!-- Charts Row 1 -->
-      <div class="grid-2-1-1 mb-16">
-        <div class="card">
-          <div class="card-title">주간 리뷰 수 추이 <span class="card-subtitle">최근 10주</span></div>
-          <div class="chart-wrap-lg"><canvas id="chart-weekly-trend" width="0" height="0" style="display: block; box-sizing: border-box; height: 0px; width: 0px;"></canvas></div>
-        </div>
-        <div class="card">
-          <div class="card-title">채널별 비중 <span class="card-subtitle">최근 4주</span></div>
-          <div class="donut-wrap" style="position:relative;height:200px">
-            <canvas id="chart-channel-donut" width="0" height="0" style="display: block; box-sizing: border-box; height: 0px; width: 0px;"></canvas>
-            <div class="donut-center"><div class="donut-center-val" id="donut-total">98</div><div class="donut-center-lbl">총 리뷰</div></div>
-          </div>
-          <div class="legend" id="channel-legend"><div class="legend-item"><div class="legend-dot" style="background:#10b981"></div>올리브영 50건</div><div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div>카페24 23건</div><div class="legend-item"><div class="legend-dot" style="background:#3b6cf0"></div>스마트스토어 25건</div></div>
-        </div>
-        <div class="card">
-          <div class="card-title">제품별 리뷰 수 <span class="card-subtitle">최근 4주</span></div>
-          <div id="product-bars">
-    <div class="hbar-item">
-      <div class="hbar-label" style="width:120px;font-size:11px" title="핸드크림 세트">핸드크림 세트</div>
-      <div class="hbar-track"><div class="hbar-fill" style="width:100%"></div></div>
-      <div class="hbar-count">35</div>
-    </div>
-    <div class="hbar-item">
-      <div class="hbar-label" style="width:120px;font-size:11px" title="마스크팩">마스크팩</div>
-      <div class="hbar-track"><div class="hbar-fill" style="width:63%"></div></div>
-      <div class="hbar-count">22</div>
-    </div>
-    <div class="hbar-item">
-      <div class="hbar-label" style="width:120px;font-size:11px" title="NMN">NMN</div>
-      <div class="hbar-track"><div class="hbar-fill" style="width:60%"></div></div>
-      <div class="hbar-count">21</div>
-    </div>
-    <div class="hbar-item">
-      <div class="hbar-label" style="width:120px;font-size:11px" title="에센셜 핸드크림">에센셜 핸드크림</div>
-      <div class="hbar-track"><div class="hbar-fill" style="width:29%"></div></div>
-      <div class="hbar-count">10</div>
-    </div>
-    <div class="hbar-item">
-      <div class="hbar-label" style="width:120px;font-size:11px" title="어드밴스드 핸드크림">어드밴스드 핸드크림</div>
-      <div class="hbar-track"><div class="hbar-fill" style="width:23%"></div></div>
-      <div class="hbar-count">8</div>
-    </div>
-    <div class="hbar-item">
-      <div class="hbar-label" style="width:120px;font-size:11px" title="기타">기타</div>
-      <div class="hbar-track"><div class="hbar-fill" style="width:6%"></div></div>
-      <div class="hbar-count">2</div>
-    </div></div>
-        </div>
+      <!-- ④ 일별 리뷰 트렌드 -->
+      <div class="card mb-16">
+        <div class="card-title">일별 리뷰 트렌드 <span class="card-subtitle">감정별 막대 + 점선 = 7일 이동평균</span></div>
+        <div class="chart-wrap-lg"><canvas id="chart-ix-daily"></canvas></div>
+        <details class="ix-details"><summary>일별 표 보기</summary><div class="ix-tbl" id="ix-daily-table"></div></details>
       </div>
 
-      <!-- Charts Row 2 -->
+      <!-- ⑤ 제품별 리뷰 현황 -->
+      <div class="card mb-16">
+        <div class="card-title">제품별 리뷰 현황 <span class="card-subtitle">행을 누르면 리뷰 아카이브에서 그 제품 리뷰만 보여요</span></div>
+        <div class="ix-tbl" id="ix-products"></div>
+      </div>
+
+      <!-- ⑥ 키워드 순위 · ⑧ 마케팅 활용 후보 -->
       <div class="grid-2 mb-16">
         <div class="card">
-          <div class="card-title">핵심 키워드 TOP 10 <span class="card-subtitle">최근 4주</span></div>
-          <div id="kw-bars">
-    <div class="hbar-item">
-      <div class="hbar-label">향기</div>
-      <div class="hbar-track"><div class="hbar-fill" style="width:100%"></div></div>
-      <div class="hbar-count">18</div>
-    </div>
-    <div class="hbar-item">
-      <div class="hbar-label">가격 언급</div>
-      <div class="hbar-track"><div class="hbar-fill" style="width:72%"></div></div>
-      <div class="hbar-count">13</div>
-    </div>
-    <div class="hbar-item">
-      <div class="hbar-label">끈적임 없음</div>
-      <div class="hbar-track"><div class="hbar-fill" style="width:67%"></div></div>
-      <div class="hbar-count">12</div>
-    </div>
-    <div class="hbar-item">
-      <div class="hbar-label">무향</div>
-      <div class="hbar-track"><div class="hbar-fill" style="width:61%"></div></div>
-      <div class="hbar-count">11</div>
-    </div>
-    <div class="hbar-item">
-      <div class="hbar-label">보습력</div>
-      <div class="hbar-track"><div class="hbar-fill" style="width:50%"></div></div>
-      <div class="hbar-count">9</div>
-    </div>
-    <div class="hbar-item">
-      <div class="hbar-label">재구매 의향</div>
-      <div class="hbar-track"><div class="hbar-fill" style="width:50%"></div></div>
-      <div class="hbar-count">9</div>
-    </div>
-    <div class="hbar-item">
-      <div class="hbar-label">만족</div>
-      <div class="hbar-track"><div class="hbar-fill" style="width:50%"></div></div>
-      <div class="hbar-count">9</div>
-    </div>
-    <div class="hbar-item">
-      <div class="hbar-label">장기 사용</div>
-      <div class="hbar-track"><div class="hbar-fill" style="width:44%"></div></div>
-      <div class="hbar-count">8</div>
-    </div>
-    <div class="hbar-item">
-      <div class="hbar-label">흡수 빠름</div>
-      <div class="hbar-track"><div class="hbar-fill" style="width:44%"></div></div>
-      <div class="hbar-count">8</div>
-    </div>
-    <div class="hbar-item">
-      <div class="hbar-label">피부 개선</div>
-      <div class="hbar-track"><div class="hbar-fill" style="width:44%"></div></div>
-      <div class="hbar-count">8</div>
-    </div></div>
+          <div class="card-title">키워드 순위 <span class="card-subtitle">누르면 그 키워드 리뷰를 검색해요</span></div>
+          <div class="ix-kwcols">
+            <div><div class="ix-kwh good">칭찬 TOP</div><div id="ix-kw-good"></div></div>
+            <div><div class="ix-kwh bad">불만 TOP</div><div id="ix-kw-bad"></div></div>
+          </div>
         </div>
         <div class="card">
-          <div class="card-title">감정 분포 <span class="card-subtitle">긍정 / 혼합 / 부정</span></div>
-          <div class="chart-wrap-lg"><canvas id="chart-sentiment" width="0" height="0" style="display: block; box-sizing: border-box; height: 0px; width: 0px;"></canvas></div>
+          <div class="card-title">마케팅 활용 후보 <span class="card-subtitle">긍정 · 내용이 구체적인 리뷰 순</span></div>
+          <div id="ix-praise"></div>
         </div>
       </div>
 
-      <!-- Alerts Row -->
-      <div class="mb-16">
-        <div class="card">
-          <div class="card-title">즉시 확인 필요한 리뷰 <span class="card-subtitle">부정·이슈</span></div>
-          <div id="alert-reviews" class="scroll-list">
-    <div class="review-card" onclick="showReviewDetail('OY1',true)" style="margin-bottom:8px">
-      <div class="review-card-top">
-        <div><div class="review-card-product" style="font-size:12px">에가 에센셜 리제너레이터 핸드크림 50ml 어워즈 한정기획</div></div>
-        <div style="display:flex;gap:4px;flex-shrink:0"><span class="tag tag-negative">부정</span></div>
-      </div>
-      <div class="review-card-text">좋은 핸드크림이이에요 다만 이 가격에 가치를 하냐는 잘 모르겠어요 손 주름 개선 효과도 전혀 모르겠고</div>
-      <div class="review-card-footer"><span class="tag tag-channel">올리브영</span><span class="text-sm text-muted">2026-03-28</span></div>
-    </div>
-    <div class="review-card" onclick="showReviewDetail('OY6',true)" style="margin-bottom:8px">
-      <div class="review-card-top">
-        <div><div class="review-card-product" style="font-size:12px">에가 에센셜 리제너레이터 핸드크림 50ml 어워즈 한정기획</div></div>
-        <div style="display:flex;gap:4px;flex-shrink:0"><span class="tag tag-negative">부정</span></div>
-      </div>
-      <div class="review-card-text">보습감 제로입니다...보습력 원하시는 분들은 다른제품 구매하세요관리템 소개로 유명한 쇼호스트 인스타 보고 샀는데^^ 전혀 아니네요</div>
-      <div class="review-card-footer"><span class="tag tag-channel">올리브영</span><span class="text-sm text-muted">2026-03-23</span></div>
-    </div>
-    <div class="review-card" onclick="showReviewDetail('R0038',true)" style="margin-bottom:8px">
-      <div class="review-card-top">
-        <div><div class="review-card-product" style="font-size:12px">에가 핸드크림 [에센셜]</div></div>
-        <div style="display:flex;gap:4px;flex-shrink:0"><span class="tag tag-negative">부정</span></div>
-      </div>
-      <div class="review-card-text">끈적임이 없는게 가장 큰 장점이고 가격이 제일 큰 단점입니다ㅠㅠ</div>
-      <div class="review-card-footer"><span class="tag tag-channel">올리브영</span><span class="text-sm text-muted">2026-03-20</span></div>
-    </div>
-    <div class="review-card" onclick="showReviewDetail('R0030',true)" style="margin-bottom:8px">
-      <div class="review-card-top">
-        <div><div class="review-card-product" style="font-size:12px">에가 핸드크림 [에센셜]</div></div>
-        <div style="display:flex;gap:4px;flex-shrink:0"><span class="tag tag-negative">부정</span></div>
-      </div>
-      <div class="review-card-text">기능성이 있어 봤자 보습력이 없어서 건조해서 주름 생길 지경임 병주고 약주고 가격은 개센가요? 
-아 보습력이 하도 없다보니 바르고 나서 다른거 해도 묻어남 없다는 장점은 있음ㅋ 근...</div>
-      <div class="review-card-footer"><span class="tag tag-channel">올리브영</span><span class="text-sm text-muted">2026-03-18</span></div>
-    </div>
-    <div class="review-card" onclick="showReviewDetail('R0005',true)" style="margin-bottom:8px">
-      <div class="review-card-top">
-        <div><div class="review-card-product" style="font-size:12px">강희재 x NMN 지우개팩 &amp; 손티에이징 핸드크림</div></div>
-        <div style="display:flex;gap:4px;flex-shrink:0"><span class="tag tag-negative">부정</span></div>
-      </div>
-      <div class="review-card-text">가격은 비싸지만 끈적이지 않고 효능이 좋다고해서 구매했었요~효과가 있기를 기대하고 있어요~</div>
-      <div class="review-card-footer"><span class="tag tag-channel">스마트스토어</span><span class="text-sm text-muted">2026-03-17</span></div>
-    </div>
-    <div class="review-card" onclick="showReviewDetail('R0076',true)" style="margin-bottom:8px">
-      <div class="review-card-top">
-        <div><div class="review-card-product" style="font-size:12px">에가 핸드크림 [어워즈 (+에센셜10+어드밴스드10)]</div></div>
-        <div style="display:flex;gap:4px;flex-shrink:0"><span class="tag tag-negative">부정</span></div>
-      </div>
-      <div class="review-card-text">가격이 너무 비싸서 아쉽지만 보습 적당하게 잘 되고 자외선 차단 기능이 있어서 좋아요</div>
-      <div class="review-card-footer"><span class="tag tag-channel">올리브영</span><span class="text-sm text-muted">2026-03-14</span></div>
-    </div>
-    <div class="review-card" onclick="showReviewDetail('R0074',true)" style="margin-bottom:8px">
-      <div class="review-card-top">
-        <div><div class="review-card-product" style="font-size:12px">에가 핸드크림 [어워즈 (+에센셜10+어드밴스드10)]</div></div>
-        <div style="display:flex;gap:4px;flex-shrink:0"><span class="tag tag-negative">부정</span></div>
-      </div>
-      <div class="review-card-text">보습이 빠르게 되서 끈적거림이 적은데 보습은 잘되서 잘 쓰고 있습니다 손도 자외선 차단을 신경쓰는게 맘에 들어요</div>
-      <div class="review-card-footer"><span class="tag tag-channel">올리브영</span><span class="text-sm text-muted">2026-03-12</span></div>
-    </div>
-    <div class="review-card" onclick="showReviewDetail('R0071',true)" style="margin-bottom:8px">
-      <div class="review-card-top">
-        <div><div class="review-card-product" style="font-size:12px">에가 핸드크림 [어워즈 (+에센셜10+어드밴스드10)]</div></div>
-        <div style="display:flex;gap:4px;flex-shrink:0"><span class="tag tag-negative">부정</span></div>
-      </div>
-      <div class="review-card-text">너무 좋아요! 보습이 잘 돼요 ㅎㅎ 끈적임도 없고 향도 나쁘지 않아요!</div>
-      <div class="review-card-footer"><span class="tag tag-channel">올리브영</span><span class="text-sm text-muted">2026-03-11</span></div>
-    </div></div>
-        </div>
-      </div>
+      <div class="ix-foot" id="ix-foot"></div>
     </div>
 
     <!-- ===== REVIEW ARCHIVE ===== -->
@@ -1185,28 +1080,6 @@ window.logoutEGA = logoutEGA;
           </div>
         </div>
         <div id="voc-body"><div class="voc-empty">불러오는 중...</div></div>
-      </div>
-
-      <div class="voc-modal" id="voc-modal" hidden onclick="if(event.target===this)closeVocReview()">
-        <div class="voc-modal-box" role="dialog" aria-label="리뷰 원본">
-          <div class="voc-modal-head"><b>리뷰 원본</b><button class="voc-modal-x" onclick="closeVocReview()" aria-label="닫기">✕</button></div>
-          <div id="voc-modal-body"></div>
-        </div>
-      </div>
-
-      <div class="wr-modal" id="wr-modal" hidden onclick="if(event.target===this)closeWeeklyReport()">
-        <div class="wr-box" role="dialog" aria-label="리뷰 주간 리포트">
-          <div class="wr-top">
-            <div><h3>📋 리뷰 주간 리포트</h3><div class="wr-period" id="wr-period"></div></div>
-            <div class="wr-tools">
-              <select class="filter-select" id="wr-week" onchange="renderWeeklyReport()"></select>
-              <button class="btn btn-outline btn-sm" id="wr-copy-btn" onclick="copyWeeklyReport()">슬랙용 복사</button>
-              <button class="btn btn-outline btn-sm" onclick="downloadWeeklyReportExcel()">📥 엑셀</button>
-              <button class="voc-modal-x" onclick="closeWeeklyReport()" aria-label="닫기">✕</button>
-            </div>
-          </div>
-          <div id="wr-body"></div>
-        </div>
       </div>
 
       <div class="section-label" style="margin-bottom:12px">전체 리뷰 검색</div>
@@ -2156,7 +2029,30 @@ window.logoutEGA = logoutEGA;
       </div>
     </div>
 
-    <div id="build-stamp">BUILD 251027-B · 위쪽 탭 메뉴 · 판매 분석/프롬프트 관리 삭제</div>
+    <!-- 공용 팝업: 리뷰 원본 · 주간 리포트 (어느 화면에서나 열림) -->
+      <div class="voc-modal" id="voc-modal" hidden onclick="if(event.target===this)closeVocReview()">
+        <div class="voc-modal-box" role="dialog" aria-label="리뷰 원본">
+          <div class="voc-modal-head"><b>리뷰 원본</b><button class="voc-modal-x" onclick="closeVocReview()" aria-label="닫기">✕</button></div>
+          <div id="voc-modal-body"></div>
+        </div>
+      </div>
+
+      <div class="wr-modal" id="wr-modal" hidden onclick="if(event.target===this)closeWeeklyReport()">
+        <div class="wr-box" role="dialog" aria-label="리뷰 주간 리포트">
+          <div class="wr-top">
+            <div><h3>📋 리뷰 주간 리포트</h3><div class="wr-period" id="wr-period"></div></div>
+            <div class="wr-tools">
+              <select class="filter-select" id="wr-week" onchange="renderWeeklyReport()"></select>
+              <button class="btn btn-outline btn-sm" id="wr-copy-btn" onclick="copyWeeklyReport()">슬랙용 복사</button>
+              <button class="btn btn-outline btn-sm" onclick="downloadWeeklyReportExcel()">📥 엑셀</button>
+              <button class="voc-modal-x" onclick="closeWeeklyReport()" aria-label="닫기">✕</button>
+            </div>
+          </div>
+          <div id="wr-body"></div>
+        </div>
+      </div>
+
+    <div id="build-stamp">BUILD 251027-C · 리뷰 Index 첫 화면</div>
   </main>
 </div>
 <script>
@@ -4569,171 +4465,220 @@ function _catByText(t) {
   return null;
 }
 
-// ===== DASHBOARD =====
+// ===== 📊 리뷰 Index (Biz Index 매출 화면 구성을 리뷰에 맞춘 첫 화면) =====
+// 기간·채널·제품 필터 → ①KPI(전기·전년 대비) ②분기 목표 ③채널 믹스 ④일별 트렌드 ⑤제품 표 ⑥키워드 ⑧마케팅 후보
 let chartInstances = {};
 function destroyChart(id) {
   if(chartInstances[id]) { chartInstances[id].destroy(); delete chartInstances[id]; }
 }
 
+let _ixPeriod = 'month';
+let _ixCustom = null;     // [from, to] 직접 선택
+let _ixExtra = null;      // review_workflow.json · repurchase_cafe24.json (분기 목표용)
+
+function _ixLatest(){ return ALL_REVIEWS.reduce((m, r) => (r.date || '') > m ? r.date : m, '2000-01-01'); }
+function _ixDays(a, b){ const [y1,m1,d1] = a.split('-').map(Number), [y2,m2,d2] = b.split('-').map(Number); return Math.round((Date.UTC(y2,m2-1,d2) - Date.UTC(y1,m1-1,d1)) / 864e5) + 1; }
+function _ixYearAgo(ymd){ const [y,m,d] = ymd.split('-'); return `${Number(y)-1}-${m}-${m === '02' && d === '29' ? '28' : d}`; }
+
+// 선택한 기간 → [시작, 끝, 이름]
+function _ixRange(){
+  const today = _vocToday();
+  const mon = _vocMonday(today);
+  if (_ixCustom) return [_ixCustom[0], _ixCustom[1], '직접 선택'];
+  switch (_ixPeriod) {
+    case 'lastweek': return [_vocAddDays(mon, -7), _vocAddDays(mon, -1), '지난주'];
+    case 'week': return [mon, today, '이번 주'];
+    case 'lastmonth': { const s = _vocAddMonths(_vocMonthStart(today), -1); return [s, _vocMonthEnd(s), '지난달']; }
+    case 'd30': return [_vocAddDays(today, -29), today, '최근 30일'];
+    default: return [_vocMonthStart(today), today, '이번 달'];
+  }
+}
+// 비교 기간: 지난주/지난달은 그 앞 주·달, 나머지는 같은 길이만큼 바로 앞
+function _ixPrevRange(s, e){
+  if (!_ixCustom && _ixPeriod === 'lastmonth') { const ps = _vocAddMonths(s, -1); return [ps, _vocMonthEnd(ps)]; }
+  if (!_ixCustom && _ixPeriod === 'month') { const ps = _vocAddMonths(s, -1); return [ps, _vocAddDays(ps, _ixDays(s, e) - 1)]; }
+  const n = _ixDays(s, e);
+  return [_vocAddDays(s, -n), _vocAddDays(s, -1)];
+}
+
+function _ixFilter(list){
+  const ch = document.getElementById('ix-channel')?.value || '';
+  const pr = document.getElementById('ix-product')?.value || '';
+  return list.filter(r => (!ch || r.channel === ch) && (!pr || _vocProduct(r) === pr));
+}
+function _ixIn(s, e){ return _ixFilter(ALL_REVIEWS.filter(r => r.date >= s && r.date <= e)); }
+
+function ixSetPeriod(p){
+  _ixPeriod = p; _ixCustom = null;
+  document.querySelectorAll('#ix-periods button').forEach(b => b.classList.toggle('on', b.dataset.p === p));
+  updateDashboard();
+}
+function ixApplyCustom(){
+  const f = document.getElementById('ix-from').value, t = document.getElementById('ix-to').value;
+  if (!f || !t || f > t) { showToast('시작일과 종료일을 확인해 주세요', 'error'); return; }
+  _ixCustom = [f, t];
+  document.querySelectorAll('#ix-periods button').forEach(b => b.classList.remove('on'));
+  updateDashboard();
+}
+document.getElementById('ix-periods')?.addEventListener('click', e => { const b = e.target.closest('button[data-p]'); if (b) ixSetPeriod(b.dataset.p); });
+
+function _ixFillSelects(){
+  const chSel = document.getElementById('ix-channel'), prSel = document.getElementById('ix-product');
+  if (!chSel || chSel.options.length > 1) return;
+  const cnt = (f) => Object.entries(ALL_REVIEWS.reduce((m, r) => { const k = f(r); if (k) m[k] = (m[k]||0)+1; return m; }, {})).sort((a,b) => b[1]-a[1]).map(([k]) => k);
+  cnt(r => r.channel).forEach(c => chSel.add(new Option(c, c)));
+  cnt(r => _vocProduct(r)).forEach(p => prSel.add(new Option(p, p)));
+}
+
+async function _ixLoadExtra(){
+  if (_ixExtra) return _ixExtra;
+  const get = async f => { try { const r = await fetch(f + '?t=' + Date.now(), { cache: 'no-store' }); return r.ok ? await r.json() : null; } catch(e) { return null; } };
+  const [wf, rp] = await Promise.all([get('review_workflow.json'), get('repurchase_cafe24.json')]);
+  _ixExtra = { wf, rp };
+  return _ixExtra;
+}
+
+function _ixChg(cur, prev, unit, goodUp){
+  if (prev === null || prev === undefined) return '<span class="ix-na">–</span>';
+  const d = cur - prev;
+  if (unit === '%') {
+    if (!prev) return '<span class="ix-na">–</span>';
+    const p = Math.round(d / prev * 100);
+    if (!p) return '<span class="ix-na">변화 없음</span>';
+    return `<span class="${(p > 0) === goodUp ? 'ix-up' : 'ix-down'}">${p > 0 ? '▲' : '▼'} ${Math.abs(p)}%</span>`;
+  }
+  if (!d) return '<span class="ix-na">변화 없음</span>';
+  return `<span class="${(d > 0) === goodUp ? 'ix-up' : 'ix-down'}">${d > 0 ? '▲' : '▼'} ${Math.abs(d)}${unit}</span>`;
+}
+
+function _ixAns(list){
+  const c = list.filter(r => !/올리브영/.test(r.channel || '') && getCremaReviewId(r));
+  return { n: c.length, done: c.filter(isReplyDone).length };
+}
+
 function updateDashboard() {
-  // ── 최근 4주 범위 계산 (항상 ALL_REVIEWS의 가장 최근 날짜 기준) ──
-  const maxDate = ALL_REVIEWS.reduce((m, r) => r.date > m ? r.date : m, '2000-01-01');
-  const [latestWS, latestWE] = getWeekRange(maxDate);
-  const monthEnd = latestWE;
-  const monthStart = new Date(latestWS); monthStart.setDate(monthStart.getDate() - 21); // 4주 전
+  if (!Array.isArray(ALL_REVIEWS) || !ALL_REVIEWS.length || !document.getElementById('ix-kpis')) return;
+  _ixFillSelects();
+  const [s, e, label] = _ixRange();
+  const [ps, pe] = _ixPrevRange(s, e);
+  const [ys, ye] = [_ixYearAgo(s), _ixYearAgo(e)];
+  const cur = _ixIn(s, e), prev = _ixIn(ps, pe), yago = _ixIn(ys, ye);
+  const esc = _cstEsc;
+  const posPct = l => l.length ? Math.round(l.filter(r => r.sentiment === '긍정').length / l.length * 100) : 0;
+  const issues = l => l.filter(_vocIsIssue);
+  const fromEl = document.getElementById('ix-from'), toEl = document.getElementById('ix-to');
+  if (!_ixCustom) { fromEl.value = s; toEl.value = e; }
+  const latest = _ixLatest();
+  document.getElementById('ix-range').innerHTML = `<b>${label}</b> ${s} ~ ${e} (${_ixDays(s, e)}일) · 비교: 전기 ${ps} ~ ${pe} · 전년 ${ys} ~ ${ye}${e > latest ? ` · <span class="ix-na">리뷰는 ${latest}까지 수집됨</span>` : ''}`;
 
-  const monthReviews = ALL_REVIEWS.filter(r => inRange(r.date, monthStart, monthEnd));
+  // ① KPI
+  const a = _ixAns(cur), ap = _ixAns(prev);
+  const ansPct = x => x.n ? Math.round(x.done / x.n * 100) : null;
+  const kpi = (k, v, sub, extra) => `<div class="ix-kpi"${extra || ''}><div class="k">${k}</div><div class="v">${v}</div><div class="d">${sub}</div></div>`;
+  document.getElementById('ix-kpis').innerHTML =
+    kpi('리뷰 수', `${cur.length}건`, `전기 ${_ixChg(cur.length, prev.length, '%', true)} · 전년 ${yago.length ? _ixChg(cur.length, yago.length, '%', true) : '<span class="ix-na">–</span>'}`) +
+    kpi('긍정 비율', `${posPct(cur)}%`, `전기 ${prev.length ? _ixChg(posPct(cur), posPct(prev), '%p', true) : '–'} · 전년 ${yago.length ? _ixChg(posPct(cur), posPct(yago), '%p', true) : '–'}`) +
+    kpi('확인 필요 리뷰', `${issues(cur).length}건`, `전기 ${issues(prev).length}건 · 누르면 원문 보기`, ` onclick="ixOpenIssues()" style="cursor:pointer"`) +
+    (CREMA_ANSWERED_IDS
+      ? kpi('답변률', a.n ? `${ansPct(a)}%` : '–', a.n ? `${a.done}/${a.n}건 · 전기 ${ap.n ? ansPct(ap) + '%' : '–'}` : '크리마 리뷰 없음')
+      : kpi('답변률', '–', '답변 상태 데이터를 불러오지 못했어요'));
 
-  // 전월 4주 (비교용)
-  const prevMonthEnd = new Date(monthStart); prevMonthEnd.setDate(prevMonthEnd.getDate() - 1);
-  const prevMonthStart = new Date(prevMonthEnd); prevMonthStart.setDate(prevMonthStart.getDate() - 27);
-  const prevMonthReviews = ALL_REVIEWS.filter(r => inRange(r.date, prevMonthStart, prevMonthEnd));
+  // ③ 채널 믹스
+  const chs = _vocCount(cur, r => [r.channel || '기타']);
+  const total = cur.length || 1;
+  document.getElementById('ix-mix').innerHTML = chs.length ? chs.map(([c, n]) => `<i style="width:${n / total * 100}%;background:${CHANNEL_COLORS[c] || '#9ca3af'}" title="${esc(c)} ${n}건"></i>`).join('') : '<i style="width:100%;background:var(--border)"></i>';
+  const prevCh = Object.fromEntries(_vocCount(prev, r => [r.channel || '기타']));
+  document.getElementById('ix-mix-legend').innerHTML = chs.map(([c, n]) => `<span><b style="background:${CHANNEL_COLORS[c] || '#9ca3af'}"></b>${esc(c)} ${n}건 (${Math.round(n / total * 100)}%) ${_ixChg(n, prevCh[c] || 0, '%', true)}</span>`).join('') || '<span class="ix-na">이 기간 리뷰 없음</span>';
 
-  const total = monthReviews.length;
-  const prevTotal = prevMonthReviews.length;
-  const change = prevTotal ? ((total - prevTotal) / prevTotal * 100).toFixed(1) : 0;
-  const posCount = monthReviews.filter(r => r.sentiment === '긍정').length;
-  const negCount = monthReviews.filter(r => r.sentiment === '부정').length;
-  const posPct = total ? Math.round(posCount / total * 100) : 0;
-  const repurchase = monthReviews.filter(r => r.has_repurchase).length;
-  // 답변이 이미 게시된 건 카운트에서 제외 (사용자 처리 완료)
-  const issues = monthReviews.filter(r => (r.issue_flag || r.sentiment === '부정') && r.reply_status !== 'posted').length;
-  const avgScore = total ? (monthReviews.reduce((a, r) => a + r.sentiment_score, 0) / total / 20).toFixed(1) : 0;
-
-  // 배너 날짜 범위 업데이트
-  const fmtDate = d => (d.getMonth()+1).toString().padStart(2,'0') + '/' + d.getDate().toString().padStart(2,'0');
-  const bannerLabel = document.getElementById('dash-banner-label');
-  if (bannerLabel) bannerLabel.textContent = '최근 4주 요약 · ' + fmtDate(monthStart) + ' ~ ' + fmtDate(monthEnd);
-
-  // 배너 요약 인사이트 (동적 생성 · 3줄 요약)
-  const topCh = Object.entries(monthReviews.reduce((acc, r) => { acc[r.channel] = (acc[r.channel]||0)+1; return acc; }, {})).sort((a,b)=>b[1]-a[1]);
-  const topKwAll = Object.entries(monthReviews.reduce((acc, r) => { r.keywords.forEach(k => { acc[k]=(acc[k]||0)+1; }); return acc; }, {})).sort((a,b)=>b[1]-a[1]);
-  const negPct = total ? Math.round(negCount/total*100) : 0;
-  const topChPct = topCh[0] && total ? Math.round(topCh[0][1]/total*100) : 0;
-  const changeSign = change >= 0 ? '+' : '';
-  const summaryEl = document.getElementById('dash-summary-text');
-  if (summaryEl) {
-    summaryEl.innerHTML = `
-      <div class="banner-insight-item"><div class="banner-insight-dot"></div><div>최근 4주 총 <b>${total}건</b> 수집 · 전월 대비 <b>${changeSign}${change}%</b> (${prevTotal}건)</div></div>
-      <div class="banner-insight-item"><div class="banner-insight-dot ${posPct>=negPct?'green':'red'}"></div><div>긍정 <b>${posPct}%</b> · 부정 ${negPct}% · 채널 1위 <b>${topCh[0]?topCh[0][0]:'-'}</b> ${topCh[0]?topCh[0][1]+'건('+topChPct+'%)':''}</div></div>
-      <div class="banner-insight-item"><div class="banner-insight-dot ${issues>0?'red':'green'}"></div><div>${issues>0?`즉시 확인 필요 리뷰 <b>${issues}건</b>`:'즉시 확인 필요 리뷰 없음'} · 최다 언급 키워드 ${topKwAll[0]?'"'+topKwAll[0][0]+'"('+topKwAll[0][1]+'건)':'-'}</div></div>
-    `;
+  // ④ 일별 트렌드 (최대 92일)
+  const days = [];
+  const dStart = _ixDays(s, e) > 92 ? _vocAddDays(e, -91) : s;
+  for (let d = dStart; d <= e; d = _vocAddDays(d, 1)) days.push(d);
+  const byDay = {}; _ixIn(_vocAddDays(dStart, -6), e).forEach(r => { (byDay[r.date] = byDay[r.date] || []).push(r); });
+  const cntS = (d, sent) => (byDay[d] || []).filter(r => sent === '혼합' ? (r.sentiment === '혼합' || r.sentiment === '중립') : r.sentiment === sent).length;
+  const ma = days.map(d => { let t = 0; for (let i = 0; i < 7; i++) t += (byDay[_vocAddDays(d, -i)] || []).length; return +(t / 7).toFixed(1); });
+  destroyChart('ix-daily');
+  const ctx = document.getElementById('chart-ix-daily');
+  if (ctx && typeof Chart !== 'undefined') {
+    chartInstances['ix-daily'] = new Chart(ctx.getContext('2d'), {
+      data: { labels: days.map(d => _vocMd(d)), datasets: [
+        { type: 'bar', label: '긍정', data: days.map(d => cntS(d, '긍정')), backgroundColor: '#10b981', stack: 's', borderRadius: 2 },
+        { type: 'bar', label: '혼합', data: days.map(d => cntS(d, '혼합')), backgroundColor: '#f59e0b', stack: 's', borderRadius: 2 },
+        { type: 'bar', label: '부정', data: days.map(d => cntS(d, '부정')), backgroundColor: '#ef4444', stack: 's', borderRadius: 2 },
+        { type: 'line', label: '7일 평균', data: ma, borderColor: '#1e50ff', borderDash: [5, 4], borderWidth: 1.5, pointRadius: 0, tension: .3 },
+      ] },
+      options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
+        plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, boxWidth: 10 } } },
+        scales: { x: { stacked: true, grid: { display: false }, ticks: { font: { size: 10 }, maxRotation: 0, autoSkip: true, maxTicksLimit: 16 } },
+                  y: { stacked: true, beginAtZero: true, ticks: { precision: 0, font: { size: 10 } }, grid: { color: 'rgba(0,0,0,.05)' } } } }
+    });
   }
+  document.getElementById('ix-daily-table').innerHTML = `<table><thead><tr><th>날짜</th><th class="r">리뷰</th><th class="r">긍정</th><th class="r">혼합</th><th class="r">부정</th><th>주요 키워드</th></tr></thead><tbody>${days.slice().reverse().map(d => { const l = byDay[d] || []; return `<tr><td>${_vocMd(d)}(${_vocDowOf(d)})</td><td class="r">${l.length}</td><td class="r">${cntS(d, '긍정')}</td><td class="r">${cntS(d, '혼합')}</td><td class="r">${cntS(d, '부정')}</td><td>${esc(_vocCount(l, r => r.keywords).slice(0, 3).map(([k]) => k).join(', ') || '-')}</td></tr>`; }).join('')}</tbody></table>`;
 
-  // KPI 업데이트
-  document.getElementById('kpi-week').textContent = total;
-  document.getElementById('kpi-rating').textContent = avgScore;
-  document.getElementById('kpi-pos').textContent = posPct + '%';
-  document.getElementById('kpi-issue').textContent = issues;
-  document.getElementById('dash-total-w').textContent = total;
-  document.getElementById('dash-avg-score').textContent = avgScore;
-  document.getElementById('dash-pos-pct').textContent = posPct + '%';
-  document.getElementById('dash-repurchase').textContent = repurchase + '건';
-  document.getElementById('donut-total').textContent = total;
+  // ⑤ 제품별 리뷰 현황
+  const prevP = Object.fromEntries(_vocCount(prev, r => [_vocProduct(r)]));
+  const prods = _vocCount(cur, r => [_vocProduct(r)]);
+  document.getElementById('ix-products').innerHTML = prods.length ? `<table><thead><tr><th>제품</th><th class="r">리뷰</th><th class="r">비중</th><th class="r">전기 대비</th><th class="r">긍정률</th><th class="r">부정</th><th class="r">재구매 언급</th><th>많이 나온 말</th></tr></thead><tbody>${prods.map(([p, n]) => {
+    const l = cur.filter(r => _vocProduct(r) === p);
+    const js = String(p).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    return `<tr class="ix-row" onclick="ixGoProduct('${esc(js)}')"><td>${esc(p)}</td><td class="r">${n}</td><td class="r">${Math.round(n / total * 100)}%</td><td class="r">${_ixChg(n, prevP[p] || 0, '%', true)}</td><td class="r">${posPct(l)}%</td><td class="r">${l.filter(r => r.sentiment === '부정').length}</td><td class="r">${l.filter(r => r.has_repurchase).length}</td><td>${_vocCount(l, r => r.keywords).slice(0, 3).map(([k]) => `<span class="ix-chip">${esc(k)}</span>`).join('')}</td></tr>`;
+  }).join('')}</tbody></table>` : '<div class="ix-empty">이 기간 리뷰가 없어요.</div>';
 
-  const changeEl = document.getElementById('kpi-week-change');
-  changeEl.textContent = (change >= 0 ? '↑ +' : '↓ ') + change + '% vs 전월 (' + prevTotal + '건)';
-  changeEl.className = 'kpi-change ' + (change >= 0 ? 'up' : 'down');
-
-  // ── 채널별 비중 (4주) ──
-  const chCounts = monthReviews.reduce((acc, r) => { acc[r.channel]=(acc[r.channel]||0)+1; return acc; }, {});
-  const chLabels = Object.keys(chCounts);
-  const chVals = chLabels.map(c => chCounts[c]);
-  const chColors = chLabels.map(c => CHANNEL_COLORS[c] || '#9ca3af');
-
-  destroyChart('channel-donut');
-  const ctx2 = document.getElementById('chart-channel-donut').getContext('2d');
-  chartInstances['channel-donut'] = new Chart(ctx2, {
-    type: 'doughnut',
-    data: { labels: chLabels, datasets: [{ data: chVals, backgroundColor: chColors, borderWidth: 2, borderColor: '#fff', hoverOffset: 4 }] },
-    options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => `${ctx.label}: ${ctx.parsed}건 (${Math.round(ctx.parsed/total*100)}%)` } } } }
-  });
-  const legendEl = document.getElementById('channel-legend');
-  legendEl.innerHTML = chLabels.map((c, i) => `<div class="legend-item"><div class="legend-dot" style="background:${chColors[i]}"></div>${c} ${chVals[i]}건</div>`).join('');
-
-  // ── 핵심 키워드 TOP 10 (4주) ──
-  const kwCounts = {};
-  monthReviews.forEach(r => { r.keywords.forEach(k => { kwCounts[k]=(kwCounts[k]||0)+1; }); });
-  const topKws = Object.entries(kwCounts).sort((a,b) => b[1]-a[1]).slice(0, 10);
-  const kwEl = document.getElementById('kw-bars');
-  const maxKw = topKws[0] ? topKws[0][1] : 1;
-  kwEl.innerHTML = topKws.length ? topKws.map(([k, v]) => `
-    <div class="hbar-item">
-      <div class="hbar-label">${k}</div>
-      <div class="hbar-track"><div class="hbar-fill" style="width:${Math.round(v/maxKw*100)}%"></div></div>
-      <div class="hbar-count">${v}</div>
-    </div>`).join('') : '<div class="text-muted text-sm">키워드 없음</div>';
-
-  // ── 주간 리뷰 추이 (최근 10주, 기준점 = 가장 최근 주) ──
-  const weeks = [];
-  for (let i = 9; i >= 0; i--) {
-    const ws = new Date(latestWS); ws.setDate(ws.getDate() - i * 7);
-    const we = new Date(ws); we.setDate(we.getDate() + 6);
-    const cnt = ALL_REVIEWS.filter(r => inRange(r.date, ws, we)).length;
-    const label = (ws.getMonth()+1) + '/' + ws.getDate();
-    weeks.push({ label, cnt, isInMonth: i < 4 });
-  }
-  destroyChart('weekly-trend');
-  const ctx1 = document.getElementById('chart-weekly-trend').getContext('2d');
-  chartInstances['weekly-trend'] = new Chart(ctx1, {
-    type: 'bar',
-    data: {
-      labels: weeks.map(w => w.label),
-      datasets: [{
-        label: '리뷰 수',
-        data: weeks.map(w => w.cnt),
-        backgroundColor: weeks.map(w => w.isInMonth ? 'rgba(59,108,240,0.85)' : 'rgba(59,108,240,0.2)'),
-        borderRadius: 5, borderSkipped: false,
-      }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => `${ctx.parsed.y}건` } } },
-      scales: { x: { grid: { display: false }, ticks: { font: { size: 11 } } }, y: { grid: { color: 'rgba(0,0,0,.05)' }, ticks: { font: { size: 11 }, callback: v => v + '건' } } }
-    }
-  });
-
-  // ── 감성 분포 (4주) ──
-  const sentData = ['긍정', '혼합', '부정'].map(s => monthReviews.filter(r => r.sentiment === s).length);
-  destroyChart('sentiment');
-  const ctx3 = document.getElementById('chart-sentiment').getContext('2d');
-  chartInstances['sentiment'] = new Chart(ctx3, {
-    type: 'doughnut',
-    data: { labels: ['긍정', '혼합', '부정'], datasets: [{ data: sentData, backgroundColor: ['#10b981', '#f59e0b', '#ef4444'], borderWidth: 2, borderColor: '#fff' }] },
-    options: { responsive: true, maintainAspectRatio: false, cutout: '65%', plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 12 } }, tooltip: { callbacks: { label: ctx => `${ctx.label}: ${ctx.parsed}건 (${total ? Math.round(ctx.parsed/total*100) : 0}%)` } } } }
-  });
-
-  // ── 즉시 확인 필요한 리뷰 (4주, 최신순) ──
-  const alertEl = document.getElementById('alert-reviews');
-  const alertReviews = monthReviews.filter(r => r.issue_flag || r.sentiment === '부정')
-    .sort((a, b) => b.date.localeCompare(a.date)).slice(0, 8);
-  alertEl.innerHTML = alertReviews.length ? alertReviews.map(r => `
-    <div class="review-card" onclick="showReviewDetail('${r.id}',true)" style="margin-bottom:8px">
-      <div class="review-card-top">
-        <div><div class="review-card-product" style="font-size:12px">${r.product.slice(0,40)}${r.product.length>40?'...':''}</div></div>
-        <div style="display:flex;gap:4px;flex-shrink:0">${sentimentTag(r.sentiment)}</div>
-      </div>
-      <div class="review-card-text">${(r.text||'').slice(0,100)}${r.text&&r.text.length>100?'...':''}</div>
-      <div class="review-card-footer">${channelTag(r.channel)}<span class="text-sm text-muted">${r.date}</span></div>
-    </div>`).join('') : '<div class="empty" style="padding:20px"><p>최근 4주 이슈 리뷰 없음</p></div>';
-
-  // ── 제품별 리뷰 수 (4주) ──
-  // 카테고리 통합: 핸드크림 관련 4종(에센셜/어드밴스드/세트/단일)을 '핸드크림'으로 묶음
-  const _normProdCatD = (cat) => {
-    if (!cat) return '기타';
-    if (cat.indexOf('핸드크림') !== -1) return '핸드크림';
-    return cat;
+  // ⑥ 키워드 순위 (칭찬 = 긍정 리뷰, 불만 = 부정·이슈 리뷰)
+  const kwList = (l, pl, cls) => {
+    const c = _vocCount(l, r => r.keywords).slice(0, 7), pm = Object.fromEntries(_vocCount(pl, r => r.keywords));
+    const mx = c.length ? c[0][1] : 1;
+    return c.length ? c.map(([k, n]) => { const js = String(k).replace(/\\/g, '\\\\').replace(/'/g, "\\'"); return `<div class="ix-kw" onclick="searchKeyword('${esc(js)}')"><span class="ix-kwn">${esc(k)}</span><span class="ix-kwbar"><i class="${cls}" style="width:${n / mx * 100}%"></i></span><span class="ix-kwc">${n}</span><span class="ix-kwd">${_ixChg(n, pm[k] || 0, '', cls === 'good')}</span></div>`; }).join('') : '<div class="ix-empty">없음</div>';
   };
-  const prodCounts = {};
-  monthReviews.forEach(r => { const n = _normProdCatD(r.product_category); prodCounts[n] = (prodCounts[n]||0)+1; });
-  const topProds = Object.entries(prodCounts).sort((a, b) => b[1]-a[1]).slice(0, 8);
-  const maxProd = topProds[0] ? topProds[0][1] : 1;
-  document.getElementById('product-bars').innerHTML = topProds.map(([p, v]) => `
-    <div class="hbar-item">
-      <div class="hbar-label" style="width:120px;font-size:11px" title="${p}">${p.slice(0,18)}${p.length>18?'...':''}</div>
-      <div class="hbar-track"><div class="hbar-fill" style="width:${Math.round(v/maxProd*100)}%"></div></div>
-      <div class="hbar-count">${v}</div>
-    </div>`).join('');
+  document.getElementById('ix-kw-good').innerHTML = kwList(cur.filter(r => r.sentiment === '긍정'), prev.filter(r => r.sentiment === '긍정'), 'good');
+  document.getElementById('ix-kw-bad').innerHTML = kwList(issues(cur), issues(prev), 'bad');
+
+  // ⑧ 마케팅 활용 후보
+  const praise = cur.filter(r => r.sentiment === '긍정' && _wrText(r.text).length >= 35)
+    .sort((x, y) => (y.sentiment_score || 0) - (x.sentiment_score || 0) || _wrText(y.text).length - _wrText(x.text).length).slice(0, 5);
+  document.getElementById('ix-praise').innerHTML = praise.length ? praise.map(r => `<div class="ix-praise"><div class="m">${_vocMd(r.date)} · ${esc(r.channel || '')} · ${esc(_vocProduct(r))}</div><div class="t">${esc(_vocCut(_wrText(r.text), 130))}</div><div class="a"><button class="btn btn-outline btn-sm" onclick="openVocReview('${r.id}')">원문 보기</button> <button class="btn btn-outline btn-sm" onclick="copyTextWithFeedback(_wrText((ALL_REVIEWS.find(x => x.id === '${r.id}') || {}).text), this)">원문 복사</button></div></div>`).join('') : '<div class="ix-empty">이 기간에는 후보가 없어요.</div>';
+
+  // 데이터 출처 · 마지막 수집일
+  const lastBy = {}; ALL_REVIEWS.forEach(r => { const c = r.channel || '기타'; if (!lastBy[c] || r.date > lastBy[c]) lastBy[c] = r.date; });
+  // 7일 넘게 안 들어오면 경고, 반년 넘게 끊긴 채널(예: 올리브영 매장)은 과거 데이터로만 표시
+  const age = d => _ixDays(d, _vocToday());
+  const mark = d => age(d) > 180 ? '(과거 데이터)' : age(d) > 7 ? '<span class="ix-warn">⚠ 수집 멈춤</span>' : '✓';
+  document.getElementById('ix-foot').innerHTML = '데이터 · 마지막 수집: ' + Object.entries(lastBy).sort((x, y) => y[1].localeCompare(x[1])).map(([c, d]) => `${esc(c)} ${d} ${mark(d)}`).join(' · ');
+
+  // ② 분기 목표 (별도 파일 — 받아오면 채움)
+  _ixLoadExtra().then(_ixRenderGoals);
+  if (typeof updateTodoStrip === 'function') updateTodoStrip();
+}
+
+function _ixRenderGoals(x){
+  const el = document.getElementById('ix-goals');
+  if (!el) return;
+  const k = x && x.wf && x.wf.kpi, sum = x && x.rp && x.rp.summary;
+  if (!k) { el.innerHTML = '<div class="ix-empty">목표 데이터(review_workflow.json)를 불러오지 못했어요.</div>'; return; }
+  const sub = document.getElementById('ix-goal-sub');
+  if (sub) sub.textContent = `자사몰(카페24) 기준 · ${x.wf.analyzedAt || ''} 갱신 · 목표는 ${k.quarter || ''} 값`;
+  const goal = (name, cur, target, unit, lowerBetter, note) => {
+    const ok = lowerBetter ? cur <= target : cur >= target;
+    const pct = lowerBetter ? Math.min(100, Math.round(target / Math.max(cur, 0.01) * 100)) : Math.min(100, Math.round(cur / target * 100));
+    return `<div class="ix-goal"><div class="k">${name}</div><div class="v">${cur}${unit}</div><div class="d">목표 ${target}${unit}${lowerBetter ? ' 이하' : ''} · ${ok ? '<span class="ix-up">달성</span>' : `<span class="ix-down">${lowerBetter ? (cur - target).toFixed(1) + unit + ' 초과' : '달성 ' + pct + '%'}</span>`}</div><div class="ix-gbar"><i class="${ok ? 'ok' : lowerBetter ? 'bad' : ''}" style="width:${pct}%"></i></div>${note ? `<div class="n">${note}</div>` : ''}</div>`;
+  };
+  el.innerHTML =
+    (k.kpi1 ? goal('재구매자 후기 작성률', k.kpi1.current, k.kpi1.target, '%', false, `후기 없는 재구매 고객 ${Number(k.kpi1.silentRepeaters || 0).toLocaleString()}명`) : '') +
+    (sum ? `<div class="ix-goal"><div class="k">첫구매자 후기 작성률</div><div class="v">${sum.firstTimeReviewRate}%</div><div class="d">재구매율 ${sum.repurchaseRate}% · 고객 ${Number(sum.totalCustomers).toLocaleString()}명</div><div class="n">재구매자가 첫구매자보다 ${sum.multiplier}배 더 후기를 써요</div></div>` : '') +
+    (k.kpi2 ? goal('부정 리뷰 중 가격 불만', k.kpi2.current, k.kpi2.target, '%', true, `부정 ${k.kpi2.totalNegative}건 중 ${k.kpi2.priceNegative}건`) : '') +
+    (k.kpi3 ? goal('월 평균 첫구매 고객', k.kpi3.current, k.kpi3.target, '명', false, '최근 6개월 평균') : '');
+}
+
+function ixOpenIssues(){
+  const [s, e] = _ixRange();
+  const l = _ixIn(s, e).filter(_vocIsIssue);
+  if (!l.length) { showToast('이 기간에 확인 필요 리뷰가 없어요', 'success'); return; }
+  window._issueRange = [s, e];   // 팝업이 리뷰 Index에서 고른 기간으로 보이도록
+  if (typeof showIssueReviewsModal === 'function') showIssueReviewsModal();
+}
+function ixGoProduct(name){
+  showPage('archive');
+  filterArchiveByProduct(name);
 }
 
 // ===== ARCHIVE =====
@@ -6175,9 +6120,10 @@ function renderIssueReviewsList() {
   // 최근 4주 범위 (Dashboard 기준)
   const today = new Date();
   const monthAgo = new Date(today); monthAgo.setDate(today.getDate() - 28);
-  const fromStr = monthAgo.toISOString().slice(0,10);
+  const fromStr = window._issueRange ? window._issueRange[0] : monthAgo.toISOString().slice(0,10);
+  const toStr = window._issueRange ? window._issueRange[1] : '9999-12-31';
   const issueReviews = ALL_REVIEWS
-    .filter(r => (r.issue_flag || r.sentiment === '부정') && r.reply_status !== 'posted' && r.date >= fromStr)
+    .filter(r => (r.issue_flag || r.sentiment === '부정') && r.reply_status !== 'posted' && r.date >= fromStr && r.date <= toStr)
     .sort((a,b) => b.date.localeCompare(a.date));
 
   // 서브타이틀 업데이트
