@@ -223,6 +223,51 @@
   @media (max-width:640px){.ix-cs{grid-template-columns:minmax(0,1fr)}.ix-proj{grid-template-columns:minmax(0,1fr)}}
   @media (max-width:1100px){.ix-kpis,.ix-goals{grid-template-columns:repeat(2,minmax(0,1fr))}}
   @media (max-width:640px){.ix-kpis,.ix-goals{grid-template-columns:minmax(0,1fr)}.ix-sep{display:none}}
+  /* 📖 사용법 · 숫자 설명 · 섹션 머리말 */
+  .sec-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:14.5px;scroll-margin-top:12px}
+  .sec-no{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:22px;padding:0 6px;border-radius:6px;background:#1e50ff;color:#fff;font-size:11.5px;font-weight:800;font-variant-numeric:tabular-nums}
+  .sec-src{margin-left:auto;font-size:11px;color:var(--text-muted)}
+  .sec-desc{font-size:12px;color:var(--text-secondary);background:#f6f8fd;border-radius:8px;padding:6px 10px;margin:8px 0 12px;line-height:1.6}
+  .hint{position:relative;display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;margin-left:5px;border-radius:50%;border:1px solid #c7d2ea;color:#6b7a99;font-size:10px;font-weight:800;cursor:help;vertical-align:1px}
+  .hint:hover,.hint:focus{border-color:#1e50ff;color:#1e50ff;outline:none}
+  .hint-pop{display:none;position:absolute;left:-10px;top:22px;z-index:50;width:230px;background:#1e2a4a;color:#fff;border-radius:8px;padding:9px 11px;font-size:12px;font-weight:500;line-height:1.55;text-align:left;box-shadow:0 8px 24px rgba(17,24,39,.22)}
+  .hint-pop b{display:block;font-size:12.5px;margin-bottom:3px}
+  .hint-pop em{display:block;font-style:normal;color:#9ec1ff;font-weight:700;margin-top:5px}
+  .hint:hover .hint-pop,.hint:focus .hint-pop{display:block}
+  .ix-chipr{display:inline-block;border:1px solid var(--border);border-radius:999px;padding:2px 10px;margin:0 4px 4px 0;background:var(--white);font-size:12px}
+  .ix-chipr.cur{border-color:#1e50ff;color:#1e50ff;font-weight:700}
+  .ix-toc{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:12px;color:var(--text-muted);margin:-4px 0 14px}
+  .ix-toc button{border:1px solid var(--border);background:var(--white);border-radius:999px;padding:3px 10px;font:inherit;font-size:12px;color:var(--text-secondary);cursor:pointer}
+  .ix-toc button:hover{border-color:#1e50ff;color:#1e50ff}
+  .tn-help{border:1px solid #1e50ff;background:#fff;color:#1e50ff;border-radius:8px;padding:5px 11px;font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap}
+  .tn-help:hover{background:#1e50ff;color:#fff}
+  .tn-menu{position:relative}
+  .tn-tools{border:1px solid var(--sidebar-border);background:#fff;border-radius:8px;padding:5px 10px;font:inherit;font-size:12.5px;font-weight:600;color:var(--text-secondary);cursor:pointer;white-space:nowrap}
+  .tn-drop{position:absolute;right:0;top:36px;z-index:60;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px rgba(17,24,39,.14);padding:6px;min-width:190px}
+  .tn-drop[hidden]{display:none}
+  .tn-drop button{display:block;width:100%;text-align:left;border:0;background:transparent;font:inherit;font-size:13px;padding:8px 10px;border-radius:7px;cursor:pointer;color:var(--text-primary)}
+  .tn-drop button:hover{background:#eef3ff}
+  .man-drawer{position:fixed;inset:0;z-index:980;background:rgba(17,24,39,.32);display:flex;justify-content:flex-end}
+  .man-drawer[hidden]{display:none}
+  .man-panel{background:#fff;width:min(420px,100%);height:100%;overflow:auto;padding:18px 20px 28px;box-shadow:-10px 0 30px rgba(17,24,39,.15)}
+  .man-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+  .man-top span{font-size:12px;font-weight:700;color:#1e50ff;letter-spacing:.04em}
+  .man-title{font-size:19px;font-weight:800;margin-bottom:12px}
+  .man-sec{margin-bottom:16px}
+  .man-h{font-size:12px;font-weight:700;color:var(--text-muted);margin-bottom:6px}
+  .man-sec p{margin:0;font-size:13.5px;line-height:1.7}
+  .man-sec ol{margin:0;padding-left:20px;font-size:13.5px;line-height:1.8}
+  .man-sec details{border:1px solid var(--border-light);border-radius:8px;padding:7px 10px;margin-bottom:6px;font-size:13px}
+  .man-sec summary{cursor:pointer;font-weight:600}
+  .man-sec details p{margin-top:6px;color:var(--text-secondary)}
+  .man-others{display:flex;flex-wrap:wrap;gap:6px}
+  .man-others button{border:1px solid var(--border);background:#fff;border-radius:999px;padding:4px 10px;font:inherit;font-size:12px;cursor:pointer;color:var(--text-secondary)}
+  .man-others button:hover{border-color:#1e50ff;color:#1e50ff}
+  .upd-day{display:grid;grid-template-columns:52px minmax(0,1fr);gap:10px;padding:10px 0;border-bottom:1px solid var(--border-light)}
+  .upd-day:last-child{border-bottom:0}
+  .upd-date{font-weight:800;color:#1e50ff;font-variant-numeric:tabular-nums}
+  .upd-day ul{margin:0;padding-left:18px;font-size:13px;line-height:1.75}
+  @media (max-width:640px){.sec-src{margin-left:0;width:100%}.tn-help{padding:5px 8px}}
   /* 📋 리뷰 주간 리포트 (Biz Index 주간 리포트 형식) */
   .wr-modal{position:fixed;inset:0;background:rgba(17,24,39,.45);display:flex;align-items:flex-start;justify-content:center;z-index:990;padding:24px 16px;overflow:auto}
   .wr-modal[hidden]{display:none}
@@ -943,6 +988,17 @@ window.logoutEGA = logoutEGA;
       <a class="nav-item" data-group="guide" onclick="showNavGroup('guide')">기준 가이드</a>
     </nav>
     <div class="tn-right" id="tn-right">
+      <button class="tn-help" onclick="openManual()" title="지금 화면 사용법">? 사용법</button>
+      <div class="tn-menu">
+        <button class="tn-tools" onclick="toggleTools()" aria-haspopup="true">도구 ▾</button>
+        <div class="tn-drop" id="tn-drop" hidden>
+          <button onclick="toggleTools(false);openManual()">📖 사용 매뉴얼</button>
+          <button onclick="toggleTools(false);openWeeklyReport()">📋 주간 리포트</button>
+          <button onclick="toggleTools(false);showPage('csTemplates')">💬 CS 답변 템플릿</button>
+          <button onclick="toggleTools(false);showPage('admin')">📐 기준 가이드</button>
+          <button onclick="openUpdates()">🆕 업데이트 내역</button>
+        </div>
+      </div>
       <button class="logout-btn" id="local-logout" onclick="logoutEGA()" title="로그아웃">로그아웃</button>
     </div>
   </header>
@@ -972,6 +1028,7 @@ window.logoutEGA = logoutEGA;
             <div class="page-title">리뷰 Index</div>
             <div class="page-subtitle">기간을 골라 리뷰 수·감정·제품·키워드를 한 화면에서 봅니다</div>
           </div>
+          <button class="btn btn-primary" onclick="openWeeklyReport()">📋 주간 리포트</button>
         </div>
       </div>
 
@@ -1011,63 +1068,73 @@ window.logoutEGA = logoutEGA;
         <span class="ix-sep"></span>
         <select class="filter-select" id="ix-channel" onchange="updateDashboard()" aria-label="채널"><option value="">전체 채널</option></select>
         <select class="filter-select" id="ix-product" onchange="updateDashboard()" aria-label="제품"><option value="">전체 제품</option></select>
-        <button class="btn btn-primary btn-sm ix-report" onclick="openWeeklyReport()">📋 주간 리포트</button>
       </div>
       <div class="ix-range" id="ix-range"></div>
+      <div class="ix-toc">바로 가기 <button onclick="ixJump('ix-s1')">요약</button><button onclick="ixJump('ix-s2')">분기 목표</button><button onclick="ixJump('ix-s3')">채널</button><button onclick="ixJump('ix-s4')">일별 트렌드</button><button onclick="ixJump('ix-s5')">제품</button><button onclick="ixJump('ix-s6')">키워드 · 후보</button><button onclick="ixJump('ix-s8')">응대</button><button onclick="ixJump('ix-s9')">프로젝트</button></div>
 
       <!-- ① 리뷰 KPI -->
+      <div class="sec-head" id="ix-s1"><span class="sec-no">01</span><b>리뷰 요약</b><span class="sec-src">크리마 리뷰 · 기준 <span data-asof="reviews">–</span></span></div>
+        <div class="sec-desc">고른 기간의 리뷰 수 · 긍정 비율 · 확인 필요 · 답변률이에요. 작은 글씨는 바로 앞 같은 기간(전기)과 1년 전(전년) 대비예요.</div>
       <div class="ix-kpis" id="ix-kpis"></div>
 
       <!-- ② 분기 목표 (자사몰 기준) -->
       <div class="card mb-16">
-        <div class="card-title">분기 목표 <span class="card-subtitle" id="ix-goal-sub">자사몰(카페24) 기준 · 매일 갱신</span></div>
+        <div class="sec-head" id="ix-s2"><span class="sec-no">02</span><b>분기 목표</b><span class="sec-src" id="ix-goal-sub">자사몰(카페24) 기준 · 매일 갱신</span></div>
+        <div class="sec-desc">자사몰 고객 기준 분기 목표 달성률이에요. 위 기간 필터와 상관없이 전체 누적으로 계산해요.</div>
         <div class="ix-goals" id="ix-goals"><div class="ix-empty">불러오는 중...</div></div>
       </div>
 
       <!-- ③ 채널 믹스 -->
       <div class="card mb-16">
-        <div class="card-title">채널 믹스 <span class="card-subtitle">채널별 리뷰 비중</span></div>
+        <div class="sec-head" id="ix-s3"><span class="sec-no">03</span><b>채널 믹스</b><span class="sec-src">크리마 리뷰 · 기준 <span data-asof="reviews">–</span></span></div>
+        <div class="sec-desc">어느 채널에서 리뷰가 들어오는지 비중이에요. 한 채널이 0%로 떨어지면 수집이 멈췄는지 확인하세요.</div>
         <div class="ix-mix" id="ix-mix"></div>
         <div class="ix-legend" id="ix-mix-legend"></div>
       </div>
 
       <!-- ④ 일별 리뷰 트렌드 -->
       <div class="card mb-16">
-        <div class="card-title">일별 리뷰 트렌드 <span class="card-subtitle">감정별 막대 + 점선 = 7일 이동평균</span></div>
+        <div class="sec-head" id="ix-s4"><span class="sec-no">04</span><b>일별 리뷰 트렌드</b><span class="sec-src">크리마 리뷰 · 기준 <span data-asof="reviews">–</span></span></div>
+        <div class="sec-desc">막대는 하루 리뷰 수(초록 긍정 · 노랑 혼합 · 빨강 부정), 점선은 7일 평균이에요. 공구·이벤트 뒤 리뷰가 언제 몰리는지 보세요.</div>
         <div class="chart-wrap-lg"><canvas id="chart-ix-daily"></canvas></div>
         <details class="ix-details"><summary>일별 표 보기</summary><div class="ix-tbl" id="ix-daily-table"></div></details>
       </div>
 
       <!-- ⑤ 제품별 리뷰 현황 -->
       <div class="card mb-16">
-        <div class="card-title">제품별 리뷰 현황 <span class="card-subtitle">행을 누르면 리뷰 아카이브에서 그 제품 리뷰만 보여요</span></div>
+        <div class="sec-head" id="ix-s5"><span class="sec-no">05</span><b>제품별 리뷰 현황</b><span class="sec-src">크리마 리뷰 · 기준 <span data-asof="reviews">–</span></span></div>
+        <div class="sec-desc">제품별 리뷰 수와 반응이에요. 행을 누르면 리뷰 아카이브에서 그 제품 리뷰만 보여요.</div>
         <div class="ix-tbl" id="ix-products"></div>
       </div>
 
       <!-- ⑥ 키워드 순위 · ⑧ 마케팅 활용 후보 -->
       <div class="grid-2 mb-16">
         <div class="card">
-          <div class="card-title">키워드 순위 <span class="card-subtitle">누르면 그 키워드 리뷰를 검색해요</span></div>
+          <div class="sec-head" id="ix-s6"><span class="sec-no">06</span><b>키워드 순위</b><span class="sec-src">자동 키워드</span></div>
+        <div class="sec-desc">칭찬은 긍정 리뷰, 불만은 부정·이슈 리뷰에서 많이 나온 말이에요. 누르면 그 키워드 리뷰를 검색해요.</div>
           <div class="ix-kwcols">
             <div><div class="ix-kwh good">칭찬 TOP</div><div id="ix-kw-good"></div></div>
             <div><div class="ix-kwh bad">불만 TOP</div><div id="ix-kw-bad"></div></div>
           </div>
         </div>
         <div class="card">
-          <div class="card-title">마케팅 활용 후보 <span class="card-subtitle">긍정 · 내용이 구체적인 리뷰 순</span></div>
+          <div class="sec-head" id="ix-s7"><span class="sec-no">07</span><b>마케팅 활용 후보</b><span class="sec-src">긍정 · 35자 이상</span></div>
+        <div class="sec-desc">내용이 구체적인 긍정 리뷰예요. 상세페이지·SNS 소재로 쓸 만한 문장을 바로 복사할 수 있어요.</div>
           <div id="ix-praise"></div>
         </div>
       </div>
 
       <!-- ⑦ 응대 현황 -->
       <div class="card mb-16">
-        <div class="card-title">응대 현황 <span class="card-subtitle">누르면 응대 화면으로 이동해요</span></div>
+        <div class="sec-head" id="ix-s8"><span class="sec-no">08</span><b>응대 현황</b><span class="sec-src">크리마 답변 상태 · 매일 갱신</span></div>
+        <div class="sec-desc">지금 남아 있는 답변 일과, 고른 기간의 채널별 답변률이에요. 누르면 응대 화면으로 이동해요.</div>
         <div class="ix-cs" id="ix-cs"></div>
       </div>
 
       <!-- ⑩ 리뷰 프로젝트 -->
       <div class="card mb-16">
-        <div class="card-title">진행 중인 리뷰 프로젝트 <span class="card-subtitle">목표 · 기간 · 담당</span></div>
+        <div class="sec-head" id="ix-s9"><span class="sec-no">09</span><b>진행 중인 리뷰 프로젝트</b><span class="sec-src">목표 · 기간 · 담당</span></div>
+        <div class="sec-desc">등록한 리뷰 캠페인의 목표 대비 진행률이에요.</div>
         <div id="ix-projects"><div class="ix-empty">불러오는 중...</div></div>
       </div>
 
@@ -1645,7 +1712,7 @@ window.logoutEGA = logoutEGA;
       </div>
 
       <div class="card mb-16">
-        <div class="card-title">데이터 상태 <span class="card-subtitle">매일 아침 8시 자동 수집 · 2일 넘게 안 바뀌면 ⚠</span></div>
+        <div class="card-title">데이터 상태 <span class="card-subtitle">매일 오전 10~11시쯤 자동 수집 · 2일 넘게 안 바뀌면 ⚠</span></div>
         <div class="gd-tbl" id="gd-status"><div class="ix-empty">확인 중...</div></div>
       </div>
 
@@ -2004,6 +2071,20 @@ window.logoutEGA = logoutEGA;
       </div>
     </div>
 
+    <!-- 사용법 패널 -->
+    <div class="man-drawer" id="man-drawer" hidden onclick="if(event.target===this)closeManual()">
+      <aside class="man-panel" role="dialog" aria-label="사용법">
+        <div class="man-top"><span>📖 사용법</span><button class="voc-modal-x" onclick="closeManual()" aria-label="닫기">✕</button></div>
+        <div id="man-body"></div>
+      </aside>
+    </div>
+    <!-- 업데이트 내역 -->
+    <div class="voc-modal" id="upd-modal" hidden onclick="if(event.target===this)this.hidden=true">
+      <div class="voc-modal-box" role="dialog" aria-label="업데이트 내역">
+        <div class="voc-modal-head"><b>🆕 업데이트 내역</b><button class="voc-modal-x" onclick="document.getElementById('upd-modal').hidden=true" aria-label="닫기">✕</button></div>
+        <div id="upd-body"></div>
+      </div>
+    </div>
     <!-- 공용 팝업: 리뷰 원본 · 주간 리포트 (어느 화면에서나 열림) -->
       <div class="voc-modal" id="voc-modal" hidden onclick="if(event.target===this)closeVocReview()">
         <div class="voc-modal-box" role="dialog" aria-label="리뷰 원본">
@@ -2027,7 +2108,7 @@ window.logoutEGA = logoutEGA;
         </div>
       </div>
 
-    <div id="build-stamp">BUILD 251028-A · 응대 현황·리뷰 프로젝트·기준 가이드 · Claude 초안 승인 게시</div>
+    <div id="build-stamp">BUILD 251028-B · 사용법 패널 · 숫자 설명 · 도구 메뉴</div>
   </main>
 </div>
 <script>
@@ -4544,12 +4625,15 @@ function updateDashboard() {
   const fromEl = document.getElementById('ix-from'), toEl = document.getElementById('ix-to');
   if (!_ixCustom) { fromEl.value = s; toEl.value = e; }
   const latest = _ixLatest();
-  document.getElementById('ix-range').innerHTML = `<b>${label}</b> ${s} ~ ${e} (${_ixDays(s, e)}일) · 비교: 전기 ${ps} ~ ${pe} · 전년 ${ys} ~ ${ye}${e > latest ? ` · <span class="ix-na">리뷰는 ${latest}까지 수집됨</span>` : ''}`;
+  document.getElementById('ix-range').innerHTML = `<span class="ix-chipr cur">${label} ${s} ~ ${e} (${_ixDays(s, e)}일)</span><span class="ix-chipr">전기 ${ps} ~ ${pe}</span><span class="ix-chipr">전년 ${ys} ~ ${ye}</span>${e > latest ? `<span class="ix-na"> 리뷰는 ${latest}까지 수집됨</span>` : ''}`;
+  const asof = window._reviewsAsOf ? new Date(window._reviewsAsOf) : null;
+  const asofTxt = asof && !isNaN(asof) ? `${String(asof.getMonth() + 1).padStart(2, '0')}-${String(asof.getDate()).padStart(2, '0')} ${String(asof.getHours()).padStart(2, '0')}:${String(asof.getMinutes()).padStart(2, '0')}` : latest;
+  document.querySelectorAll('[data-asof="reviews"]').forEach(el => { el.textContent = asofTxt; });
 
   // ① KPI
   const a = _ixAns(cur), ap = _ixAns(prev);
   const ansPct = x => x.n ? Math.round(x.done / x.n * 100) : null;
-  const kpi = (k, v, sub, extra) => `<div class="ix-kpi"${extra || ''}><div class="k">${k}</div><div class="v">${v}</div><div class="d">${sub}</div></div>`;
+  const kpi = (k, v, sub, extra) => `<div class="ix-kpi"${extra || ''}><div class="k">${k}${_hint(k)}</div><div class="v">${v}</div><div class="d">${sub}</div></div>`;
   document.getElementById('ix-kpis').innerHTML =
     kpi('리뷰 수', `${cur.length}건`, `전기 ${_ixChg(cur.length, prev.length, '%', true)} · 전년 ${yago.length ? _ixChg(cur.length, yago.length, '%', true) : '<span class="ix-na">–</span>'}`) +
     kpi('긍정 비율', `${posPct(cur)}%`, `전기 ${prev.length ? _ixChg(posPct(cur), posPct(prev), '%p', true) : '–'} · 전년 ${yago.length ? _ixChg(posPct(cur), posPct(yago), '%p', true) : '–'}`) +
@@ -4636,14 +4720,114 @@ function _ixRenderGoals(x){
   const goal = (name, cur, target, unit, lowerBetter, note) => {
     const ok = lowerBetter ? cur <= target : cur >= target;
     const pct = lowerBetter ? Math.min(100, Math.round(target / Math.max(cur, 0.01) * 100)) : Math.min(100, Math.round(cur / target * 100));
-    return `<div class="ix-goal"><div class="k">${name}</div><div class="v">${cur}${unit}</div><div class="d">목표 ${target}${unit}${lowerBetter ? ' 이하' : ''} · ${ok ? '<span class="ix-up">달성</span>' : `<span class="ix-down">${lowerBetter ? (cur - target).toFixed(1) + unit + ' 초과' : '달성 ' + pct + '%'}</span>`}</div><div class="ix-gbar"><i class="${ok ? 'ok' : lowerBetter ? 'bad' : ''}" style="width:${pct}%"></i></div>${note ? `<div class="n">${note}</div>` : ''}</div>`;
+    return `<div class="ix-goal"><div class="k">${name}${_hint(name)}</div><div class="v">${cur}${unit}</div><div class="d">목표 ${target}${unit}${lowerBetter ? ' 이하' : ''} · ${ok ? '<span class="ix-up">달성</span>' : `<span class="ix-down">${lowerBetter ? (cur - target).toFixed(1) + unit + ' 초과' : '달성 ' + pct + '%'}</span>`}</div><div class="ix-gbar"><i class="${ok ? 'ok' : lowerBetter ? 'bad' : ''}" style="width:${pct}%"></i></div>${note ? `<div class="n">${note}</div>` : ''}</div>`;
   };
   el.innerHTML =
     (k.kpi1 ? goal('재구매자 후기 작성률', k.kpi1.current, k.kpi1.target, '%', false, `후기 없는 재구매 고객 ${Number(k.kpi1.silentRepeaters || 0).toLocaleString()}명`) : '') +
-    (sum ? `<div class="ix-goal"><div class="k">첫구매자 후기 작성률</div><div class="v">${sum.firstTimeReviewRate}%</div><div class="d">재구매율 ${sum.repurchaseRate}% · 고객 ${Number(sum.totalCustomers).toLocaleString()}명</div><div class="n">재구매자가 첫구매자보다 ${sum.multiplier}배 더 후기를 써요</div></div>` : '') +
+    (sum ? `<div class="ix-goal"><div class="k">첫구매자 후기 작성률${_hint('첫구매자 후기 작성률')}</div><div class="v">${sum.firstTimeReviewRate}%</div><div class="d">재구매율 ${sum.repurchaseRate}% · 고객 ${Number(sum.totalCustomers).toLocaleString()}명</div><div class="n">재구매자가 첫구매자보다 ${sum.multiplier}배 더 후기를 써요</div></div>` : '') +
     (k.kpi2 ? goal('부정 리뷰 중 가격 불만', k.kpi2.current, k.kpi2.target, '%', true, `부정 ${k.kpi2.totalNegative}건 중 ${k.kpi2.priceNegative}건`) : '') +
     (k.kpi3 ? goal('월 평균 첫구매 고객', k.kpi3.current, k.kpi3.target, '명', false, '최근 6개월 평균') : '');
 }
+
+// ===== 📖 사용법 패널 · 숫자 설명(?) · 도구 메뉴 · 업데이트 내역 =====
+// 화면마다 "언제 쓰나요 / 이렇게 하세요 / 자주 묻는 것" 세 칸으로 고정
+const MANUAL = {
+  dashboard: { title: '리뷰 Index', when: '월요일 회의 전, 월말 점검, 특정 제품 반응이 궁금할 때',
+    steps: ['위쪽 <b>기간</b>에서 지난주 · 이번 달 등을 고르거나 날짜를 직접 넣고 [조회]를 눌러요.', '<b>채널 · 제품</b>을 고르면 모든 숫자가 그 조건으로 바뀌어요.', '숫자 이름 옆 <b>?</b>에 마우스를 올리면 뜻과 "높을수록 좋은지"가 나와요.', '제품 표의 행이나 키워드를 누르면 <b>리뷰 아카이브</b>에서 그 리뷰 원문을 볼 수 있어요.', '오른쪽 위 <b>📋 주간 리포트</b> → [슬랙용 복사]로 팀에 공유해요.'],
+    faq: [['오늘 숫자가 적어요', '리뷰는 매일 오전 10~11시쯤 한 번 모아요. 그 뒤에 쓴 리뷰는 다음 날 들어와요.'], ['지난주 숫자가 나중에 바뀌었어요', '스마트스토어 리뷰가 크리마에 늦게 들어오면 원래 작성일로 추가돼요.'], ['감정(긍정/부정)이 틀렸어요', '리뷰 아카이브에서 리뷰를 눌러 상세 화면에서 고치면 모든 숫자에 반영돼요.']] },
+  insights: { title: '리뷰 Index › 누적 인사이트', when: '전체 기간의 큰 흐름(월별 추이, 키워드, 제품, 채널)을 볼 때',
+    steps: ['위쪽 작은 탭(전체 추이 · 키워드 분석 · 제품별 분석 · 채널 비교)을 눌러 바꿔 봐요.', '기간을 골라 보고 싶으면 <b>요약</b> 탭으로 돌아가요.'],
+    faq: [['기간을 바꿀 수 없나요?', '누적 인사이트는 전체 기간 기준이에요. 기간별은 요약 탭에서 봐요.']] },
+  replies: { title: '응대 › 리뷰 답변', when: '매일 또는 주 2~3회, 남은 리뷰 답변을 처리할 때',
+    steps: ['위쪽 <b>승인 대기</b>를 누르면 Claude가 쓴 답변 초안이 보여요.', '고객 리뷰와 초안을 읽고, 고칠 곳이 있으면 <b>[✏️ 수정]</b>을 눌러 고쳐요.', '<b>[승인하고 게시]</b> → 확인창에서 [확인]을 누르면 크리마에 게시돼요.', '여러 건은 카드를 눌러 선택한 뒤 <b>[선택 승인·게시]</b>로 한 번에 올려요.', '초안이 없는 리뷰는 <b>[자동 답변 채우기]</b>로 템플릿 초안을 바로 만들 수 있어요.'],
+    faq: [['⚠ 민감 표시는 뭐예요?', '부작용·환불처럼 CS 확인이 필요한 리뷰예요. 일괄 게시에서 빠지니, CS 처리 여부를 확인하고 하나씩 게시해요.'], ['새 리뷰 초안은 어떻게 받나요?', 'Claude에게 "답변 초안 써줘"라고 하면 그때까지 쌓인 미답변 리뷰의 초안을 올려드려요.'], ['게시가 실패해요', '오른쪽 위 게시 서버 표시를 확인하세요. "임시 외부 서버"면 1분 뒤 다시 누르면 대개 돼요.']] },
+  cafe24qa: { title: '응대 › Q&A 문의', when: '카페24 상품 Q&A와 1:1 문의를 확인할 때',
+    steps: ['답변 대기 문의부터 확인해요.', '주제·제품별로 모아 보고 자주 나오는 질문을 찾아요.', '답변 문구는 <b>CS 답변 템플릿</b> 탭에서 찾아 복사해요.'],
+    faq: [['여기서 답변을 등록하나요?', '이 화면은 모아 보기용이에요. 답변 등록은 카페24 관리자에서 해요.']] },
+  csTemplates: { title: '응대 › CS 답변 템플릿', when: '게시판 답변이나 전화 상담 후 문자를 보낼 때',
+    steps: ['카테고리(배송 · 취소/환불 · 이벤트 · 제품 · 전화 후 문자)에서 템플릿을 골라요.', '<b>상황으로 찾기</b>에 상황을 적으면 맞는 템플릿을 추천하고 빈칸(택배사·송장·날짜·제품)을 채워줘요.', '<b>블록 조립</b>으로 인사 · 핵심 · 요청 문장을 붙여 새 답변을 만들어요.', '[복사]를 눌러 붙여 넣어요.'],
+    faq: [['템플릿을 고치거나 추가할 수 있나요?', '네. [수정] · [새 템플릿]으로 바꿀 수 있어요. 이 브라우저에 저장되니 다른 사람과 나누려면 [내보내기] 파일을 공유해요.']] },
+  archive: { title: '리뷰 아카이브', when: '마케팅 소재를 찾거나, 특정 키워드 리뷰를 모으거나, 회의 자료가 필요할 때',
+    steps: ['위 <b>고객의 소리</b> 카드에서 주간 · 월간 요약을 봐요.', '검색칸에 키워드를 넣어요. 여러 개는 쉼표로(예: 보습, 끈적임).', '결과는 [엑셀]로 내려받을 수 있어요.', '리뷰를 누르면 상세 화면에서 감정 분류를 고칠 수 있어요.'],
+    faq: [['회의용 자료는 어디서?', '고객의 소리 카드의 [📋 주간 리포트] 또는 [📥 회의용 엑셀 다운로드]를 써요.']] },
+  writeRate: { title: '고객 분석 › 리뷰 작성률', when: '월 1회, 리뷰 요청이 잘 되고 있는지 볼 때',
+    steps: ['배송 완료 주문 대비 리뷰가 얼마나 달리는지 일별로 봐요.', '작성률이 떨어진 기간이 있으면 리뷰 요청 메시지 발송을 점검해요.'], faq: [] },
+  repurchase: { title: '고객 분석 › 재구매 분석', when: '월 1회, 재구매 고객과 후기 작성 현황을 볼 때',
+    steps: ['구매 횟수별 고객 수와 후기 작성률을 봐요.', '여러 번 샀는데 후기가 없는 고객이 리뷰 요청 1순위예요.'], faq: [] },
+  reviewWorkflow: { title: '고객 분석 › 리뷰 타이밍', when: '리뷰 요청 메시지를 언제 보낼지 정할 때',
+    steps: ['배송 후 리뷰를 쓰기까지 며칠 걸리는지(중앙값) 봐요.', '그 시점에 맞춰 리뷰 요청을 보내면 작성률을 높일 수 있어요.'], faq: [] },
+  admin: { title: '기준 가이드', when: '숫자가 이상해 보이거나, 지표 뜻이 헷갈릴 때',
+    steps: ['<b>데이터 상태</b>에서 각 데이터가 언제 갱신됐는지 봐요. ⚠가 있으면 수집이 멈춘 거예요.', '<b>지표 정의</b>에서 숫자를 어떻게 계산하는지 확인해요.'], faq: [] },
+};
+
+// 숫자 이름 옆 '?' 설명. good: up(높을수록 좋음) · down(낮을수록 좋음)
+const HINTS = {
+  '리뷰 수': ['선택한 기간에 작성된 리뷰 수예요.', 'up'],
+  '긍정 비율': ['자동 분류가 "긍정"으로 본 리뷰 비율이에요. 틀린 분류는 아카이브에서 고칠 수 있어요.', 'up'],
+  '확인 필요 리뷰': ['부정이거나 이슈 표시가 붙은 리뷰예요. 누르면 원문을 보고 답변할 수 있어요.', 'down'],
+  '답변률': ['크리마 리뷰 중 댓글(답변)이 1개 이상 달린 비율이에요. 올리브영은 빼요.', 'up'],
+  '재구매자 후기 작성률': ['2번 이상 산 자사몰 고객 중 후기를 쓴 사람 비율이에요.', 'up'],
+  '첫구매자 후기 작성률': ['1번 산 자사몰 고객 중 후기를 쓴 사람 비율이에요.', 'up'],
+  '부정 리뷰 중 가격 불만': ['부정 리뷰 가운데 가격을 언급한 비율이에요.', 'down'],
+  '월 평균 첫구매 고객': ['최근 6개월 동안 자사몰에서 처음 산 고객 수의 월평균이에요.', 'up'],
+  '미답변 리뷰': ['아직 답변이 없는 리뷰예요(올리브영 제외). 기간과 상관없이 지금 남은 수예요.', 'down'],
+  '승인 대기 답변': ['초안은 있지만 아직 게시하지 않은 답변이에요. 읽고 승인하면 게시돼요.', 'down'],
+  'Q&A 답변 대기': ['카페24 상품 Q&A와 1:1 문의 중 답변이 없는 건이에요.', 'down'],
+  '기간 답변률 (채널별)': ['고른 기간에 작성된 리뷰 중 답변이 달린 비율을 채널별로 나눈 거예요.', 'up'],
+  '기간 답변률': ['고른 기간에 작성된 리뷰 중 답변이 달린 비율이에요.', 'up'],
+};
+function _hint(key){
+  const h = HINTS[key];
+  if (!h) return '';
+  return `<span class="hint" tabindex="0" onclick="event.stopPropagation()" aria-label="${_cstEsc(key)} 설명">?<span class="hint-pop" role="tooltip"><b>${_cstEsc(key)}</b>${_cstEsc(h[0])}<em>${h[1] === 'up' ? '높을수록 좋아요' : '낮을수록 좋아요'}</em></span></span>`;
+}
+
+function _manualPageId(){ const p = document.querySelector('.page.active'); return p ? p.id.replace('page-', '') : 'dashboard'; }
+function openManual(id){
+  id = id || _manualPageId();
+  const m = MANUAL[id] || MANUAL.dashboard;
+  const others = Object.entries(MANUAL).filter(([k]) => k !== id).map(([k, v]) => `<button onclick="openManual('${k}')">${_cstEsc(v.title)}</button>`).join('');
+  document.getElementById('man-body').innerHTML = `
+    <div class="man-title">${_cstEsc(m.title)}</div>
+    <div class="man-sec"><div class="man-h">언제 쓰나요</div><p>${_cstEsc(m.when)}</p></div>
+    <div class="man-sec"><div class="man-h">이렇게 하세요</div><ol>${m.steps.map(s => `<li>${s}</li>`).join('')}</ol></div>
+    ${m.faq.length ? `<div class="man-sec"><div class="man-h">자주 묻는 것</div>${m.faq.map(([q, a]) => `<details><summary>${_cstEsc(q)}</summary><p>${_cstEsc(a)}</p></details>`).join('')}</div>` : ''}
+    <div class="man-sec"><div class="man-h">다른 화면 사용법</div><div class="man-others">${others}</div></div>`;
+  document.getElementById('man-drawer').hidden = false;
+}
+function closeManual(){ document.getElementById('man-drawer').hidden = true; }
+
+function toggleTools(force){
+  const d = document.getElementById('tn-drop');
+  if (!d) return;
+  d.hidden = force === false ? true : !d.hidden;
+}
+document.addEventListener('click', e => { if (!e.target.closest('.tn-menu')) toggleTools(false); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeManual(); toggleTools(false); const u = document.getElementById('upd-modal'); if (u) u.hidden = true; } });
+
+// 업데이트 내역 (광고 대시보드의 Action Log처럼, 바뀐 점을 팀이 볼 수 있게)
+const CHANGELOG = [
+  ['10/28', ['오른쪽 위 <b>? 사용법</b>: 지금 화면의 사용법을 바로 볼 수 있어요', '숫자 이름 옆 <b>?</b> 설명, 섹션별 번호·출처·한 줄 설명 추가', '<b>리뷰 답변</b>: Claude가 초안을 쓰고, 담당자가 읽고 승인하면 게시', '<b>기준 가이드</b>: 데이터 상태 · 지표 정의 · 자동 판단 규칙', '리뷰 Index에 <b>응대 현황 · 리뷰 프로젝트</b> 추가']],
+  ['10/27', ['<b>리뷰 Index 첫 화면</b>: 기간 · 채널 · 제품 필터, 분기 목표, 일별 트렌드, 제품 표, 키워드', '메뉴를 <b>위쪽 탭 5개</b>로 정리 (판매 분석 · 프롬프트 관리 삭제)', '<b>📋 주간 리포트</b> (Biz Index 형식, 슬랙 복사 · 엑셀)', '답변 상태(크리마) 매일 자동 갱신 → 미답변 숫자 정확해짐', '누적 인사이트 월별 그래프가 비어 보이던 문제 수정']],
+  ['10/26', ['리뷰 답변 <b>자동 채우기</b>(템플릿, AI 비용 0원) · 부정 리뷰는 일괄 처리에서 제외', '게시 서버 자동 선택(회사 서버 우선)', '옛 Weekly Report · 쓰지 않던 화면 삭제']],
+  ['10/23', ['CS 답변 템플릿: <b>상황으로 찾기</b>(빈칸 자동 채움) · <b>블록 조립</b>']],
+];
+function openUpdates(){
+  toggleTools(false);
+  document.getElementById('upd-body').innerHTML = CHANGELOG.map(([d, items]) => `<div class="upd-day"><div class="upd-date">${d}</div><ul>${items.map(i => `<li>${i}</li>`).join('')}</ul></div>`).join('');
+  document.getElementById('upd-modal').hidden = false;
+}
+
+function ixJump(id){ const el = document.getElementById(id); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+
+// 처음 들어온 사람에게 사용법을 한 번 자동으로 보여줌
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    let seen = true;
+    try { seen = localStorage.getItem('ega_manual_seen_v1') === '1'; localStorage.setItem('ega_manual_seen_v1', '1'); } catch (e) {}
+    if (!seen) openManual('dashboard');
+  }, 1500);
+});
 
 // ⑦ 응대 현황: 지금 남은 일(기간과 무관) + 고른 기간의 채널별 답변률
 function _ixRenderCs(cur){
@@ -4657,7 +4841,7 @@ function _ixRenderCs(cur){
   const oldest = pending.map(r => r.date).sort()[0];
   const qa = Number(String(document.getElementById('nav-qa-count')?.textContent || '0').replace(/,/g, '')) || 0;
   const rate = ch => { const l = cur.filter(r => r.channel === ch && getCremaReviewId(r)); return l.length ? `${Math.round(l.filter(isReplyDone).length / l.length * 100)}% (${l.filter(isReplyDone).length}/${l.length})` : '–'; };
-  const box = (k, v, d, go) => `<div class="ix-goal" onclick="${go}"><div class="k">${k}</div><div class="v">${v}</div><div class="d">${d}</div></div>`;
+  const box = (k, v, d, go) => `<div class="ix-goal" onclick="${go}"><div class="k">${k}${_hint(k)}</div><div class="v">${v}</div><div class="d">${d}</div></div>`;
   el.innerHTML =
     box('미답변 리뷰', `${pending.length}건`, pending.length ? `7일 넘은 것 ${over7}건 · 가장 오래된 ${oldest}` : '모두 답변했어요', "showPage('replies');setReplyFilter('none')") +
     box('승인 대기 답변', `${waiting.length}건`, claude ? `Claude 초안 ${claude}건 · 읽고 승인하면 게시` : '초안이 준비되면 여기 표시', "showPage('replies');setReplyFilter('ai_generated')") +
@@ -5372,6 +5556,7 @@ async function bootstrapReviews() {
   try {
     const res = await fetch('reviews.json?t=' + Date.now(), { cache: 'no-store' });
     if (!res.ok) throw new Error('HTTP ' + res.status);
+    window._reviewsAsOf = res.headers.get('last-modified');   // 리뷰 데이터가 서버에 올라온 시각 (섹션 '기준' 표시)
     ALL_REVIEWS = await res.json();
     const badge = document.getElementById('nav-total');
     if (badge) badge.textContent = ALL_REVIEWS.length.toLocaleString();
