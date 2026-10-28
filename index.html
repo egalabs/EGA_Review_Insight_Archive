@@ -60,9 +60,36 @@
   .logout-btn:hover{border-color:var(--negative);color:var(--negative);background:var(--negative-bg)}
   #build-stamp{font-size:10.5px;color:var(--text-muted);text-align:center;padding:18px 0 22px}
   /* 그룹 안의 세부 탭 */
-  .subtabs{display:none;gap:2px;padding:8px 32px 0;background:var(--bg);border-bottom:1px solid var(--border);flex-shrink:0;overflow-x:auto}
+  /* 왼쪽 사이드바: 지금 탭의 세부 화면 + 섹션 목차 (광고 대시보드 형식) */
+  .layout{flex:1;display:flex;min-height:0}
+  .sidenav{width:224px;flex-shrink:0;background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto}
+  .sn-body{flex:1;padding:16px 12px}
+  .subtabs{display:none;flex-direction:column;gap:2px}
   .subtabs.show{display:flex}
-  @media (max-width:900px){.topnav{gap:12px;padding:0 12px}.tn-brand span{display:none}.subtabs{padding:8px 16px 0}}
+  .sn-title{font-size:13px;font-weight:800;color:var(--text-primary);padding:4px 10px 10px}
+  .sidenav .rtab{width:100%;justify-content:flex-start;border:0;border-radius:8px;margin:0;padding:8px 10px;font-size:13px;color:var(--text-secondary)}
+  .sidenav .rtab:hover{background:#f3f6fd;color:var(--text-primary)}
+  .sidenav .rtab.active{background:#eef3ff;color:#1e50ff;border:0}
+  .sidenav .rtab .nav-badge{margin-left:auto}
+  .sn-anchors{display:none;flex-direction:column;margin:2px 0 6px 12px;padding-left:8px;border-left:2px solid #e3e9f8}
+  .rtab.active + .sn-anchors,.sn-anchors.always{display:flex}
+  .sn-a{border:0;background:transparent;text-align:left;font:inherit;font-size:12px;color:var(--text-muted);padding:4px 8px;border-radius:6px;cursor:pointer}
+  .sn-a:hover{color:var(--text-primary);background:#f6f8fd}
+  .sn-a.on{color:#1e50ff;font-weight:700}
+  .sn-foot{border-top:1px solid var(--border-light);padding:10px 12px 14px;display:flex;flex-direction:column;gap:2px}
+  .sn-foot button{border:0;background:transparent;text-align:left;font:inherit;font-size:12px;color:var(--text-secondary);padding:5px 10px;border-radius:6px;cursor:pointer}
+  .sn-foot button:hover{background:#f6f8fd;color:var(--text-primary)}
+  .sn-foot #build-stamp{text-align:left;padding:6px 10px 0;font-size:10px}
+  @media (min-width:901px){#page-dashboard .ix-toc{display:none}}
+  @media (max-width:900px){
+    .topnav{gap:12px;padding:0 12px}.tn-brand span{display:none}
+    .layout{flex-direction:column}
+    .sidenav{width:auto;border-right:0;border-bottom:1px solid var(--border);overflow:visible}
+    .sn-body{padding:6px 12px}
+    .subtabs.show{flex-direction:row;overflow-x:auto}
+    .sn-title,.sn-anchors,.rtab.active + .sn-anchors,.sn-foot{display:none}
+    .sidenav .rtab{width:auto;white-space:nowrap}
+  }
 
   /* Main content */
   .main{flex:1;overflow-y:auto;overflow-x:hidden;background:var(--bg)}
@@ -1002,20 +1029,47 @@ window.logoutEGA = logoutEGA;
       <button class="logout-btn" id="local-logout" onclick="logoutEGA()" title="로그아웃">로그아웃</button>
     </div>
   </header>
-  <div class="subtabs show" data-group="index">
-    <button class="rtab active" data-page="dashboard" onclick="showPage('dashboard')">요약</button>
-    <button class="rtab" data-page="insights" onclick="showPage('insights')">누적 인사이트</button>
-  </div>
-  <div class="subtabs" data-group="cs">
-    <button class="rtab" data-page="replies" onclick="showPage('replies')">리뷰 답변 <span class="nav-badge alert" id="nav-reply-count" title="답변 안 한 리뷰" hidden>0</span></button>
-    <button class="rtab" data-page="cafe24qa" onclick="showPage('cafe24qa')">Q&amp;A 문의 <span class="nav-badge warn" id="nav-qa-count" title="답변 대기 문의" hidden>0</span></button>
-    <button class="rtab" data-page="csTemplates" onclick="showPage('csTemplates')">CS 답변 템플릿</button>
-  </div>
-  <div class="subtabs" data-group="customer">
-    <button class="rtab" data-page="writeRate" onclick="showPage('writeRate')">리뷰 작성률</button>
-    <button class="rtab" data-page="repurchase" onclick="showPage('repurchase')">재구매 분석</button>
-    <button class="rtab" data-page="reviewWorkflow" onclick="showPage('reviewWorkflow')">리뷰 타이밍</button>
-  </div>
+  <div class="layout">
+  <!-- 왼쪽 사이드바: 지금 탭의 세부 화면 + 섹션 목차 -->
+  <aside class="sidenav" aria-label="세부 메뉴">
+    <div class="sn-body">
+      <div class="subtabs show" data-group="index">
+        <div class="sn-title">📊 리뷰 Index</div>
+        <button class="rtab active" data-page="dashboard" onclick="showPage('dashboard')">요약</button>
+        <div class="sn-anchors"><button class="sn-a" data-target="ix-s1" onclick="ixJump('ix-s1')">01 리뷰 요약</button><button class="sn-a" data-target="ix-s2" onclick="ixJump('ix-s2')">02 분기 목표</button><button class="sn-a" data-target="ix-s3" onclick="ixJump('ix-s3')">03 채널 믹스</button><button class="sn-a" data-target="ix-s4" onclick="ixJump('ix-s4')">04 일별 트렌드</button><button class="sn-a" data-target="ix-s5" onclick="ixJump('ix-s5')">05 제품별 현황</button><button class="sn-a" data-target="ix-s6" onclick="ixJump('ix-s6')">06 키워드 순위</button><button class="sn-a" data-target="ix-s7" onclick="ixJump('ix-s7')">07 마케팅 후보</button><button class="sn-a" data-target="ix-s8" onclick="ixJump('ix-s8')">08 응대 현황</button><button class="sn-a" data-target="ix-s9" onclick="ixJump('ix-s9')">09 리뷰 프로젝트</button></div>
+        <button class="rtab" data-page="insights" onclick="showPage('insights')">누적 인사이트</button>
+      </div>
+      <div class="subtabs" data-group="cs">
+        <div class="sn-title">💬 응대</div>
+        <button class="rtab" data-page="replies" onclick="showPage('replies')">리뷰 답변 <span class="nav-badge alert" id="nav-reply-count" title="답변 안 한 리뷰" hidden>0</span></button>
+        <button class="rtab" data-page="cafe24qa" onclick="showPage('cafe24qa')">Q&amp;A 문의 <span class="nav-badge warn" id="nav-qa-count" title="답변 대기 문의" hidden>0</span></button>
+        <button class="rtab" data-page="csTemplates" onclick="showPage('csTemplates')">CS 답변 템플릿</button>
+      </div>
+      <div class="subtabs" data-group="archive">
+        <div class="sn-title">🗂 리뷰 아카이브</div>
+        <button class="rtab" data-page="archive" onclick="showPage('archive')">리뷰 아카이브</button>
+        <div class="sn-anchors"><button class="sn-a" data-target="voc-card" onclick="ixJump('voc-card')">고객의 소리</button><button class="sn-a" data-target="ar-search" onclick="ixJump('ar-search')">전체 리뷰 검색</button></div>
+        <button class="rtab" onclick="openWeeklyReport()">📋 주간 리포트</button>
+      </div>
+      <div class="subtabs" data-group="customer">
+        <div class="sn-title">👥 고객 분석</div>
+        <button class="rtab" data-page="writeRate" onclick="showPage('writeRate')">리뷰 작성률</button>
+        <button class="rtab" data-page="repurchase" onclick="showPage('repurchase')">재구매 분석</button>
+        <button class="rtab" data-page="reviewWorkflow" onclick="showPage('reviewWorkflow')">리뷰 타이밍</button>
+      </div>
+      <div class="subtabs" data-group="guide">
+        <div class="sn-title">📐 기준 가이드</div>
+        <button class="rtab" data-page="admin" onclick="showPage('admin')">기준 가이드</button>
+        <div class="sn-anchors"><button class="sn-a" data-target="gd-s1" onclick="ixJump('gd-s1')">데이터 상태</button><button class="sn-a" data-target="gd-s2" onclick="ixJump('gd-s2')">지표 정의</button><button class="sn-a" data-target="gd-s3" onclick="ixJump('gd-s3')">자동 판단 규칙</button></div>
+      </div>
+    </div>
+    <div class="sn-foot">
+      <button onclick="openManual()">📖 사용법</button>
+      <button onclick="openUpdates()">🆕 업데이트 내역</button>
+      <button onclick="showPage('admin')">📐 기준 가이드</button>
+      <div id="build-stamp">BUILD 251028-C · 왼쪽 사이드바</div>
+    </div>
+  </aside>
 
   <!-- Main -->
   <main class="main">
@@ -1174,7 +1228,7 @@ window.logoutEGA = logoutEGA;
         <div id="voc-body"><div class="voc-empty">불러오는 중...</div></div>
       </div>
 
-      <div class="section-label" style="margin-bottom:12px">전체 리뷰 검색</div>
+      <div class="section-label" id="ar-search" style="margin-bottom:12px">전체 리뷰 검색</div>
 
       <!-- Filters -->
       <div class="card mb-16" style="padding:14px 18px">
@@ -1712,12 +1766,12 @@ window.logoutEGA = logoutEGA;
       </div>
 
       <div class="card mb-16">
-        <div class="card-title">데이터 상태 <span class="card-subtitle">매일 오전 10~11시쯤 자동 수집 · 2일 넘게 안 바뀌면 ⚠</span></div>
+        <div class="card-title" id="gd-s1">데이터 상태 <span class="card-subtitle">매일 오전 10~11시쯤 자동 수집 · 2일 넘게 안 바뀌면 ⚠</span></div>
         <div class="gd-tbl" id="gd-status"><div class="ix-empty">확인 중...</div></div>
       </div>
 
       <div class="card mb-16">
-        <div class="card-title">지표 정의</div>
+        <div class="card-title" id="gd-s2">지표 정의</div>
         <div class="gd-tbl"><table>
           <thead><tr><th>지표</th><th>계산 방법</th><th>데이터</th></tr></thead>
           <tbody>
@@ -1735,7 +1789,7 @@ window.logoutEGA = logoutEGA;
       </div>
 
       <div class="card mb-16">
-        <div class="card-title">자동 판단 규칙</div>
+        <div class="card-title" id="gd-s3">자동 판단 규칙</div>
         <ul class="gd-rules">
           <li><b>레드플래그(주간 리포트)</b>: 부정 리뷰 급증(5건 이상이면서 전주의 1.5배) · 제품별 부정 비율 15% 이상(2건 이상) · 같은 불만 키워드 3회 이상 · 리뷰 수 3주 연속 감소 · 채널 리뷰 0건 · 수집 중단 · 답변률 50% 미만 · 한 제품에 리뷰 50% 이상 편중</li>
           <li><b>마케팅 활용 후보</b>: 긍정 리뷰 중 내용이 구체적인(35자 이상) 리뷰를 감정 점수·길이 순으로</li>
@@ -2108,8 +2162,8 @@ window.logoutEGA = logoutEGA;
         </div>
       </div>
 
-    <div id="build-stamp">BUILD 251028-B · 사용법 패널 · 숫자 설명 · 도구 메뉴</div>
   </main>
+  </div>
 </div>
 <script>
 // ===== DATA =====
@@ -4807,7 +4861,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeManua
 
 // 업데이트 내역 (광고 대시보드의 Action Log처럼, 바뀐 점을 팀이 볼 수 있게)
 const CHANGELOG = [
-  ['10/28', ['오른쪽 위 <b>? 사용법</b>: 지금 화면의 사용법을 바로 볼 수 있어요', '숫자 이름 옆 <b>?</b> 설명, 섹션별 번호·출처·한 줄 설명 추가', '<b>리뷰 답변</b>: Claude가 초안을 쓰고, 담당자가 읽고 승인하면 게시', '<b>기준 가이드</b>: 데이터 상태 · 지표 정의 · 자동 판단 규칙', '리뷰 Index에 <b>응대 현황 · 리뷰 프로젝트</b> 추가']],
+  ['10/28', ['<b>왼쪽 사이드바</b>: 지금 탭의 세부 화면과 섹션 목차(누르면 바로 이동, 보고 있는 섹션은 파랗게)', '오른쪽 위 <b>? 사용법</b>: 지금 화면의 사용법을 바로 볼 수 있어요', '숫자 이름 옆 <b>?</b> 설명, 섹션별 번호·출처·한 줄 설명 추가', '<b>리뷰 답변</b>: Claude가 초안을 쓰고, 담당자가 읽고 승인하면 게시', '<b>기준 가이드</b>: 데이터 상태 · 지표 정의 · 자동 판단 규칙', '리뷰 Index에 <b>응대 현황 · 리뷰 프로젝트</b> 추가']],
   ['10/27', ['<b>리뷰 Index 첫 화면</b>: 기간 · 채널 · 제품 필터, 분기 목표, 일별 트렌드, 제품 표, 키워드', '메뉴를 <b>위쪽 탭 5개</b>로 정리 (판매 분석 · 프롬프트 관리 삭제)', '<b>📋 주간 리포트</b> (Biz Index 형식, 슬랙 복사 · 엑셀)', '답변 상태(크리마) 매일 자동 갱신 → 미답변 숫자 정확해짐', '누적 인사이트 월별 그래프가 비어 보이던 문제 수정']],
   ['10/26', ['리뷰 답변 <b>자동 채우기</b>(템플릿, AI 비용 0원) · 부정 리뷰는 일괄 처리에서 제외', '게시 서버 자동 선택(회사 서버 우선)', '옛 Weekly Report · 쓰지 않던 화면 삭제']],
   ['10/23', ['CS 답변 템플릿: <b>상황으로 찾기</b>(빈칸 자동 채움) · <b>블록 조립</b>']],
@@ -4819,6 +4873,14 @@ function openUpdates(){
 }
 
 function ixJump(id){ const el = document.getElementById(id); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+// 본문을 내리면 사이드바 목차에서 지금 보고 있는 섹션을 파랗게 표시
+document.querySelector('.main')?.addEventListener('scroll', () => {
+  const list = [...document.querySelectorAll('.subtabs.show .rtab.active + .sn-anchors .sn-a')];
+  if (!list.length) return;
+  let cur = list[0];
+  list.forEach(b => { const el = document.getElementById(b.dataset.target); if (el && el.getBoundingClientRect().top < 160) cur = b; });
+  list.forEach(b => b.classList.toggle('on', b === cur));
+}, { passive: true });
 
 // 처음 들어온 사람에게 사용법을 한 번 자동으로 보여줌
 document.addEventListener('DOMContentLoaded', () => {
