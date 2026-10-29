@@ -308,6 +308,19 @@
     .hk:first-child{border-top:0}
   }
   @media (max-width:1100px){.ix-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  /* 사이드바 간략형 (광고 대시보드와 같은 모양) */
+  .sidenav{width:220px}
+  .sn-body{padding:18px 12px}
+  .sidenav .nav-item{gap:8px;padding:10px 12px;margin:2px 0 0;font-size:14px;font-weight:600;color:var(--text-secondary);background:transparent}
+  .sidenav .nav-item .ni-e{font-size:15px;line-height:1}
+  .sidenav .nav-item:hover{background:transparent;color:var(--text-primary)}
+  .sidenav .nav-item.active{background:transparent;color:#1d3fbf;font-weight:800}
+  .sidenav .subtabs{gap:2px;margin:4px 0 10px}
+  .sidenav .rtab,.sidenav .sn-a{display:flex;align-items:center;width:100%;border:0;background:transparent;border-radius:8px;padding:10px 12px;margin:0;font:inherit;font-size:13.5px;font-weight:500;color:#4b5563;text-align:left;cursor:pointer}
+  .sidenav .rtab:hover,.sidenav .sn-a:hover{background:#f3f6fd;color:var(--text-primary)}
+  .sidenav .rtab.active,.sidenav .sn-a.on{background:#eef3ff;color:#1d3fbf;font-weight:700}
+  .sidenav .rtab .nav-badge{margin-left:auto}
+  @media (max-width:900px){.sidenav .sn-a{display:none}.sidenav .rtab{width:auto;white-space:nowrap}}
   /* 📖 사용법 · 숫자 설명 · 섹션 머리말 */
   .sec-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:14.5px;scroll-margin-top:12px}
   .sec-no{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:22px;padding:0 6px;border-radius:6px;background:#1e50ff;color:#fff;font-size:11.5px;font-weight:800;font-variant-numeric:tabular-nums}
@@ -1085,39 +1098,45 @@ window.logoutEGA = logoutEGA;
   <!-- 왼쪽 사이드바: 지금 탭의 세부 화면 + 섹션 목차 -->
   <aside class="sidenav" aria-label="메뉴">
     <div class="sn-body">
-      <div class="sn-label">메뉴</div>
-      <a class="nav-item active" data-group="index" onclick="showNavGroup('index')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg>리뷰 Index</a>
+      <a class="nav-item active" data-group="index" onclick="showNavGroup('index')"><span class="ni-e">🏠</span>리뷰 Index</a>
       <div class="subtabs show" data-group="index">
-        <button class="rtab active" data-page="dashboard" onclick="showPage('dashboard')">요약</button>
-        <div class="sn-anchors"><button class="sn-a" data-target="ix-s1" onclick="ixJump('ix-s1')">01 리뷰 요약</button><button class="sn-a" data-target="ix-s2" onclick="ixJump('ix-s2')">02 분기 목표</button><button class="sn-a" data-target="ix-s4" onclick="ixJump('ix-s4')">03 일별 트렌드</button><button class="sn-a" data-target="ix-s5" onclick="ixJump('ix-s5')">04 제품별 현황</button><button class="sn-a" data-target="ix-s6" onclick="ixJump('ix-s6')">05 키워드 순위</button><button class="sn-a" data-target="ix-s7" onclick="ixJump('ix-s7')">06 마케팅 후보</button><button class="sn-a" data-target="ix-s8" onclick="ixJump('ix-s8')">07 응대 현황</button><button class="sn-a" data-target="ix-s9" onclick="ixJump('ix-s9')">08 리뷰 프로젝트</button></div>
+        <button class="sn-a" data-target="ix-s1" onclick="ixJump('ix-s1')">리뷰 요약</button>
+        <button class="sn-a" data-target="ix-s2" onclick="ixJump('ix-s2')">분기 목표</button>
+        <button class="sn-a" data-target="ix-s4" onclick="ixJump('ix-s4')">일별 추이</button>
+        <button class="sn-a" data-target="ix-s5" onclick="ixJump('ix-s5')">제품별 현황</button>
+        <button class="sn-a" data-target="ix-s6" onclick="ixJump('ix-s6')">키워드 · 마케팅 후보</button>
+        <button class="sn-a" data-target="ix-s8" onclick="ixJump('ix-s8')">응대 현황</button>
         <button class="rtab" data-page="insights" onclick="showPage('insights')">누적 인사이트</button>
       </div>
-      <a class="nav-item" data-group="cs" onclick="showNavGroup('cs')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>응대 <span class="nav-badge alert" id="nav-cs-count" title="답변 안 한 리뷰 + 답변 대기 문의" hidden>0</span></a>
+      <a class="nav-item" data-group="cs" onclick="showNavGroup('cs')"><span class="ni-e">💬</span>응대 <span class="nav-badge alert" id="nav-cs-count" title="답변 안 한 리뷰 + 답변 대기 문의" hidden>0</span></a>
       <div class="subtabs" data-group="cs">
         <button class="rtab" data-page="replies" onclick="showPage('replies')">리뷰 답변 <span class="nav-badge alert" id="nav-reply-count" title="답변 안 한 리뷰" hidden>0</span></button>
         <button class="rtab" data-page="cafe24qa" onclick="showPage('cafe24qa')">Q&amp;A 문의 <span class="nav-badge warn" id="nav-qa-count" title="답변 대기 문의" hidden>0</span></button>
         <button class="rtab" data-page="csTemplates" onclick="showPage('csTemplates')">CS 답변 템플릿</button>
       </div>
-      <a class="nav-item" data-group="archive" onclick="showNavGroup('archive')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 10h16M4 14h10"/><circle cx="17" cy="17" r="3"/><path d="m21 21-1.5-1.5"/></svg>리뷰 아카이브 <span class="nav-badge" id="nav-total" title="누적 리뷰">0</span></a>
+      <a class="nav-item" data-group="archive" onclick="showNavGroup('archive')"><span class="ni-e">🗂️</span>리뷰 아카이브 <span class="nav-badge" id="nav-total" title="누적 리뷰">0</span></a>
       <div class="subtabs" data-group="archive">
-        <div class="sn-anchors always"><button class="sn-a" data-target="voc-card" onclick="ixJump('voc-card')">고객의 소리</button><button class="sn-a" data-target="ar-search" onclick="ixJump('ar-search')">전체 리뷰 검색</button></div>
-        <button class="rtab" onclick="openWeeklyReport()">📋 주간 리포트</button>
+        <button class="sn-a" data-target="voc-card" onclick="ixJump('voc-card')">고객의 소리</button>
+        <button class="sn-a" data-target="ar-search" onclick="ixJump('ar-search')">전체 리뷰 검색</button>
+        <button class="rtab" onclick="openWeeklyReport()">주간 리포트</button>
       </div>
-      <a class="nav-item" data-group="customer" onclick="showNavGroup('customer')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0113 0"/><path d="M16 4.5a3.5 3.5 0 010 7M18 14a6 6 0 013.5 6"/></svg>고객 분석</a>
+      <a class="nav-item" data-group="customer" onclick="showNavGroup('customer')"><span class="ni-e">👥</span>고객 분석</a>
       <div class="subtabs" data-group="customer">
         <button class="rtab" data-page="writeRate" onclick="showPage('writeRate')">리뷰 작성률</button>
         <button class="rtab" data-page="repurchase" onclick="showPage('repurchase')">재구매 분석</button>
         <button class="rtab" data-page="reviewWorkflow" onclick="showPage('reviewWorkflow')">리뷰 타이밍</button>
       </div>
-      <a class="nav-item" data-group="guide" onclick="showNavGroup('guide')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20V3H6.5A2.5 2.5 0 004 5.5z"/><path d="M8 7h8M8 11h6"/></svg>기준 가이드</a>
+      <a class="nav-item" data-group="guide" onclick="showNavGroup('guide')"><span class="ni-e">📐</span>기준 가이드</a>
       <div class="subtabs" data-group="guide">
-        <div class="sn-anchors always"><button class="sn-a" data-target="gd-s1" onclick="ixJump('gd-s1')">데이터 상태</button><button class="sn-a" data-target="gd-s2" onclick="ixJump('gd-s2')">지표 정의</button><button class="sn-a" data-target="gd-s3" onclick="ixJump('gd-s3')">자동 판단 규칙</button></div>
+        <button class="sn-a" data-target="gd-s1" onclick="ixJump('gd-s1')">데이터 상태</button>
+        <button class="sn-a" data-target="gd-s2" onclick="ixJump('gd-s2')">지표 정의</button>
+        <button class="sn-a" data-target="gd-s3" onclick="ixJump('gd-s3')">자동 판단 규칙</button>
       </div>
     </div>
     <div class="sn-foot">
       <button onclick="openManual()">📖 사용법</button>
       <button onclick="openUpdates()">🆕 업데이트 내역</button>
-      <div id="build-stamp">BUILD 251028-D · 왼쪽 메뉴 · 큰 숫자 카드</div>
+      <div id="build-stamp">BUILD 251029-A · 사이드바 간략형</div>
     </div>
   </aside>
 
@@ -2329,6 +2348,7 @@ function showPage(id) {
   document.querySelectorAll('.subtabs').forEach(b => b.classList.toggle('show', b.dataset.group === g));
   document.querySelectorAll('.subtabs .rtab').forEach(b => b.classList.toggle('active', b.dataset.page === id));
   const main = document.querySelector('.main'); if (main) main.scrollTop = 0;
+  if (typeof _snSpy === 'function') setTimeout(_snSpy, 0);
   if(id==='insights') initInsights();
   if(id==='archive') { if(!archiveInitialized) { initArchive(); archiveInitialized=true; } renderVoc(); }
   if(id==='admin') initAdmin();
@@ -4826,6 +4846,7 @@ function updateDashboard() {
   // ② 분기 목표 (별도 파일 — 받아오면 채움)
   _ixRenderCs(cur);
   _ixLoadExtra().then(x => { _ixRenderGoals(x); _ixRenderProjects(x); });
+  if (typeof _snSpy === 'function') setTimeout(_snSpy, 0);
   if (typeof updateTodoStrip === 'function') updateTodoStrip();
 }
 
@@ -4929,6 +4950,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeManua
 
 // 업데이트 내역 (광고 대시보드의 Action Log처럼, 바뀐 점을 팀이 볼 수 있게)
 const CHANGELOG = [
+  ['10/29', ['<b>사이드바 간략형</b>: 들여쓰기·번호 없이 한 줄 목록, 지금 보는 항목만 파란 배경']],
   ['10/28', ['<b>메뉴를 왼쪽으로</b>: 큰 메뉴 5개와 세부 화면을 왼쪽 한 곳에, 위에는 지금 위치 표시', '광고 대시보드처럼 <b>큰 숫자 카드</b>(리뷰 수·긍정 비율·답변률·채널 비중)와 <b>증감 색 배지</b>, 한글이 또렷한 글꼴', '<b>왼쪽 사이드바</b>: 지금 탭의 세부 화면과 섹션 목차(누르면 바로 이동, 보고 있는 섹션은 파랗게)', '오른쪽 위 <b>? 사용법</b>: 지금 화면의 사용법을 바로 볼 수 있어요', '숫자 이름 옆 <b>?</b> 설명, 섹션별 번호·출처·한 줄 설명 추가', '<b>리뷰 답변</b>: Claude가 초안을 쓰고, 담당자가 읽고 승인하면 게시', '<b>기준 가이드</b>: 데이터 상태 · 지표 정의 · 자동 판단 규칙', '리뷰 Index에 <b>응대 현황 · 리뷰 프로젝트</b> 추가']],
   ['10/27', ['<b>리뷰 Index 첫 화면</b>: 기간 · 채널 · 제품 필터, 분기 목표, 일별 트렌드, 제품 표, 키워드', '메뉴를 <b>위쪽 탭 5개</b>로 정리 (판매 분석 · 프롬프트 관리 삭제)', '<b>📋 주간 리포트</b> (Biz Index 형식, 슬랙 복사 · 엑셀)', '답변 상태(크리마) 매일 자동 갱신 → 미답변 숫자 정확해짐', '누적 인사이트 월별 그래프가 비어 보이던 문제 수정']],
   ['10/26', ['리뷰 답변 <b>자동 채우기</b>(템플릿, AI 비용 0원) · 부정 리뷰는 일괄 처리에서 제외', '게시 서버 자동 선택(회사 서버 우선)', '옛 Weekly Report · 쓰지 않던 화면 삭제']],
@@ -4940,15 +4962,23 @@ function openUpdates(){
   document.getElementById('upd-modal').hidden = false;
 }
 
-function ixJump(id){ const el = document.getElementById(id); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
-// 본문을 내리면 사이드바 목차에서 지금 보고 있는 섹션을 파랗게 표시
-document.querySelector('.main')?.addEventListener('scroll', () => {
-  const list = [...document.querySelectorAll('.subtabs.show .rtab.active + .sn-anchors .sn-a, .subtabs.show .sn-anchors.always .sn-a')];
-  if (!list.length) return;
-  let cur = list[0];
-  list.forEach(b => { const el = document.getElementById(b.dataset.target); if (el && el.getBoundingClientRect().top < 160) cur = b; });
+function ixJump(id){
+  const el = document.getElementById(id);
+  if (!el) return;
+  const pg = el.closest('.page');
+  if (pg && !pg.classList.contains('active')) showPage(pg.id.replace('page-', ''));
+  setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 30);
+}
+// 지금 화면에 있는 섹션 항목만 강조 (다른 화면으로 가면 섹션 강조는 모두 끔)
+function _snSpy(){
+  const list = [...document.querySelectorAll('.sidenav .sn-a')];
+  const live = list.filter(b => { const el = document.getElementById(b.dataset.target); return b.closest('.subtabs.show') && el && el.closest('.page.active'); });
+  let cur = live[0] || null;
+  live.forEach(b => { if (document.getElementById(b.dataset.target).getBoundingClientRect().top < 160) cur = b; });
   list.forEach(b => b.classList.toggle('on', b === cur));
-}, { passive: true });
+}
+// 본문을 내리면 사이드바 목차에서 지금 보고 있는 섹션을 파랗게 표시
+document.querySelector('.main')?.addEventListener('scroll', _snSpy, { passive: true });
 
 // 처음 들어온 사람에게 사용법을 한 번 자동으로 보여줌
 document.addEventListener('DOMContentLoaded', () => {
