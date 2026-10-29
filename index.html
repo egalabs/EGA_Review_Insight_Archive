@@ -1137,7 +1137,7 @@ window.logoutEGA = logoutEGA;
     <div class="sn-foot">
       <button onclick="openManual()">📖 사용법</button>
       <button onclick="openUpdates()">🆕 업데이트 내역</button>
-      <div id="build-stamp">BUILD 251029-B · 브라우저 탭 아이콘</div>
+      <div id="build-stamp">BUILD 251029-C · 아카이브 상세 이동 수정</div>
     </div>
   </aside>
 
@@ -2623,9 +2623,16 @@ function openVocReview(id){
     ${r.memo ? `<div class="voc-m-kw">메모: ${_cstEsc(r.memo)}</div>` : ''}
     <div class="voc-m-actions">
       <button class="btn btn-primary btn-sm" id="voc-m-copy" onclick="copyVocReview('${r.id}')">원문 복사</button>
-      <button class="btn btn-outline btn-sm" onclick="closeVocReview();showReviewDetail('${r.id}',false);document.getElementById('detail-panel').scrollIntoView({behavior:'smooth',block:'center'})">아카이브 상세에서 보기·감정 수정</button>
+      <button class="btn btn-outline btn-sm" onclick="openReviewInArchive('${r.id}')">아카이브 상세에서 보기·감정 수정</button>
     </div>`;
   m.hidden = false;
+}
+// 리뷰 원본 팝업 → 리뷰 아카이브 상세로 이동 (어느 화면에서 열었든 아카이브로 옮긴 뒤 상세를 보여줌)
+function openReviewInArchive(id){
+  closeVocReview();
+  if (typeof closeWeeklyReport === 'function') closeWeeklyReport();
+  showReviewDetail(id, true);
+  setTimeout(() => { const p = document.getElementById('detail-panel'); if (p) p.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 80);
 }
 function closeVocReview(){ const m = document.getElementById('voc-modal'); if (m) m.hidden = true; }
 function copyVocReview(id){
@@ -4951,7 +4958,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeManua
 
 // 업데이트 내역 (광고 대시보드의 Action Log처럼, 바뀐 점을 팀이 볼 수 있게)
 const CHANGELOG = [
-  ['10/29', ['<b>브라우저 탭 아이콘</b>: 파란 말풍선 아이콘으로 다른 탭과 구분', '<b>사이드바 간략형</b>: 들여쓰기·번호 없이 한 줄 목록, 지금 보는 항목만 파란 배경']],
+  ['10/29', ['리뷰 원본 팝업의 <b>[아카이브 상세에서 보기]</b>가 다른 화면에서 열었을 때 반응하지 않던 문제 수정', '<b>브라우저 탭 아이콘</b>: 파란 말풍선 아이콘으로 다른 탭과 구분', '<b>사이드바 간략형</b>: 들여쓰기·번호 없이 한 줄 목록, 지금 보는 항목만 파란 배경']],
   ['10/28', ['<b>메뉴를 왼쪽으로</b>: 큰 메뉴 5개와 세부 화면을 왼쪽 한 곳에, 위에는 지금 위치 표시', '광고 대시보드처럼 <b>큰 숫자 카드</b>(리뷰 수·긍정 비율·답변률·채널 비중)와 <b>증감 색 배지</b>, 한글이 또렷한 글꼴', '<b>왼쪽 사이드바</b>: 지금 탭의 세부 화면과 섹션 목차(누르면 바로 이동, 보고 있는 섹션은 파랗게)', '오른쪽 위 <b>? 사용법</b>: 지금 화면의 사용법을 바로 볼 수 있어요', '숫자 이름 옆 <b>?</b> 설명, 섹션별 번호·출처·한 줄 설명 추가', '<b>리뷰 답변</b>: Claude가 초안을 쓰고, 담당자가 읽고 승인하면 게시', '<b>기준 가이드</b>: 데이터 상태 · 지표 정의 · 자동 판단 규칙', '리뷰 Index에 <b>응대 현황 · 리뷰 프로젝트</b> 추가']],
   ['10/27', ['<b>리뷰 Index 첫 화면</b>: 기간 · 채널 · 제품 필터, 분기 목표, 일별 트렌드, 제품 표, 키워드', '메뉴를 <b>위쪽 탭 5개</b>로 정리 (판매 분석 · 프롬프트 관리 삭제)', '<b>📋 주간 리포트</b> (Biz Index 형식, 슬랙 복사 · 엑셀)', '답변 상태(크리마) 매일 자동 갱신 → 미답변 숫자 정확해짐', '누적 인사이트 월별 그래프가 비어 보이던 문제 수정']],
   ['10/26', ['리뷰 답변 <b>자동 채우기</b>(템플릿, AI 비용 0원) · 부정 리뷰는 일괄 처리에서 제외', '게시 서버 자동 선택(회사 서버 우선)', '옛 Weekly Report · 쓰지 않던 화면 삭제']],
