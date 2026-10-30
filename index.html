@@ -322,6 +322,21 @@
   .sidenav .rtab.active,.sidenav .sn-a.on{background:#eef3ff;color:#1d3fbf;font-weight:700}
   .sidenav .rtab .nav-badge{margin-left:auto}
   @media (max-width:900px){.sidenav .sn-a{display:none}.sidenav .rtab{width:auto;white-space:nowrap}}
+  /* CS 템플릿 찾기: 이렇게 이해했어요 */
+  .cst-intent{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px;font-size:13px;color:var(--text-primary)}
+  .cst-intent b{color:#1d3fbf}
+  .cst-intent .cst-ai-select{margin-left:auto;font-size:12px;padding:4px 8px}
+  .cst-intent-also{font-size:12px;color:var(--text-muted);display:inline-flex;gap:4px;align-items:center;flex-wrap:wrap}
+  .cst-intent-chip{border:1px solid var(--border);background:#fff;border-radius:999px;padding:2px 9px;font:inherit;font-size:12px;color:var(--text-secondary);cursor:pointer}
+  .cst-intent-chip:hover{border-color:#1e50ff;color:#1e50ff}
+  .cst-intent-sub{font-size:12px;color:var(--text-secondary);margin:4px 0 6px}
+  #cst-missing:empty{display:none}
+  #cst-missing{margin-top:14px;border-top:1px dashed var(--border);padding-top:12px}
+  .cst-miss-h{font-size:13px;font-weight:700;margin-bottom:6px}.cst-miss-h span{font-size:11.5px;font-weight:500;color:var(--text-muted);margin-left:6px}
+  .cst-miss{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;align-items:center;padding:8px 10px;border:1px solid var(--border-light);border-radius:8px;margin-bottom:6px;font-size:12.5px}
+  .cst-miss .cst-miss-n{font-size:11px;color:#c76a00;font-weight:700}
+  .cst-miss .cst-miss-ex{grid-column:1;font-size:11.5px;color:var(--text-muted)}
+  .cst-miss .cst-copy-btn{grid-column:2;grid-row:1 / span 2}
   /* 📖 사용법 · 숫자 설명 · 섹션 머리말 */
   .sec-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:14.5px;scroll-margin-top:12px}
   .sec-no{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:22px;padding:0 6px;border-radius:6px;background:#1e50ff;color:#fff;font-size:11.5px;font-weight:800;font-variant-numeric:tabular-nums}
@@ -1137,7 +1152,7 @@ window.logoutEGA = logoutEGA;
     <div class="sn-foot">
       <button onclick="openManual()">📖 사용법</button>
       <button onclick="openUpdates()">🆕 업데이트 내역</button>
-      <div id="build-stamp">BUILD 251029-C · 아카이브 상세 이동 수정</div>
+      <div id="build-stamp">BUILD 251030-A · CS 템플릿 문의 종류 판단 · 리뷰 답변 숫자 카드 정리</div>
     </div>
   </aside>
 
@@ -2000,9 +2015,10 @@ window.logoutEGA = logoutEGA;
         <textarea id="cst-sit" class="cst-ai-input" rows="3" maxlength="2000" placeholder="상황을 간단히 적어주세요.&#10;예) 고객이 통관번호를 잘못 적어서 수정함. 수정 안내 문자 필요 / 10월 24일 CJ대한통운 123456789012 발송"></textarea>
         <div class="cst-ai-actions">
           <button class="cst-copy-btn" onclick="findCsTemplates()">템플릿 찾기</button>
-          <span class="cst-ai-status" id="cst-find-status"></span>
         </div>
+        <div class="cst-ai-status" id="cst-find-status"></div>
         <div id="cst-find-results"></div>
+        <div id="cst-missing"></div>
       </div>
 
       <div class="card mb-16" id="cst-build">
@@ -2075,25 +2091,25 @@ window.logoutEGA = logoutEGA;
 
       <!-- Stats -->
       <div class="reply-stats-grid" id="reply-stats">
-        <div class="reply-stat-card clickable" title="답변 가능한 모든 리뷰 (올리브영 제외)" onclick="setReplyFilter('all')">
+        <div class="reply-stat-card clickable" title="아직 크리마에 답변이 없는 리뷰 전체 (승인 대기 + 초안 없음)" onclick="setReplyFilter('todo')">
           <div class="reply-stat-val" style="color:var(--text-primary)" id="rstat-total">0</div>
-          <div class="reply-stat-lbl">전체 답변 대상</div>
-          <div style="font-size:10px;color:#9ca3af;margin-top:2px">올영 제외 전체</div>
+          <div class="reply-stat-lbl">남은 답변</div>
+          <div style="font-size:10px;color:#9ca3af;margin-top:2px">승인 대기 + 초안 없음 · 메뉴 숫자와 같아요</div>
         </div>
         <div class="reply-stat-card clickable" title="답변은 채웠으나 아직 게시 안 한 리뷰" onclick="setReplyFilter('ai_generated')">
           <div class="reply-stat-val" style="color:var(--mixed)" id="rstat-generated">0</div>
           <div class="reply-stat-lbl">승인 대기</div>
-          <div style="font-size:10px;color:#9ca3af;margin-top:2px">클릭하여 보기</div>
+          <div style="font-size:10px;color:#9ca3af;margin-top:2px">초안 있음 · 읽고 승인하면 게시</div>
         </div>
-        <div class="reply-stat-card clickable" title="실제 게시 완료된 답변" onclick="setReplyFilter('posted')">
+        <div class="reply-stat-card clickable" title="크리마에 답변(댓글)이 달린 리뷰" onclick="setReplyFilter('posted')">
           <div class="reply-stat-val" style="color:var(--positive)" id="rstat-posted">0</div>
-          <div class="reply-stat-lbl">게시 완료</div>
-          <div style="font-size:10px;color:#9ca3af;margin-top:2px">클릭하여 보기</div>
+          <div class="reply-stat-lbl">답변 완료</div>
+          <div style="font-size:10px;color:#9ca3af;margin-top:2px" id="rstat-posted-sub">클릭하여 보기</div>
         </div>
         <div class="reply-stat-card clickable" title="아직 답변이 없는 리뷰 (트래킹 대상)" onclick="setReplyFilter('none')" style="background:#fef2f2">
           <div class="reply-stat-val" style="color:var(--negative)" id="rstat-pending">0</div>
-          <div class="reply-stat-lbl" style="font-weight:600">미답변 ⚠️</div>
-          <div style="font-size:10px;color:var(--negative);margin-top:2px">클릭하여 우선 답변</div>
+          <div class="reply-stat-lbl" style="font-weight:600">초안 없음 ⚠️</div>
+          <div style="font-size:10px;color:var(--negative);margin-top:2px">자동 답변 채우기로 초안 만들기</div>
         </div>
       </div>
 
@@ -2117,8 +2133,8 @@ window.logoutEGA = logoutEGA;
       <div class="reply-filter-bar">
         <button class="reply-filter-btn active" onclick="setReplyFilter('all',this)">전체</button>
         <button class="reply-filter-btn" onclick="setReplyFilter('ai_generated',this)">승인 대기</button>
-        <button class="reply-filter-btn" onclick="setReplyFilter('posted',this)">게시 완료</button>
-        <button class="reply-filter-btn" onclick="setReplyFilter('none',this)">미답변</button>
+        <button class="reply-filter-btn" onclick="setReplyFilter('posted',this)">답변 완료</button>
+        <button class="reply-filter-btn" onclick="setReplyFilter('none',this)">초안 없음</button>
         <label style="display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;cursor:pointer;padding:6px 12px;border:1px solid var(--border);border-radius:20px" title="현재 페이지의 미게시 리뷰 전체 선택"><input type="checkbox" id="reply-select-all" onchange="toggleSelectAllReplies(this)" style="cursor:pointer;width:15px;height:15px">전체 선택</label>
         <button class="btn btn-primary btn-sm" onclick="bulkGenerateSelected()">✨ 선택 항목 자동 답변</button>
         <button class="btn btn-outline btn-sm" onclick="bulkRegenerateSelected()" title="이미 답변 있는 선택 항목을 다른 표현으로 다시 채우기">🔄 선택 항목 다른 표현으로</button>
@@ -3041,6 +3057,7 @@ async function initCsTemplates(){
   renderCsTemplates();
   _cstRenderBuildChips();
   renderCsBuild();
+  _cstRenderMissing();
 }
 
 function _cstRenderBasics(){
@@ -3274,6 +3291,7 @@ const CST_SYNONYMS = [
   [/송장/, '운송장'],
   [/안\s*왔|안\s*와|못\s*받|미수령|분실|없어졌/, '미수령 배송완료'],
   [/늦|지연|언제\s*(와|오|도착)|안\s*옴/, '배송 지연 예상도착일'],
+  [/안\s*(와|오|옴|가져)|아직\s*(안|도)/, '지연 재요청'],
   [/환불|취소/, '취소 환불'],
   [/반품|교환|회수|수거/, '반품 수거'],
   [/잘못\s*(왔|온|배송)|오배송|다른\s*제품/, '오배송 재출고'],
@@ -3356,7 +3374,83 @@ function _cstAutoVal(v, parsed){
 let _cstParsed = {};
 let _cstSuggest = new Set();
 
-function findCsTemplates(){
+// ids: 기본 템플릿 번호. 비어 있으면 "아직 템플릿 없음"으로 안내하고 만들기로 연결
+// ── 상황 → 문의 종류(의도)를 먼저 판단하고, 그 종류의 템플릿 안에서만 순위를 매김 ──
+const CST_INTENTS = [
+  { id: 'ship_done', label: '배송완료인데 못 받음', re: /배송\s*완료|완료\s*(로|라고|인데|됐|되어|돼|뜨|떠|나와)|도착\s*(했다고|으로|이라고|처리)|분실|없어졌|미수령|문\s*앞에\s*없/, ids: [4, 5, 37] },
+  { id: 'address', label: '배송지·주소 변경', re: /주소|배송지|받는\s*(곳|분|사람)/, ids: [38], drop: ['exchange'] },
+  { id: 'damage', label: '파손·불량', re: /파손|찢어|찢겨|깨져|깨진|터져|터진|새어|새서|샜|불량|훼손|찌그러|구겨져/, ids: [] },
+  { id: 'wrong', label: '오배송·누락', re: /잘못\s*(왔|온|배송|보내)|오배송|다른\s*(제품|상품|색|옵션)\S*\s*(왔|옴|와서|배송)|누락|빠져\s*(있|왔)|덜\s*왔|하나\s*(안|덜)\s*왔|대신\s*\S+\s*(이|가)?\s*(왔|옴|와서|배송)/, ids: [7, 3], drop: ['exchange'] },
+  { id: 'customs', label: '통관번호', re: /통관|고유\s*부호|P\d{6,}/i, ids: [13, 31, 32, 33] },
+  { id: 'split', label: '분할배송·나머지 수량', re: /분할|나머지|일부만|나눠\s*(서|져)|따로\s*(왔|와)/, ids: [1, 2] },
+  { id: 'overseas', label: '해외배송', re: /해외|미국|국제|EMS|외국/i, ids: [12, 35, 1, 2] },
+  { id: 'exchange', label: '교환 (단순변심 포함)', re: /교환|바꾸고|바꿔|바꿀|다른\s*(제품|상품)으로/, ids: [] },
+  { id: 'return', label: '반품·수거', re: /반품|회수|수거/, ids: [8, 9, 39] },
+  { id: 'cancel', label: '취소·환불', re: /취소|환불/, ids: [10, 39, 11] },
+  { id: 'coupon', label: '쿠폰·적립금·결제', re: /쿠폰|적립금|포인트|할인\s*(적용|안|이)|결제\s*(오류|안|이)|가격\s*(적용|오류)/, ids: [] },
+  { id: 'pregnant', label: '임신·수유 중 섭취', re: /임신|임산부|수유|모유/, ids: [22] },
+  { id: 'intake', label: '복용법·섭취량', re: /먹|복용|섭취|공복|식후|몇\s*포|하루\s*(에)?\s*\d/, ids: [19, 20, 21] },
+  { id: 'storage', label: '보관', re: /보관|냉장|유통\s*기한/, ids: [19] },
+  { id: 'usage', label: '사용법·성분', re: /얼굴에|손에|바르|발라|사용해도|써도|성분|레티놀|pdrn|전성분|쿨링|화끈|따끔|시원/i, ids: [23, 24, 25, 26, 27] },
+  { id: 'soldout', label: '품절·재입고', re: /품절|재고|재입고/, ids: [15, 16] },
+  { id: 'event', label: '이벤트·경품', re: /이벤트|당첨|경품|선착순/, ids: [14, 15, 16, 17, 18] },
+  { id: 'gift', label: '사은품·증정품', re: /사은품|증정/, ids: [3, 30] },
+  { id: 'review', label: '후기 답글', re: /후기|리뷰/, ids: [28, 29, 30, 21] },
+  { id: 'missed', label: '부재중·연락 안 됨', re: /부재|전화\s*(안|못)|통화\s*(안|못)|연락\s*(안|두절|이\s*안)|(전화|연락)\S*\s*안\s*받|안\s*받으(셔|시)/, ids: [41] },
+  // 일반적인 배송 문의는 뒤쪽에 둬서, 더 구체적인 종류(통관·이벤트·주소 등)가 먼저 잡히게
+  { id: 'ship_delay', label: '배송 조회·지연·아직 못 받음', re: /(언제|아직)\s*\S*\s*(와|오|도착|받|발송|출고)|안\s*(왔|와|옴|오)|못\s*받|지연|늦어|늦게|늦는|배송\s*조회|어디쯤|발송\s*(전|안)|출고\s*(전|안)|운송장|송장/, ids: [36, 34, 6] },
+  { id: 'later', label: '확인 후 다시 연락', re: /확인\s*(후|해서|하고)|알아보고|다시\s*연락/, ids: [40] },
+];
+// "환불 말고", "취소 안 하고"처럼 부정된 말은 판단에서 뺀다
+const CST_NEG_RE = /(환불|취소|반품|교환)\s*(은|는|이|가|을|를)?\s*(말고|안\s*(하고|할|하|하겠|해도)|대신|아니(고|라)|원치\s*않|싫)/g;
+
+function _cstDetectIntents(s){
+  const t = String(s || '').replace(CST_NEG_RE, ' ');
+  let hits = CST_INTENTS.filter(i => i.re.test(t)).map(i => i.id);
+  // 배송완료 미수령이면 일반 지연은 빼고, 주소변경·오배송이면 '교환'은 빼고, 이벤트 얘기면 사은품·품절은 이벤트로
+  if (hits.includes('ship_done')) hits = hits.filter(h => h !== 'ship_delay');
+  CST_INTENTS.filter(i => hits.includes(i.id) && i.drop).forEach(i => { hits = hits.filter(h => !i.drop.includes(h)); });
+  if (hits.includes('event')) hits = hits.filter(h => h !== 'gift' && h !== 'soldout');
+  if (hits.includes('pregnant')) hits = hits.filter(h => h !== 'intake');
+  return hits;
+}
+
+// 고른 결과 기억: 같은 종류의 상황에서 실제로 복사한 템플릿을 다음에 위로 (이 브라우저에만 저장)
+const CST_PICKS_KEY = 'ega_cst_picks_v1', CST_MISSING_KEY = 'ega_cst_missing_v1';
+function _cstLoad(k){ try { return JSON.parse(localStorage.getItem(k) || '{}'); } catch (e) { return {}; } }
+function _cstSave(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+function _cstRecordPick(intentId, templateId){
+  if (!intentId) return;
+  const p = _cstLoad(CST_PICKS_KEY);
+  (p[intentId] = p[intentId] || {})[templateId] = ((p[intentId] || {})[templateId] || 0) + 1;
+  _cstSave(CST_PICKS_KEY, p);
+}
+function _cstRecordMissing(intentId, situation){
+  const m = _cstLoad(CST_MISSING_KEY);
+  const it = CST_INTENTS.find(i => i.id === intentId);
+  const o = m[intentId] = m[intentId] || { label: it ? it.label : intentId, count: 0, examples: [] };
+  o.count++;
+  o.examples = [situation.slice(0, 80)].concat(o.examples.filter(x => x !== situation.slice(0, 80))).slice(0, 3);
+  _cstSave(CST_MISSING_KEY, m);
+}
+function _cstRenderMissing(){
+  const el = document.getElementById('cst-missing');
+  if (!el) return;
+  const m = Object.entries(_cstLoad(CST_MISSING_KEY)).sort((a, b) => b[1].count - a[1].count).slice(0, 5);
+  el.innerHTML = m.length ? `<div class="cst-miss-h">📝 만들면 좋을 템플릿 <span>찾았지만 맞는 템플릿이 없던 상황</span></div>` + m.map(([id, o]) => `
+    <div class="cst-miss"><b>${_cstEsc(o.label)}</b> <span class="cst-miss-n">${o.count}회</span><div class="cst-miss-ex">${o.examples.map(x => '· ' + _cstEsc(x)).join('<br>')}</div>
+    <button class="cst-copy-btn" onclick="cstNewFromIntent('${id}')">이 상황 템플릿 만들기</button></div>`).join('') : '';
+}
+function cstNewFromIntent(intentId){
+  cstOpenEditor(null);
+  const it = CST_INTENTS.find(i => i.id === intentId);
+  const catGuess = { damage: 'refund', exchange: 'refund', coupon: 'product' }[intentId] || 'shipping';
+  const sel = document.getElementById('cst-ed-cat'); if (sel && [...sel.options].some(o => o.value === catGuess)) sel.value = catGuess;
+  const title = document.getElementById('cst-ed-title'); if (title && it) title.value = it.label + ' 안내';
+}
+
+let _cstIntent = null;
+function findCsTemplates(forced){
   const s = document.getElementById('cst-sit').value.trim();
   const status = document.getElementById('cst-find-status');
   const out = document.getElementById('cst-find-results');
@@ -3364,22 +3458,31 @@ function findCsTemplates(){
   if (!_cstData) return;
   if (!s) { status.textContent = '상황을 먼저 적어주세요.'; status.classList.add('error'); out.innerHTML = ''; return; }
   _cstParsed = _cstParseSituation(s);
-
+  const hits = _cstDetectIntents(s);
+  const intentId = forced || hits[0] || null;
+  _cstIntent = intentId;
+  const intent = CST_INTENTS.find(i => i.id === intentId);
+  const picks = (_cstLoad(CST_PICKS_KEY)[intentId]) || {};
+  const all = _cstAll();
+  // 후보: 그 종류의 기본 템플릿 + 제목이 그 종류에 맞는 내 템플릿
+  const pool = intent ? all.filter(t => intent.ids.includes(Number(t.id)) || (t._custom && intent.re.test(t.title))) : all;
   const isEvent = /이벤트|당첨|경품/.test(s);
-  const ranked = _cstRank(_cstAll(), t => t.title, t => t.text, s)
+  let ranked = _cstRank(pool, t => t.title, t => t.text, s)
     .map(x => {
-      let score = x.score + _cstVarBoost(x.it.text, _cstParsed);
-      if (x.it.category === 'event' && !isEvent) score *= 0.4;  // 이벤트 얘기가 없으면 경품 템플릿은 뒤로
+      let score = x.score + _cstVarBoost(x.it.text, _cstParsed) + Math.min(15, (picks[x.it.id] || 0) * 5);
+      if (!intent && x.it.category === 'event' && !isEvent) score *= 0.4;
+      // 종류가 맞으면 기본 점수 + 그 종류에서 가장 대표적인 템플릿(목록 앞쪽)일수록 조금 더
+      if (intent) { const k = intent.ids.indexOf(Number(x.it.id)); score += 3 + (k >= 0 ? (intent.ids.length - k) * 1.5 : 0); }
       return { it: x.it, score };
     })
-    .sort((a, b) => b.score - a.score)
-    .filter(x => x.score >= 2).slice(0, 3);
+    .sort((a, b) => b.score - a.score);
+  ranked = (intent ? ranked : ranked.filter(x => x.score >= 8)).slice(0, 3);
+  if (intent && !ranked.length) _cstRecordMissing(intentId, s);
+
   ranked.forEach(({ it }) => {
     const vals = _cstVarValues[it.id] = _cstVarValues[it.id] || {};
     (it.vars || []).forEach(v => { const a = _cstAutoVal(v, _cstParsed); if (a && !vals[v]) vals[v] = a; });
   });
-
-  // 블록 추천(⭐)도 같은 상황으로 갱신
   const blocks = _cstData.blocks || [];
   _cstSuggest = new Set(_cstRank(blocks, b => b.label, b => b.text, s)
     .map(x => ({ it: x.it, score: x.score + _cstVarBoost(x.it.text, _cstParsed) }))
@@ -3390,21 +3493,26 @@ function findCsTemplates(){
 
   const found = Object.entries({ 택배사: _cstParsed.courier, 운송장: _cstParsed.tracking, 날짜: _cstParsed.date, 제품: _cstParsed.product })
     .filter(([, v]) => v).map(([k, v]) => `${k} ${v}`);
-  status.textContent = (ranked.length ? `맞는 템플릿 ${ranked.length}개` : '딱 맞는 템플릿이 없어요. 아래 블록으로 만들어 보세요.') + (found.length ? ` · 자동으로 넣은 값: ${found.join(', ')}` : '');
+  const opts = CST_INTENTS.map(i => `<option value="${i.id}"${i.id === intentId ? ' selected' : ''}>${_cstEsc(i.label)}</option>`).join('');
+  const others = hits.filter(h => h !== intentId).map(h => CST_INTENTS.find(i => i.id === h)).filter(Boolean)
+    .map(i => `<button class="cst-intent-chip" onclick="findCsTemplates('${i.id}')">${_cstEsc(i.label)}</button>`).join('');
+  status.innerHTML = `<div class="cst-intent">이렇게 이해했어요: <b>${intent ? _cstEsc(intent.label) : '종류를 정하지 못했어요'}</b>
+      ${others ? `<span class="cst-intent-also">이것일 수도 있어요 ${others}</span>` : ''}
+      <select class="cst-ai-select" onchange="findCsTemplates(this.value)" aria-label="문의 종류 바꾸기"><option value="">다른 종류로 바꾸기 ▾</option>${opts}</select></div>
+    <div class="cst-intent-sub">${ranked.length ? `맞는 템플릿 ${ranked.length}개` : (intent ? `"${_cstEsc(intent.label)}" 템플릿이 아직 없어요. 아래 블록으로 만들거나 [이 상황 템플릿 만들기]를 눌러주세요.` : '딱 맞는 템플릿이 없어요. 종류를 골라주시거나 아래 블록으로 만들어 보세요.')}${found.length ? ` · 자동으로 넣은 값: ${found.join(', ')}` : ''}</div>`;
 
   const catLabel = id => (_cstData.categories.find(c => c.id === id) || {}).label || id;
   out.innerHTML = ranked.map(({ it: t }, i) => `
     <div class="cst-find-card ${i === 0 ? 'best' : ''}">
       <div class="cst-card-head">
-        <div class="cst-card-title"><span class="cst-card-cat">${_cstEsc(catLabel(t.category))}</span>${i === 0 ? '⭐ ' : ''}${_cstEsc(t.title)}${t._custom ? '<span class="cst-badge mine">내 템플릿</span>' : ''}</div>
+        <div class="cst-card-title"><span class="cst-card-cat">${_cstEsc(catLabel(t.category))}</span>${i === 0 ? '⭐ ' : ''}${_cstEsc(t.title)}${t._custom ? '<span class="cst-badge mine">내 템플릿</span>' : ''}${picks[t.id] ? `<span class="cst-badge mine">자주 고름 ${picks[t.id]}</span>` : ''}</div>
         <div class="cst-card-actions"><button class="cst-copy-btn" data-fcopy="${_cstEsc(t.id)}">복사하기</button></div>
       </div>
       ${(t.vars && t.vars.length) ? `<div class="cst-vars">${t.vars.map(v => `
         <div class="cst-var">${_cstEsc(v)} <input type="text" data-fid="${_cstEsc(t.id)}" data-var="${_cstEsc(v)}" placeholder="${_cstEsc(v)}" value="${_cstEsc((_cstVarValues[t.id] || {})[v] || '')}"></div>`).join('')}</div>` : ''}
       <div class="cst-body" id="cst-fbody-${_cstEsc(t.id)}">${_cstEsc(_cstResolveText(t))}</div>
       ${t.note ? `<div class="cst-note">⚠ ${_cstEsc(t.note)}</div>` : ''}
-    </div>`).join('');
-
+    </div>`).join('') + (intent && !ranked.length ? `<div class="cst-find-card"><button class="cst-copy-btn" onclick="cstNewFromIntent('${intentId}')">이 상황 템플릿 만들기</button></div>` : '');
   out.querySelectorAll('input[data-fid]').forEach(inp => {
     inp.oninput = () => {
       const id = inp.dataset.fid;
@@ -3413,8 +3521,9 @@ function findCsTemplates(){
     };
   });
   out.querySelectorAll('[data-fcopy]').forEach(btn => {
-    btn.onclick = () => copyTextWithFeedback(_cstResolveText(_cstFind(btn.dataset.fcopy)), btn);
+    btn.onclick = () => { _cstRecordPick(_cstIntent, btn.dataset.fcopy); copyTextWithFeedback(_cstResolveText(_cstFind(btn.dataset.fcopy)), btn); };
   });
+  _cstRenderMissing();
   renderCsTemplates();  // 아래 전체 목록의 같은 템플릿에도 채운 값이 보이게
 }
 
@@ -4958,7 +5067,8 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeManua
 
 // 업데이트 내역 (광고 대시보드의 Action Log처럼, 바뀐 점을 팀이 볼 수 있게)
 const CHANGELOG = [
-  ['10/29', ['리뷰 원본 팝업의 <b>[아카이브 상세에서 보기]</b>가 다른 화면에서 열었을 때 반응하지 않던 문제 수정', '<b>브라우저 탭 아이콘</b>: 파란 말풍선 아이콘으로 다른 탭과 구분', '<b>사이드바 간략형</b>: 들여쓰기·번호 없이 한 줄 목록, 지금 보는 항목만 파란 배경']],
+  ['10/30', ['<b>리뷰 답변 숫자 카드</b>: "전체 답변 대상"(누적 전체)을 <b>남은 답변</b>(승인 대기 + 초안 없음)으로 바꿔 메뉴 숫자와 맞춤, 답변 완료에 전체·답변률 표시']],
+  ['10/29', ['<b>CS 템플릿 찾기</b>: 상황을 문의 종류로 먼저 판단해 "이렇게 이해했어요"로 보여주고, 틀리면 바로 바꿀 수 있어요. 맞는 템플릿이 없으면 "만들면 좋을 템플릿"에 모아요', '리뷰 원본 팝업의 <b>[아카이브 상세에서 보기]</b>가 다른 화면에서 열었을 때 반응하지 않던 문제 수정', '<b>브라우저 탭 아이콘</b>: 파란 말풍선 아이콘으로 다른 탭과 구분', '<b>사이드바 간략형</b>: 들여쓰기·번호 없이 한 줄 목록, 지금 보는 항목만 파란 배경']],
   ['10/28', ['<b>메뉴를 왼쪽으로</b>: 큰 메뉴 5개와 세부 화면을 왼쪽 한 곳에, 위에는 지금 위치 표시', '광고 대시보드처럼 <b>큰 숫자 카드</b>(리뷰 수·긍정 비율·답변률·채널 비중)와 <b>증감 색 배지</b>, 한글이 또렷한 글꼴', '<b>왼쪽 사이드바</b>: 지금 탭의 세부 화면과 섹션 목차(누르면 바로 이동, 보고 있는 섹션은 파랗게)', '오른쪽 위 <b>? 사용법</b>: 지금 화면의 사용법을 바로 볼 수 있어요', '숫자 이름 옆 <b>?</b> 설명, 섹션별 번호·출처·한 줄 설명 추가', '<b>리뷰 답변</b>: Claude가 초안을 쓰고, 담당자가 읽고 승인하면 게시', '<b>기준 가이드</b>: 데이터 상태 · 지표 정의 · 자동 판단 규칙', '리뷰 Index에 <b>응대 현황 · 리뷰 프로젝트</b> 추가']],
   ['10/27', ['<b>리뷰 Index 첫 화면</b>: 기간 · 채널 · 제품 필터, 분기 목표, 일별 트렌드, 제품 표, 키워드', '메뉴를 <b>위쪽 탭 5개</b>로 정리 (판매 분석 · 프롬프트 관리 삭제)', '<b>📋 주간 리포트</b> (Biz Index 형식, 슬랙 복사 · 엑셀)', '답변 상태(크리마) 매일 자동 갱신 → 미답변 숫자 정확해짐', '누적 인사이트 월별 그래프가 비어 보이던 문제 수정']],
   ['10/26', ['리뷰 답변 <b>자동 채우기</b>(템플릿, AI 비용 0원) · 부정 리뷰는 일괄 처리에서 제외', '게시 서버 자동 선택(회사 서버 우선)', '옛 Weekly Report · 쓰지 않던 화면 삭제']],
@@ -6378,6 +6488,7 @@ function getFilteredReplyReviews() {
   if (replyFilter === 'ai_generated') reviews = reviews.filter(r => r.reply_status === 'ai_generated' && !r.board_answered);
   else if (replyFilter === 'posted') reviews = reviews.filter(r => isReplyDone(r));
   else if (replyFilter === 'none') reviews = reviews.filter(r => (!r.reply_status || r.reply_status === '') && !r.board_answered);
+  else if (replyFilter === 'todo') reviews = reviews.filter(r => !isReplyDone(r));
   if (replyChannelFilter !== 'all') reviews = reviews.filter(r => r.channel === replyChannelFilter);
   // 감정 필터 (혼합/중립 → 둘 다 포함)
   if (replySentimentFilter !== 'all') {
@@ -6428,17 +6539,20 @@ function updateReplyStats() {
   const posted = all.filter(r => isReplyDone(r)).length;               // 게시/자사몰 답변 완료
   const generated = all.filter(r => r.reply_status === 'ai_generated' && !r.board_answered).length;
   const pending = all.length - generated - posted;                     // 진짜 미답변
-  document.getElementById('rstat-total').textContent = all.length;
-  document.getElementById('rstat-generated').textContent = generated;
-  document.getElementById('rstat-posted').textContent = posted;
-  document.getElementById('rstat-pending').textContent = pending;
+  // 카드 4개: 남은 답변(= 승인 대기 + 초안 없음, 메뉴 숫자와 같음) · 승인 대기 · 답변 완료(전체 대비) · 초안 없음
+  document.getElementById('rstat-total').textContent = (pending + generated).toLocaleString();
+  document.getElementById('rstat-generated').textContent = generated.toLocaleString();
+  document.getElementById('rstat-posted').textContent = posted.toLocaleString();
+  document.getElementById('rstat-pending').textContent = pending.toLocaleString();
+  const sub = document.getElementById('rstat-posted-sub');
+  if (sub) sub.textContent = all.length ? `전체 ${all.length.toLocaleString()}건 중 · 답변률 ${(posted / all.length * 100).toFixed(1)}%` : '클릭하여 보기';
   // nav badge = 미답변 수
   _setNavBadge('nav-reply-count', pending + generated);
 }
 
 // ── 필터 변경 ──
 const REPLY_FILTER_ORDER = ['all', 'ai_generated', 'posted', 'none'];
-const REPLY_STAT_MAP = { all: 'rstat-total', ai_generated: 'rstat-generated', posted: 'rstat-posted', none: 'rstat-pending' };
+const REPLY_STAT_MAP = { todo: 'rstat-total', ai_generated: 'rstat-generated', posted: 'rstat-posted', none: 'rstat-pending' };
 // 현재 필터에 맞춰 상단 KPI 카드의 활성(파란 링) 표시를 이동시킨다
 function syncReplyStatCards(f) {
   document.querySelectorAll('#reply-stats .reply-stat-card').forEach(c => c.classList.remove('active'));
