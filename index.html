@@ -1152,7 +1152,7 @@ window.logoutEGA = logoutEGA;
     <div class="sn-foot">
       <button onclick="openManual()">📖 사용법</button>
       <button onclick="openUpdates()">🆕 업데이트 내역</button>
-      <div id="build-stamp">BUILD 251102-B · 답변 완료는 크리마 기준 · 이번 달 비교 기간 보정</div>
+      <div id="build-stamp">BUILD 251102-C · 답변 관리 버튼 상태 표시</div>
     </div>
   </aside>
 
@@ -2135,10 +2135,18 @@ window.logoutEGA = logoutEGA;
         <button class="reply-filter-btn" onclick="setReplyFilter('ai_generated',this)">승인 대기</button>
         <button class="reply-filter-btn" onclick="setReplyFilter('posted',this)">답변 완료</button>
         <button class="reply-filter-btn" onclick="setReplyFilter('none',this)">초안 없음</button>
-        <label style="display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;cursor:pointer;padding:6px 12px;border:1px solid var(--border);border-radius:20px" title="현재 페이지의 미게시 리뷰 전체 선택"><input type="checkbox" id="reply-select-all" onchange="toggleSelectAllReplies(this)" style="cursor:pointer;width:15px;height:15px">전체 선택</label>
-        <button class="btn btn-primary btn-sm" onclick="bulkGenerateSelected()">✨ 선택 항목 자동 답변</button>
-        <button class="btn btn-outline btn-sm" onclick="bulkRegenerateSelected()" title="이미 답변 있는 선택 항목을 다른 표현으로 다시 채우기">🔄 선택 항목 다른 표현으로</button>
-        <button class="btn btn-outline btn-sm" onclick="generateCurrentReplyPage()">✨ 현재 목록 전체 채우기</button>
+        <style>
+          .reply-filter-bar .btn:disabled{opacity:.4;cursor:not-allowed;box-shadow:none}
+          .reply-filter-bar label.is-off{opacity:.4;cursor:not-allowed}
+          #reply-actions-note{font-size:12px;color:var(--text-muted);padding:6px 4px}
+        </style>
+        <span id="reply-actions" style="display:contents">
+        <label id="reply-select-all-wrap" style="display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;cursor:pointer;padding:6px 12px;border:1px solid var(--border);border-radius:20px" title="현재 페이지의 답변 전 리뷰 전체 선택"><input type="checkbox" id="reply-select-all" onchange="toggleSelectAllReplies(this)" style="cursor:pointer;width:15px;height:15px">전체 선택</label>
+        <button class="btn btn-primary btn-sm" id="reply-btn-gen" onclick="bulkGenerateSelected()">✨ 선택 항목 자동 답변</button>
+        <button class="btn btn-outline btn-sm" id="reply-btn-regen" onclick="bulkRegenerateSelected()" title="이미 답변 있는 선택 항목을 다른 표현으로 다시 채우기">🔄 선택 항목 다른 표현으로</button>
+        <button class="btn btn-outline btn-sm" id="reply-btn-fill" onclick="generateCurrentReplyPage()">✨ 현재 목록 전체 채우기</button>
+        </span>
+        <span id="reply-actions-note" style="display:none">답변 완료 목록이라 채우기·게시할 게 없어요. 카드의 [되돌리기]·[상세보기]만 쓸 수 있어요.</span>
         <button class="btn btn-outline btn-sm" onclick="exportSavedReplies()">💾 답변 백업</button>
         <button class="btn btn-outline btn-sm" onclick="document.getElementById('reply-import-file').click()">📥 백업 불러오기</button>
         <input type="file" id="reply-import-file" accept=".json" style="display:none" onchange="importSavedReplies(this)">
@@ -5068,7 +5076,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeManua
 
 // 업데이트 내역 (광고 대시보드의 Action Log처럼, 바뀐 점을 팀이 볼 수 있게)
 const CHANGELOG = [
-  ['11/2', ['<b>이번 달 전월 대비</b>: 31일처럼 전월보다 긴 날에 비교 기간이 이번 달 1일까지 넘어가던 것 보정', '<b>답변 완료 기준을 크리마로 고정</b>: 상품 페이지 리뷰 영역에 보이는 크리마 답변 기준. 자사몰 게시판 기준은 쓰지 않아요']],
+  ['11/2', ['<b>답변 관리 버튼</b>: 지금 누를 수 없는 버튼은 흐리게 + 이유 안내, 답변 완료 탭에선 일괄 버튼 대신 안내 문구', '<b>이번 달 전월 대비</b>: 31일처럼 전월보다 긴 날에 비교 기간이 이번 달 1일까지 넘어가던 것 보정', '<b>답변 완료 기준을 크리마로 고정</b>: 상품 페이지 리뷰 영역에 보이는 크리마 답변 기준. 자사몰 게시판 기준은 쓰지 않아요']],
   ['10/30', ['<b>리뷰 답변 숫자 카드</b>: "전체 답변 대상"(누적 전체)을 <b>남은 답변</b>(승인 대기 + 초안 없음)으로 바꿔 메뉴 숫자와 맞춤, 답변 완료에 전체·답변률 표시']],
   ['10/29', ['<b>CS 템플릿 찾기</b>: 상황을 문의 종류로 먼저 판단해 "이렇게 이해했어요"로 보여주고, 틀리면 바로 바꿀 수 있어요. 맞는 템플릿이 없으면 "만들면 좋을 템플릿"에 모아요', '리뷰 원본 팝업의 <b>[아카이브 상세에서 보기]</b>가 다른 화면에서 열었을 때 반응하지 않던 문제 수정', '<b>브라우저 탭 아이콘</b>: 파란 말풍선 아이콘으로 다른 탭과 구분', '<b>사이드바 간략형</b>: 들여쓰기·번호 없이 한 줄 목록, 지금 보는 항목만 파란 배경']],
   ['10/28', ['<b>메뉴를 왼쪽으로</b>: 큰 메뉴 5개와 세부 화면을 왼쪽 한 곳에, 위에는 지금 위치 표시', '광고 대시보드처럼 <b>큰 숫자 카드</b>(리뷰 수·긍정 비율·답변률·채널 비중)와 <b>증감 색 배지</b>, 한글이 또렷한 글꼴', '<b>왼쪽 사이드바</b>: 지금 탭의 세부 화면과 섹션 목차(누르면 바로 이동, 보고 있는 섹션은 파랗게)', '오른쪽 위 <b>? 사용법</b>: 지금 화면의 사용법을 바로 볼 수 있어요', '숫자 이름 옆 <b>?</b> 설명, 섹션별 번호·출처·한 줄 설명 추가', '<b>리뷰 답변</b>: Claude가 초안을 쓰고, 담당자가 읽고 승인하면 게시', '<b>기준 가이드</b>: 데이터 상태 · 지표 정의 · 자동 판단 규칙', '리뷰 Index에 <b>응대 현황 · 리뷰 프로젝트</b> 추가']],
@@ -6403,7 +6411,7 @@ async function generateReplyForReview(id) {
 async function generateCurrentReplyPage() {
   const reviews = getFilteredReplyReviews();
   const start = (replyPage - 1) * REPLY_PER_PAGE;
-  const pageReviews = reviews.slice(start, start + REPLY_PER_PAGE).filter(r => r.reply_status !== 'posted');
+  const pageReviews = reviews.slice(start, start + REPLY_PER_PAGE).filter(r => !isReplyDone(r));
   if (pageReviews.length === 0) { showToast('현재 페이지에 생성할 리뷰가 없습니다', 'error'); return; }
   const ids = pageReviews.filter(r => !r.ai_reply && r.sentiment !== '부정').map(r => r.id);
   const negN = pageReviews.filter(r => !r.ai_reply && r.sentiment === '부정').length;
@@ -6785,12 +6793,13 @@ function renderReplyList() {
   const start = (replyPage - 1) * REPLY_PER_PAGE;
   const pageReviews = reviews.slice(start, start + REPLY_PER_PAGE);
 
-  // 전체 선택 체크박스 상태 동기화 (현재 페이지 미게시 전부 선택됐는지)
+  // 전체 선택 체크박스 상태 동기화 (현재 페이지 답변 전 리뷰 전부 선택됐는지) + 도구 버튼 상태
   const _sa = document.getElementById('reply-select-all');
   if (_sa) {
-    const _sel = pageReviews.filter(r => r.reply_status !== 'posted');
+    const _sel = pageReviews.filter(r => !isReplyDone(r));
     _sa.checked = _sel.length > 0 && _sel.every(r => bulkSelected.has(r.id));
   }
+  _syncReplyActions(pageReviews);
 
   const listEl = document.getElementById('reply-list');
   if (reviews.length === 0) {
@@ -7001,7 +7010,7 @@ function clearBulkSelection() {
 function toggleSelectAllReplies(cb) {
   const reviews = getFilteredReplyReviews();
   const start = (replyPage - 1) * REPLY_PER_PAGE;
-  const pageReviews = reviews.slice(start, start + REPLY_PER_PAGE).filter(r => r.reply_status !== 'posted');
+  const pageReviews = reviews.slice(start, start + REPLY_PER_PAGE).filter(r => !isReplyDone(r));
   if (cb.checked) pageReviews.forEach(r => bulkSelected.add(r.id));
   else pageReviews.forEach(r => bulkSelected.delete(r.id));
   updateBulkBar();
@@ -7078,7 +7087,27 @@ async function bulkRegenerateSelected() {
   if (!confirm('선택한 ' + ids.length + '건의 기존 답변을 다른 표현으로 다시 채울까요? (직접 수정한 내용도 덮어써요)')) return;
   await _bulkRun(ids, '다른 표현으로 채우기');
 }
+// 도구 버튼 상태: 지금 누를 수 없는 버튼은 흐리게 하고 이유를 툴팁으로
+let _replyPageCache = [];
+function _syncReplyActions(pageReviews) {
+  if (pageReviews) _replyPageCache = pageReviews;
+  const posted = replyFilter === 'posted';
+  const acts = document.getElementById('reply-actions'), note = document.getElementById('reply-actions-note');
+  if (acts) acts.style.display = posted ? 'none' : 'contents';
+  if (note) note.style.display = posted ? '' : 'none';
+  if (posted) return;
+  const open = _replyPageCache.filter(r => !isReplyDone(r));
+  const set = (id, off, why, tip) => { const b = document.getElementById(id); if (!b) return; b.disabled = off; b.title = off ? why : tip; };
+  const noSel = bulkSelected.size === 0;
+  set('reply-btn-gen', noSel, '먼저 카드를 눌러 선택하거나 [전체 선택]을 체크해 주세요', '선택한 리뷰 중 초안 없는 것에 자동 답변 채우기');
+  set('reply-btn-regen', noSel, '먼저 카드를 눌러 선택하거나 [전체 선택]을 체크해 주세요', '이미 답변 있는 선택 항목을 다른 표현으로 다시 채우기');
+  set('reply-btn-fill', !open.some(r => !r.ai_reply && r.sentiment !== '부정'), '이 페이지에는 새로 채울 리뷰가 없어요 (초안 있음·답변 완료·부정 리뷰는 제외)', '이 페이지의 초안 없는 리뷰를 한 번에 채우기 (부정 리뷰 제외)');
+  const sa = document.getElementById('reply-select-all'), wrap = document.getElementById('reply-select-all-wrap');
+  if (sa) sa.disabled = !open.length;
+  if (wrap) { wrap.classList.toggle('is-off', !open.length); wrap.title = open.length ? '현재 페이지의 답변 전 리뷰 전체 선택' : '이 페이지에는 선택할 답변 전 리뷰가 없어요'; }
+}
 function updateBulkBar() {
+  _syncReplyActions();
   const bar = document.getElementById('bulk-bar');
   if (bulkSelected.size > 0) {
     bar.style.display = 'flex';
