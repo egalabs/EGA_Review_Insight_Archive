@@ -1152,7 +1152,7 @@ window.logoutEGA = logoutEGA;
     <div class="sn-foot">
       <button onclick="openManual()">📖 사용법</button>
       <button onclick="openUpdates()">🆕 업데이트 내역</button>
-      <div id="build-stamp">BUILD 251102-A · 답변 완료는 크리마 기준</div>
+      <div id="build-stamp">BUILD 251102-B · 답변 완료는 크리마 기준 · 이번 달 비교 기간 보정</div>
     </div>
   </aside>
 
@@ -4793,7 +4793,8 @@ function _ixRange(){
 // 비교 기간: 지난주/지난달은 그 앞 주·달, 나머지는 같은 길이만큼 바로 앞
 function _ixPrevRange(s, e){
   if (!_ixCustom && _ixPeriod === 'lastmonth') { const ps = _vocAddMonths(s, -1); return [ps, _vocMonthEnd(ps)]; }
-  if (!_ixCustom && _ixPeriod === 'month') { const ps = _vocAddMonths(s, -1); return [ps, _vocAddDays(ps, _ixDays(s, e) - 1)]; }
+  // 이번 달(진행 중)은 전월 같은 날수까지. 31일처럼 전월보다 길면 전월 말일에서 자름(이번 달 1일이 섞이지 않게)
+  if (!_ixCustom && _ixPeriod === 'month') { const ps = _vocAddMonths(s, -1), pe = _vocAddDays(ps, _ixDays(s, e) - 1), pm = _vocMonthEnd(ps); return [ps, pe > pm ? pm : pe]; }
   const n = _ixDays(s, e);
   return [_vocAddDays(s, -n), _vocAddDays(s, -1)];
 }
@@ -5067,7 +5068,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeManua
 
 // 업데이트 내역 (광고 대시보드의 Action Log처럼, 바뀐 점을 팀이 볼 수 있게)
 const CHANGELOG = [
-  ['11/2', ['<b>답변 완료 기준을 크리마로 고정</b>: 상품 페이지 리뷰 영역에 보이는 크리마 답변 기준. 자사몰 게시판 기준은 쓰지 않아요']],
+  ['11/2', ['<b>이번 달 전월 대비</b>: 31일처럼 전월보다 긴 날에 비교 기간이 이번 달 1일까지 넘어가던 것 보정', '<b>답변 완료 기준을 크리마로 고정</b>: 상품 페이지 리뷰 영역에 보이는 크리마 답변 기준. 자사몰 게시판 기준은 쓰지 않아요']],
   ['10/30', ['<b>리뷰 답변 숫자 카드</b>: "전체 답변 대상"(누적 전체)을 <b>남은 답변</b>(승인 대기 + 초안 없음)으로 바꿔 메뉴 숫자와 맞춤, 답변 완료에 전체·답변률 표시']],
   ['10/29', ['<b>CS 템플릿 찾기</b>: 상황을 문의 종류로 먼저 판단해 "이렇게 이해했어요"로 보여주고, 틀리면 바로 바꿀 수 있어요. 맞는 템플릿이 없으면 "만들면 좋을 템플릿"에 모아요', '리뷰 원본 팝업의 <b>[아카이브 상세에서 보기]</b>가 다른 화면에서 열었을 때 반응하지 않던 문제 수정', '<b>브라우저 탭 아이콘</b>: 파란 말풍선 아이콘으로 다른 탭과 구분', '<b>사이드바 간략형</b>: 들여쓰기·번호 없이 한 줄 목록, 지금 보는 항목만 파란 배경']],
   ['10/28', ['<b>메뉴를 왼쪽으로</b>: 큰 메뉴 5개와 세부 화면을 왼쪽 한 곳에, 위에는 지금 위치 표시', '광고 대시보드처럼 <b>큰 숫자 카드</b>(리뷰 수·긍정 비율·답변률·채널 비중)와 <b>증감 색 배지</b>, 한글이 또렷한 글꼴', '<b>왼쪽 사이드바</b>: 지금 탭의 세부 화면과 섹션 목차(누르면 바로 이동, 보고 있는 섹션은 파랗게)', '오른쪽 위 <b>? 사용법</b>: 지금 화면의 사용법을 바로 볼 수 있어요', '숫자 이름 옆 <b>?</b> 설명, 섹션별 번호·출처·한 줄 설명 추가', '<b>리뷰 답변</b>: Claude가 초안을 쓰고, 담당자가 읽고 승인하면 게시', '<b>기준 가이드</b>: 데이터 상태 · 지표 정의 · 자동 판단 규칙', '리뷰 Index에 <b>응대 현황 · 리뷰 프로젝트</b> 추가']],
