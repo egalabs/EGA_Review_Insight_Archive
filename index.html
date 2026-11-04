@@ -1152,7 +1152,7 @@ window.logoutEGA = logoutEGA;
     <div class="sn-foot">
       <button onclick="openManual()">📖 사용법</button>
       <button onclick="openUpdates()">🆕 업데이트 내역</button>
-      <div id="build-stamp">BUILD 251102-C · 답변 관리 버튼 상태 표시</div>
+      <div id="build-stamp">BUILD 251103-A · 답변 중복 게시 방지</div>
     </div>
   </aside>
 
@@ -4877,7 +4877,7 @@ function updateDashboard() {
   const fromEl = document.getElementById('ix-from'), toEl = document.getElementById('ix-to');
   if (!_ixCustom) { fromEl.value = s; toEl.value = e; }
   const latest = _ixLatest();
-  document.getElementById('ix-range').innerHTML = `<span class="ix-chipr cur">${label} ${s} ~ ${e} (${_ixDays(s, e)}일)</span><span class="ix-chipr">전기 ${ps} ~ ${pe}</span><span class="ix-chipr">전년 ${ys} ~ ${ye}</span>${e > latest ? `<span class="ix-na"> 리뷰는 ${latest}까지 수집됨</span>` : ''}`;
+  document.getElementById('ix-range').innerHTML = `<span class="ix-chipr cur">${label} ${s} ~ ${e} (${_ixDays(s, e)}일)</span><span class="ix-chipr">전기 ${ps} ~ ${pe}${_ixDays(ps, pe) !== _ixDays(s, e) ? ` (${_ixDays(ps, pe)}일 · 이번 기간보다 ${_ixDays(s, e) - _ixDays(ps, pe)}일 짧아 건수 증감이 커 보일 수 있어요)` : ''}</span><span class="ix-chipr">전년 ${ys} ~ ${ye}</span>${e > latest ? `<span class="ix-na"> 리뷰는 ${latest}까지 수집됨</span>` : ''}`;
   const asof = window._reviewsAsOf ? new Date(window._reviewsAsOf) : null;
   const asofTxt = asof && !isNaN(asof) ? `${String(asof.getMonth() + 1).padStart(2, '0')}-${String(asof.getDate()).padStart(2, '0')} ${String(asof.getHours()).padStart(2, '0')}:${String(asof.getMinutes()).padStart(2, '0')}` : latest;
   document.querySelectorAll('[data-asof="reviews"]').forEach(el => { el.textContent = asofTxt; });
@@ -5076,6 +5076,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeManua
 
 // 업데이트 내역 (광고 대시보드의 Action Log처럼, 바뀐 점을 팀이 볼 수 있게)
 const CHANGELOG = [
+  ['11/3', ['<b>답변 중복 게시 방지</b>: 크리마 답변 상태를 못 불러오면 숫자 대신 "확인 불가"로 두고 채우기·게시를 멈춤, 이미 답변 달린 리뷰는 선택·게시 불가', '선택한 리뷰에 할 게 없으면 버튼이 흐려져요', '이번 달 전월 비교 기간이 짧을 때(예: 3/31) 날수 차이 표시']],
   ['11/2', ['<b>답변 관리 버튼</b>: 지금 누를 수 없는 버튼은 흐리게 + 이유 안내, 답변 완료 탭에선 일괄 버튼 대신 안내 문구', '<b>이번 달 전월 대비</b>: 31일처럼 전월보다 긴 날에 비교 기간이 이번 달 1일까지 넘어가던 것 보정', '<b>답변 완료 기준을 크리마로 고정</b>: 상품 페이지 리뷰 영역에 보이는 크리마 답변 기준. 자사몰 게시판 기준은 쓰지 않아요']],
   ['10/30', ['<b>리뷰 답변 숫자 카드</b>: "전체 답변 대상"(누적 전체)을 <b>남은 답변</b>(승인 대기 + 초안 없음)으로 바꿔 메뉴 숫자와 맞춤, 답변 완료에 전체·답변률 표시']],
   ['10/29', ['<b>CS 템플릿 찾기</b>: 상황을 문의 종류로 먼저 판단해 "이렇게 이해했어요"로 보여주고, 틀리면 바로 바꿀 수 있어요. 맞는 템플릿이 없으면 "만들면 좋을 템플릿"에 모아요', '리뷰 원본 팝업의 <b>[아카이브 상세에서 보기]</b>가 다른 화면에서 열었을 때 반응하지 않던 문제 수정', '<b>브라우저 탭 아이콘</b>: 파란 말풍선 아이콘으로 다른 탭과 구분', '<b>사이드바 간략형</b>: 들여쓰기·번호 없이 한 줄 목록, 지금 보는 항목만 파란 배경']],
@@ -5859,8 +5860,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   // 페이지 로드 직후 저장된 답변/게시 상태를 ALL_REVIEWS에 복원
   // (이거 빠지면 대시보드·모달·위클리리포트에서 답변/게시 정보가 안 보임)
   if (typeof applySavedReplies === 'function') applySavedReplies();
-  // 자사몰(카페24 게시판) 실제 답변 상태 반영 — 이미 답변 단 리뷰를 미답변에서 제외
-  if (typeof applyBoardReplyStatus === 'function') await applyBoardReplyStatus();
+  // 크리마 답변 상태 반영(crema_answered.json) — 이미 답변 단 리뷰를 미답변에서 제외
+  if (typeof applyCremaReplyStatus === 'function') await applyCremaReplyStatus();
   // 사용자가 수동 정정한 감정도 복원
   if (typeof applySentimentOverrides === 'function') applySentimentOverrides();
   await applyClaudeDrafts();
@@ -6408,10 +6409,14 @@ async function generateReplyForReview(id) {
   } catch (e) { showToast('답변 채우기 오류: ' + e.message, 'error'); }
   updateReplyStats(); renderReplyList();
 }
-async function generateCurrentReplyPage() {
-  const reviews = getFilteredReplyReviews();
+// 지금 보고 있는 페이지의 리뷰 (open=true면 답변 전 리뷰만)
+function _currentReplyPage(open) {
   const start = (replyPage - 1) * REPLY_PER_PAGE;
-  const pageReviews = reviews.slice(start, start + REPLY_PER_PAGE).filter(r => !isReplyDone(r));
+  const list = getFilteredReplyReviews().slice(start, start + REPLY_PER_PAGE);
+  return open ? list.filter(r => !isReplyDone(r)) : list;
+}
+async function generateCurrentReplyPage() {
+  const pageReviews = _currentReplyPage(true);
   if (pageReviews.length === 0) { showToast('현재 페이지에 생성할 리뷰가 없습니다', 'error'); return; }
   const ids = pageReviews.filter(r => !r.ai_reply && r.sentiment !== '부정').map(r => r.id);
   const negN = pageReviews.filter(r => !r.ai_reply && r.sentiment === '부정').length;
@@ -6422,7 +6427,7 @@ async function generateCurrentReplyPage() {
 // ── 답변 완료 상태 반영 (크리마 기준) ──
 // crema_answered.json: 매일 수집 때 크리마 API로 확인한 '답변(댓글)이 달린 리뷰 ID' 목록.
 let CREMA_ANSWERED_IDS = null;
-async function applyBoardReplyStatus() {
+async function applyCremaReplyStatus() {
   // 답변 완료 기준 = 크리마에 답변(댓글)이 달렸는지 (crema_answered.json, 리뷰 ID로 정확 매칭).
   // 상품 페이지 리뷰 영역(크리마 위젯)에 고객이 보는 기준과 같다. 자사몰 게시판 기준은 쓰지 않는다(11/2 결정).
   try {
@@ -6435,9 +6440,9 @@ async function applyBoardReplyStatus() {
         if (/올리브영/.test(r.channel || '')) return;
         if (r.reply_status === 'posted') return;
         const cid = getCremaReviewId(r);
-        if (cid && CREMA_ANSWERED_IDS.has(String(cid))) { r.board_answered = true; n++; }
+        if (cid && CREMA_ANSWERED_IDS.has(String(cid))) { r.crema_done = true; n++; }
       });
-      window._boardAnsweredCount = n;
+      window._cremaAnsweredCount = n;
       window._answeredSource = 'crema(' + CREMA_ANSWERED_IDS.size + ')';
       return;
     }
@@ -6445,7 +6450,14 @@ async function applyBoardReplyStatus() {
   // 크리마 답변 파일을 못 불러오면 다른 기준으로 바꾸지 않고 '확인 불가'로 둔다 (CREMA_ANSWERED_IDS = null)
 }
 // 리뷰가 답변 완료 상태인가: 대시보드에서 게시했거나, 크리마에 답변이 달려 있음
-function isReplyDone(r) { return r.reply_status === 'posted' || r.board_answered === true; }
+function isReplyDone(r) { return r.reply_status === 'posted' || r.crema_done === true; }
+// 크리마 답변 상태를 불러왔는가. 못 불러왔으면 이미 답변된 리뷰를 구분할 수 없으니 생성·게시를 막는다(중복 게시 방지)
+function _answeredReady() { return !!CREMA_ANSWERED_IDS; }
+function _answeredBlocked() {
+  if (_answeredReady()) return false;
+  showCenterPopup('답변 상태를 불러오지 못했어요', '크리마에 이미 답변이 달린 리뷰를 구분할 수 없어서, 중복 게시를 막으려고 채우기·게시를 멈췄어요.\n새로고침하거나 다시 로그인한 뒤 시도해 주세요.', 'error');
+  return true;
+}
 
 // ── 답변 대상 리뷰 필터 (올리브영 제외) ──
 // Claude가 쓴 답변 초안(reply_drafts.json)을 '승인 대기'로 올린다.
@@ -6456,6 +6468,7 @@ async function applyClaudeDrafts() {
     if (!res.ok) return;
     const data = await res.json();
     const byId = {}; (data.drafts || []).forEach(d => { if (d && d.id && d.draft) byId[d.id] = d; });
+    if (!_answeredReady()) return;   // 답변 여부를 모르면 이미 게시된 리뷰에 초안이 다시 붙을 수 있어 올리지 않음
     ALL_REVIEWS.forEach(r => {
       const d = byId[r.id];
       if (!d || isReplyDone(r)) return;
@@ -6476,9 +6489,9 @@ function getReplyReviews() {
 
 function getFilteredReplyReviews() {
   let reviews = getReplyReviews();
-  if (replyFilter === 'ai_generated') reviews = reviews.filter(r => r.reply_status === 'ai_generated' && !r.board_answered);
+  if (replyFilter === 'ai_generated') reviews = reviews.filter(r => r.reply_status === 'ai_generated' && !r.crema_done);
   else if (replyFilter === 'posted') reviews = reviews.filter(r => isReplyDone(r));
-  else if (replyFilter === 'none') reviews = reviews.filter(r => (!r.reply_status || r.reply_status === '') && !r.board_answered);
+  else if (replyFilter === 'none') reviews = reviews.filter(r => (!r.reply_status || r.reply_status === '') && !r.crema_done);
   else if (replyFilter === 'todo') reviews = reviews.filter(r => !isReplyDone(r));
   if (replyChannelFilter !== 'all') reviews = reviews.filter(r => r.channel === replyChannelFilter);
   // 감정 필터 (혼합/중립 → 둘 다 포함)
@@ -6528,17 +6541,19 @@ function getFilteredReplyReviews() {
 function updateReplyStats() {
   const all = getReplyReviews();
   const posted = all.filter(r => isReplyDone(r)).length;               // 게시/자사몰 답변 완료
-  const generated = all.filter(r => r.reply_status === 'ai_generated' && !r.board_answered).length;
+  const generated = all.filter(r => r.reply_status === 'ai_generated' && !r.crema_done).length;
   const pending = all.length - generated - posted;                     // 진짜 미답변
   // 카드 4개: 남은 답변(= 승인 대기 + 초안 없음, 메뉴 숫자와 같음) · 승인 대기 · 답변 완료(전체 대비) · 초안 없음
-  document.getElementById('rstat-total').textContent = (pending + generated).toLocaleString();
-  document.getElementById('rstat-generated').textContent = generated.toLocaleString();
-  document.getElementById('rstat-posted').textContent = posted.toLocaleString();
-  document.getElementById('rstat-pending').textContent = pending.toLocaleString();
+  const ok = _answeredReady();
+  const num = n => ok ? n.toLocaleString() : '–';
+  document.getElementById('rstat-total').textContent = num(pending + generated);
+  document.getElementById('rstat-generated').textContent = num(generated);
+  document.getElementById('rstat-posted').textContent = num(posted);
+  document.getElementById('rstat-pending').textContent = num(pending);
   const sub = document.getElementById('rstat-posted-sub');
-  if (sub) sub.textContent = all.length ? `크리마 기준 · 전체 ${all.length.toLocaleString()}건 중 ${(posted / all.length * 100).toFixed(1)}%` : '크리마 기준';
-  // nav badge = 미답변 수
-  _setNavBadge('nav-reply-count', pending + generated);
+  if (sub) sub.textContent = !ok ? '답변 상태를 불러오지 못했어요 · 새로고침' : all.length ? `크리마 기준 · 전체 ${all.length.toLocaleString()}건 중 ${(posted / all.length * 100).toFixed(1)}%` : '크리마 기준';
+  // nav badge = 미답변 수 (답변 상태를 모르면 비움)
+  _setNavBadge('nav-reply-count', ok ? pending + generated : 0);
 }
 
 // ── 필터 변경 ──
@@ -6610,7 +6625,7 @@ function _buildIssueReplyCardHtml(r) {
   const statusClass = r.reply_status || 'none';
   const statusLabel = r.reply_status === 'posted' ? '게시 완료' : r.reply_status === 'ai_generated' ? '승인 대기' : '미답변';
   const isEditing = window._issueEditingId === r.id;
-  const canPost = r.reply_status === 'ai_generated' && r.ai_reply && getCremaReviewId(r);
+  const canPost = r.reply_status === 'ai_generated' && r.ai_reply && getCremaReviewId(r) && !isReplyDone(r);
   const channelEmoji = r.channel === '스마트스토어' ? '🟢' : r.channel === '올리브영' ? '🛍️' : '🛒';
   const isOliveYoung = r.channel === '올리브영';
 
@@ -6706,6 +6721,8 @@ window.postIssueReply = async function(id) {
   const r = ALL_REVIEWS.find(x => x.id === id);
   const cremaReviewId = getCremaReviewId(r);
   if (!r || !r.ai_reply || !cremaReviewId) { showToast('크리마 리뷰 ID가 없어 게시할 수 없습니다', 'error'); return; }
+  if (_answeredBlocked()) return;
+  if (isReplyDone(r)) { showToast('이미 크리마에 답변이 달린 리뷰예요. 중복 게시를 막았어요', 'error'); return; }
   const card = document.getElementById('issue-reply-card-' + id);
   const btn = card?.querySelector('.btn-post');
   if (btn) { btn.disabled = true; btn.innerHTML = '<span class="loader"></span> 게시 중...'; }
@@ -6799,7 +6816,7 @@ function renderReplyList() {
     const _sel = pageReviews.filter(r => !isReplyDone(r));
     _sa.checked = _sel.length > 0 && _sel.every(r => bulkSelected.has(r.id));
   }
-  _syncReplyActions(pageReviews);
+  _syncReplyActions();
 
   const listEl = document.getElementById('reply-list');
   if (reviews.length === 0) {
@@ -6809,11 +6826,11 @@ function renderReplyList() {
   }
 
   listEl.innerHTML = pageReviews.map(r => {
-    const statusClass = r.board_answered ? 'posted' : (r.reply_status || 'none');
-    const statusLabel = r.reply_status === 'posted' ? '게시 완료' : (r.board_answered ? '크리마 답변 완료' : (r.reply_status === 'ai_generated' ? '승인 대기' : '미답변'));
+    const statusClass = r.crema_done ? 'posted' : (r.reply_status || 'none');
+    const statusLabel = r.reply_status === 'posted' ? '게시 완료' : (r.crema_done ? '크리마 답변 완료' : (r.reply_status === 'ai_generated' ? '승인 대기' : '미답변'));
     const isEditing = replyEditingId === r.id;
     const isSelected = bulkSelected.has(r.id);
-    const canPost = r.reply_status === 'ai_generated' && r.ai_reply && getCremaReviewId(r);
+    const canPost = r.reply_status === 'ai_generated' && r.ai_reply && getCremaReviewId(r) && !isReplyDone(r);
     const channelEmoji = r.channel === '스마트스토어' ? '🟢' : '🛒';
 
     const selectable = !isReplyDone(r);
@@ -6822,7 +6839,7 @@ function renderReplyList() {
       <div class="reply-header">
         <div style="flex:1">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap">
-            ${r.reply_status !== 'posted' ? `<input type="checkbox" class="reply-select-cb" ${isSelected?'checked':''} onchange="toggleBulkSelect('${r.id}')" style="cursor:pointer;width:16px;height:16px" title="선택 (일괄 생성/게시)">` : ''}
+            ${!isReplyDone(r) ? `<input type="checkbox" class="reply-select-cb" ${isSelected?'checked':''} onchange="toggleBulkSelect('${r.id}')" style="cursor:pointer;width:16px;height:16px" title="선택 (일괄 생성/게시)">` : ''}
             <span style="font-size:12px;font-weight:600;color:var(--text-primary)">${r.product || r.product_norm || r.product_category || '제품명 없음'}</span>
             <span class="reply-status-tag ${statusClass}">${statusLabel}</span>
             <span class="tag tag-channel" style="font-size:10.5px">${channelEmoji} ${r.channel}</span>
@@ -6928,6 +6945,8 @@ function saveReplyEdit(id) {
 
 // ── 개별 게시 ──
 async function postSingleReply(id) {
+  if (_answeredBlocked()) return;
+  { const r0 = ALL_REVIEWS.find(x => x.id === id); if (r0 && isReplyDone(r0)) { showToast('이미 크리마에 답변이 달린 리뷰예요. 중복 게시를 막았어요', 'error'); return; } }
   if (!serverOnline) {
     showToast('서버에 먼저 연결하세요', 'error');
     return;
@@ -7008,9 +7027,7 @@ function clearBulkSelection() {
 }
 // 전체 선택: 현재 페이지의 미게시 리뷰 전부 선택/해제
 function toggleSelectAllReplies(cb) {
-  const reviews = getFilteredReplyReviews();
-  const start = (replyPage - 1) * REPLY_PER_PAGE;
-  const pageReviews = reviews.slice(start, start + REPLY_PER_PAGE).filter(r => !isReplyDone(r));
+  const pageReviews = _currentReplyPage(true);
   if (cb.checked) pageReviews.forEach(r => bulkSelected.add(r.id));
   else pageReviews.forEach(r => bulkSelected.delete(r.id));
   updateBulkBar();
@@ -7047,6 +7064,7 @@ async function _runReplyPool(ids, concurrency, onProgress) {
 }
 // 공통 실행부
 async function _bulkRun(ids, verb, skippedNeg) {
+  if (_answeredBlocked()) return;
   // 일괄 게시와 동일한 중앙 진행률 바 (몇 개 중 몇 개)
   showCenterProgress(verb + ' 중...', 0, ids.length, '잠시만 기다려주세요', '✨');
   const ok = await _runReplyPool(ids, 6, (done, total, okc) => {
@@ -7088,19 +7106,18 @@ async function bulkRegenerateSelected() {
   await _bulkRun(ids, '다른 표현으로 채우기');
 }
 // 도구 버튼 상태: 지금 누를 수 없는 버튼은 흐리게 하고 이유를 툴팁으로
-let _replyPageCache = [];
-function _syncReplyActions(pageReviews) {
-  if (pageReviews) _replyPageCache = pageReviews;
+function _syncReplyActions() {
   const posted = replyFilter === 'posted';
   const acts = document.getElementById('reply-actions'), note = document.getElementById('reply-actions-note');
   if (acts) acts.style.display = posted ? 'none' : 'contents';
   if (note) note.style.display = posted ? '' : 'none';
   if (posted) return;
-  const open = _replyPageCache.filter(r => !isReplyDone(r));
+  const open = _currentReplyPage(true);
   const set = (id, off, why, tip) => { const b = document.getElementById(id); if (!b) return; b.disabled = off; b.title = off ? why : tip; };
-  const noSel = bulkSelected.size === 0;
-  set('reply-btn-gen', noSel, '먼저 카드를 눌러 선택하거나 [전체 선택]을 체크해 주세요', '선택한 리뷰 중 초안 없는 것에 자동 답변 채우기');
-  set('reply-btn-regen', noSel, '먼저 카드를 눌러 선택하거나 [전체 선택]을 체크해 주세요', '이미 답변 있는 선택 항목을 다른 표현으로 다시 채우기');
+  const sel = [...bulkSelected].map(id => ALL_REVIEWS.find(x => x.id === id)).filter(r => r && !isReplyDone(r));
+  const pick = '먼저 카드를 눌러 선택하거나 [전체 선택]을 체크해 주세요';
+  set('reply-btn-gen', !sel.some(r => !r.ai_reply && r.sentiment !== '부정'), sel.length ? '선택한 리뷰에 새로 채울 게 없어요 (이미 초안 있음 · 부정 리뷰는 하나씩)' : pick, '선택한 리뷰 중 초안 없는 것에 자동 답변 채우기');
+  set('reply-btn-regen', !sel.some(r => r.ai_reply), sel.length ? '선택한 리뷰에 다시 쓸 초안이 없어요' : pick, '이미 답변 있는 선택 항목을 다른 표현으로 다시 채우기');
   set('reply-btn-fill', !open.some(r => !r.ai_reply && r.sentiment !== '부정'), '이 페이지에는 새로 채울 리뷰가 없어요 (초안 있음·답변 완료·부정 리뷰는 제외)', '이 페이지의 초안 없는 리뷰를 한 번에 채우기 (부정 리뷰 제외)');
   const sa = document.getElementById('reply-select-all'), wrap = document.getElementById('reply-select-all-wrap');
   if (sa) sa.disabled = !open.length;
@@ -7117,6 +7134,7 @@ function updateBulkBar() {
   }
 }
 async function postBulkReplies() {
+  if (_answeredBlocked()) return;
   const selectedIds = [...bulkSelected];
   if (selectedIds.length === 0) {
     showCenterPopup('선택된 리뷰가 없습니다', '먼저 게시할 리뷰 카드를 클릭해 선택한 뒤 다시 눌러주세요.', 'error');
@@ -7128,10 +7146,11 @@ async function postBulkReplies() {
   }
   // 게시 대상 선별 + 제외 사유 집계
   const items = [];
-  let noReply = 0, noCrema = 0, flagged = 0;
+  let noReply = 0, noCrema = 0, flagged = 0, done = 0;
   selectedIds.forEach(id => {
     const r = ALL_REVIEWS.find(x => x.id === id);
     if (!r) return;
+    if (isReplyDone(r)) { done++; return; }   // 이미 답변 달린 리뷰는 다시 게시하지 않음
     if (!r.ai_reply) { noReply++; return; }
     if (r.reply_flag) { flagged++; return; }   // 민감 표시 초안은 하나씩 확인 후 게시
     const cremaReviewId = getCremaReviewId(r);
@@ -7143,6 +7162,7 @@ async function postBulkReplies() {
     if (noReply) reason += '\n• 답변 없음: ' + noReply + '건 → 먼저 "선택 자동 답변"으로 초안을 채워주세요.';
     if (noCrema) reason += '\n• 크리마 리뷰 ID 없음: ' + noCrema + '건 → 올리브영 등 외부 리뷰는 크리마에 게시할 수 없습니다.';
     if (flagged) reason += '\n• 민감 표시 초안: ' + flagged + '건 → 카드에서 하나씩 확인 후 [승인하고 게시]를 눌러주세요.';
+    if (done) reason += '\n• 이미 답변 완료: ' + done + '건 → 크리마에 답변이 있어 다시 게시하지 않아요.';
     showCenterPopup('게시할 수 있는 리뷰가 없습니다', reason, 'error');
     return;
   }
